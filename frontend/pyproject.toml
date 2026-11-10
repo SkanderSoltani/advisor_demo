@@ -1,0 +1,42 @@
+[project]
+name = "transition-studio-frontend"
+version = "0.1.0"
+description = "Transition Studio front end (Plotly Dash), ported from the v0 React reference."
+requires-python = ">=3.11"
+dependencies = [
+    "dash>=4.5,<5",
+    "dash-mantine-components>=3.0,<4",
+    "dash-iconify>=0.1.2",
+    "dash-ag-grid>=35.3,<36",
+    "plotly>=7.1",
+    "httpx>=0.28",
+    "pydantic[email]>=2.14",
+    "gunicorn>=22.0",
+]
+
+[dependency-groups]
+dev = [
+    "datamodel-code-generator>=0.25",
+    "pytest>=8.2",
+    "playwright>=1.45",
+    "ruff>=0.5",
+    "pillow>=13.0.0",
+]
+
+[tool.uv]
+package = false
+no-build-package = ["cryptography"]
+
+[tool.ruff]
+line-length = 110  # Dash layout code (class strings) — backend uses 100
+target-version = "py311"
+extend-exclude = ["services/schemas.py"]
+
+[tool.ruff.lint]
+# same rule set as the backend (../pyproject.toml)
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # intentional unicode (·, —, …, ’)
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

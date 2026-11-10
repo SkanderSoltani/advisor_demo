@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme inline {
+  --color-brand-primary: var(--brand-primary); --color-brand-primary-dark: var(--brand-primary-dark); --color-brand-navy: var(--brand-navy);
+  --color-ink-900: var(--ink-900); --color-ink-600: var(--ink-600); --color-ink-300: var(--ink-300);
+  --color-surface-0: var(--surface-0); --color-surface-50: var(--surface-50); --color-surface-100: var(--surface-100);
+  --color-positive: var(--positive); --color-negative: var(--negative); --color-warning: var(--warning);
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+}
+:root { color-scheme: light; --brand-primary:#00A0DF; --brand-primary-dark:#0072AE; --brand-navy:#003D5C; --ink-900:#1A1A1A; --ink-600:#5B6670; --ink-300:#C5CBD1; --surface-0:#FFFFFF; --surface-50:#F5F7F9; --surface-100:#EBEFF2; --positive:#2E8540; --negative:#C8102E; --warning:#E8A317; --background:var(--surface-50); --foreground:var(--ink-900); --border:var(--surface-100); --ring:var(--brand-primary); --radius:12px; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--surface-50); color:var(--ink-900); font-family: Inter, 'Helvetica Neue', Arial, sans-serif; }
+button, input { font: inherit; }

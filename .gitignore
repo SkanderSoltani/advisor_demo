@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+data/*.db
+data/synthetic/*.pdf
+
+# front end
+frontend/.screens/
+reference/react-ui/node_modules/
+reference/react-ui/.next/
+
+.DS_Store

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "notice": "PLACEHOLDER target models for the internal demo. Weights are illustrative and are NOT Schwab-published model portfolios. Replace with the real models when available. Product prices/returns are simulated from the synthetic universe via each product's `proxy` rule.",
+  "proxy_rules": ["broad_market", "large_cap", "mid_cap", "small_cap", "large_growth", "large_value", "dividend"],
+  "products": [
+    {"ticker": "SCHB", "name": "Schwab U.S. Broad Market ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 3, "proxy": "broad_market"},
+    {"ticker": "SCHX", "name": "Schwab U.S. Large-Cap ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 3, "proxy": "large_cap"},
+    {"ticker": "SCHM", "name": "Schwab U.S. Mid-Cap ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 4, "proxy": "mid_cap"},
+    {"ticker": "SCHG", "name": "Schwab U.S. Large-Cap Growth ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 4, "proxy": "large_growth"},
+    {"ticker": "SCHV", "name": "Schwab U.S. Large-Cap Value ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 4, "proxy": "large_value"},
+    {"ticker": "SCHD", "name": "Schwab U.S. Dividend Equity ETF", "issuer": "Charles Schwab", "asset_class": "US Equity", "expense_ratio_bps": 6, "proxy": "dividend"}
+  ],
+  "models": [
+    {
+      "id": "SCHWAB-TR",
+      "name": "Schwab Core Equity — Total Return",
+      "provider": "Charles Schwab",
+      "objective": "total_return",
+      "construction": "market_cap",
+      "benchmark": "SYN-LMC (Synthetic US Large/Mid Cap Index)",
+      "advisory_fee_bps": 0,
+      "description": "Core US equity built from low-cost Schwab ETFs: large-cap core with growth, value and mid-cap sleeves.",
+      "rationale": "Broad, low-cost market exposure for long-term growth. Low tracking error to the US market and simple to maintain.",
+      "holdings": [
+        {"ticker": "SCHX", "weight": 0.55},
+        {"ticker": "SCHG", "weight": 0.15},
+        {"ticker": "SCHV", "weight": 0.15},
+        {"ticker": "SCHM", "weight": 0.15}
+      ]
+    },
+    {
+      "id": "SCHWAB-INC",
+      "name": "Schwab Dividend Income",
+      "provider": "Charles Schwab",
+      "objective": "income",
+      "construction": "market_cap_fundamental",
+      "benchmark": "SYN-DIV (Synthetic US Dividend Index)",
+      "advisory_fee_bps": 0,
+      "description": "Income-oriented US equity anchored on a quality dividend ETF, with value and large-cap core sleeves.",
+      "rationale": "Higher portfolio yield from companies with the quality to sustain dividends, while keeping broad large-cap diversification.",
+      "holdings": [
+        {"ticker": "SCHD", "weight": 0.60},
+        {"ticker": "SCHV", "weight": 0.25},
+        {"ticker": "SCHX", "weight": 0.15}
+      ]
+    }
+  ]
+}

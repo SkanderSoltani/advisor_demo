@@ -1,0 +1,7385 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Transition Studio",
+    "description": "Transition Studio API (v1). Internal prototype on SYNTHETIC data only. Analytics are simulated (data_source=mock_random). Not tax or investment advice.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Log in (mock JWT auth)",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Current user",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/book/summary": {
+      "get": {
+        "tags": [
+          "book"
+        ],
+        "summary": "Advisor-level totals",
+        "operationId": "summary_api_v1_book_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookSummary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/book/analytics/tracking-error": {
+      "get": {
+        "tags": [
+          "book"
+        ],
+        "summary": "AUM-weighted average rolling TE across all accounts + 10th\u201390th percentile band",
+        "operationId": "tracking_error_api_v1_book_analytics_tracking_error_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "window",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TEWindow",
+              "default": 63
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookTrackingError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/book/analytics/tax-impact": {
+      "get": {
+        "tags": [
+          "book"
+        ],
+        "summary": "Taxes saved, losses harvested and realized gains per period, with cumulative totals",
+        "operationId": "tax_impact_api_v1_book_analytics_tax_impact_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Granularity",
+              "default": "month"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxImpact"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/book/analytics/activity": {
+      "get": {
+        "tags": [
+          "book"
+        ],
+        "summary": "Management events per period by type, and AUM at period end",
+        "operationId": "activity_api_v1_book_analytics_activity_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Granularity",
+              "default": "month"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Client list with summary rows",
+        "operationId": "list_clients_api_v1_clients_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive match on name or email",
+              "title": "Search"
+            },
+            "description": "Case-insensitive match on name or email"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClientStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Onboard a new client (household)",
+        "operationId": "create_client_api_v1_clients_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Client detail",
+        "operationId": "get_client_api_v1_clients__client_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Edit profile or tax profile",
+        "operationId": "update_client_api_v1_clients__client_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Delete a client with all its accounts, lots and history",
+        "description": "Permanently removes the household (accounts, lots, management events and any transition\nin progress). The book file is rewritten without it.",
+        "operationId": "delete_client_api_v1_clients__client_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/accounts": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Client's accounts",
+        "operationId": "list_accounts_api_v1_clients__client_id__accounts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Add an account (starts with no holdings)",
+        "operationId": "create_account_api_v1_clients__client_id__accounts_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/analytics/tracking-error": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Rolling TE to target (value-weighted across accounts), with event markers",
+        "operationId": "client_te_api_v1_clients__client_id__analytics_tracking_error_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "window",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TEWindow",
+              "default": 63
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/analytics/tax-savings": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Estimated taxes saved per period, plus cumulative since inception",
+        "operationId": "client_tax_api_v1_clients__client_id__analytics_tax_savings_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Granularity",
+              "default": "month"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxSavings"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/analytics/summary": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "AUM over time and per-year realized gains, losses, rebalances and turnover",
+        "operationId": "client_summary_api_v1_clients__client_id__analytics_summary_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientAnalyticsSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/events": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "Management event timeline",
+        "operationId": "client_events_api_v1_clients__client_id__events_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/EventTypeOut"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Holdings, lots, metrics",
+        "operationId": "get_account_api_v1_accounts__account_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/analytics/tax-history": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Realized ST/LT gains, harvested losses, estimated tax paid and saved",
+        "operationId": "tax_history_api_v1_accounts__account_id__analytics_tax_history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Granularity",
+              "default": "month"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxHistory"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/analytics/tracking-error": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Rolling ex-post TE vs target, plus ex-ante TE today",
+        "operationId": "tracking_error_api_v1_accounts__account_id__analytics_tracking_error_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "window",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TEWindow",
+              "default": 63
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/analytics/exposures": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Sector weights vs target, top active weights, concentration, yield, beta, factors",
+        "operationId": "exposures_api_v1_accounts__account_id__analytics_exposures_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExposuresOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}": {
+      "get": {
+        "tags": [
+          "accounts",
+          "events"
+        ],
+        "summary": "Event + trade list",
+        "operationId": "get_event_api_v1_events__event_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "tags": [
+          "models"
+        ],
+        "summary": "Target-model catalog",
+        "operationId": "list_models_api_v1_models_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "objective",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "total_return",
+                    "income"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Objective"
+            }
+          },
+          {
+            "name": "construction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "examples": [
+                "market_cap"
+              ],
+              "title": "Construction"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models/{model_id}": {
+      "get": {
+        "tags": [
+          "models"
+        ],
+        "summary": "Model detail + holdings",
+        "operationId": "get_model_api_v1_models__model_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Model Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models/compare": {
+      "post": {
+        "tags": [
+          "models"
+        ],
+        "summary": "Compare models for an account: stats, TE from current holdings, full-transition tax",
+        "operationId": "compare_models_api_v1_models_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparisonPayload"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/analytics/regimes": {
+      "post": {
+        "tags": [
+          "models",
+          "analytics"
+        ],
+        "summary": "Upload macro-regime labels (CSV: date,regime). Replaces previous labels.",
+        "operationId": "upload_regimes_api_v1_analytics_regimes_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_regimes_api_v1_analytics_regimes_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegimeUploadResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "models",
+          "analytics"
+        ],
+        "summary": "Remove uploaded regime labels",
+        "operationId": "clear_regimes_api_v1_analytics_regimes_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/transitions": {
+      "post": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Start a transition for an account (empty accounts start at INGEST_CHOICE)",
+        "operationId": "create_transition_api_v1_transitions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransitionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/transitions/{transition_id}": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Transition session state",
+        "operationId": "get_transition_api_v1_transitions__transition_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransitionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/chat": {
+      "post": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Guided conversation turn: send a message, a quick reply, or an action",
+        "operationId": "chat_api_v1_transitions__transition_id__chat_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatTurn"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/back": {
+      "post": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Go back to an earlier visited state; downstream results are invalidated",
+        "operationId": "back_api_v1_transitions__transition_id__back_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatTurn"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/history": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Conversation history (to restore the chat after a reload)",
+        "operationId": "history_api_v1_transitions__transition_id__history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatHistory"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/locks": {
+      "put": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Set the lots locked for this transition (replaces previous locks)",
+        "operationId": "set_locks_api_v1_transitions__transition_id__locks_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocksRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransitionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/optimize": {
+      "post": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Run the tax-aware transition optimizer",
+        "operationId": "optimize_api_v1_transitions__transition_id__optimize_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/frontier": {
+      "post": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Efficient frontier: tax cost vs ex-ante TE across budgets",
+        "operationId": "frontier_api_v1_transitions__transition_id__frontier_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrontierRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrontierResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/trades.csv": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Trade list of the last optimization (CSV)",
+        "operationId": "trades_csv_api_v1_transitions__transition_id__trades_csv_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/summary.pdf": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "PDF summary of the last optimization",
+        "operationId": "summary_pdf_api_v1_transitions__transition_id__summary_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ingest/pdf": {
+      "post": {
+        "tags": [
+          "ingest"
+        ],
+        "summary": "Upload a tax-lot statement PDF (\u226410 MB). Returns a preview; nothing is committed.",
+        "operationId": "upload_pdf_api_v1_ingest_pdf_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_pdf_api_v1_ingest_pdf_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParsePreview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ingest/plaid/link-token": {
+      "post": {
+        "tags": [
+          "ingest"
+        ],
+        "summary": "Create a Plaid Link token (Sandbox; mock in demo mode)",
+        "operationId": "plaid_link_token_api_v1_ingest_plaid_link_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkTokenOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ingest/plaid/exchange": {
+      "post": {
+        "tags": [
+          "ingest"
+        ],
+        "summary": "Exchange a Link public token and preview holdings + rebuilt lots",
+        "operationId": "plaid_exchange_api_v1_ingest_plaid_exchange_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaidExchangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParsePreview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ingest/{transition_id}/confirm": {
+      "post": {
+        "tags": [
+          "ingest"
+        ],
+        "summary": "Commit the (edited) preview rows as the account's lots",
+        "operationId": "confirm_api_v1_ingest__transition_id__confirm_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountCreate": {
+        "properties": {
+          "account_type": {
+            "type": "string",
+            "pattern": "^(individual_taxable|joint_taxable|trust|ira|roth_ira)$",
+            "title": "Account Type",
+            "examples": [
+              "joint_taxable"
+            ]
+          },
+          "custodian": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Custodian",
+            "examples": [
+              "Schwab"
+            ]
+          },
+          "nickname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nickname",
+            "examples": [
+              "Joint brokerage"
+            ]
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id",
+            "examples": [
+              "TR-MCF"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_type",
+          "custodian"
+        ],
+        "title": "AccountCreate"
+      },
+      "AccountDetail": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "account": {
+            "$ref": "#/components/schemas/AccountSummary"
+          },
+          "client_name": {
+            "type": "string",
+            "title": "Client Name"
+          },
+          "unrealized": {
+            "$ref": "#/components/schemas/UnrealizedSplit"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/HoldingOut"
+            },
+            "type": "array",
+            "title": "Holdings"
+          },
+          "lots": {
+            "items": {
+              "$ref": "#/components/schemas/LotOut"
+            },
+            "type": "array",
+            "title": "Lots"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account",
+          "client_name",
+          "unrealized",
+          "holdings",
+          "lots"
+        ],
+        "title": "AccountDetail"
+      },
+      "AccountList": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AccountSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "AccountList"
+      },
+      "AccountSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "account_type": {
+            "type": "string",
+            "title": "Account Type"
+          },
+          "taxable": {
+            "type": "boolean",
+            "title": "Taxable"
+          },
+          "custodian": {
+            "type": "string",
+            "title": "Custodian"
+          },
+          "nickname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nickname"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id"
+          },
+          "onboarding_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Onboarding Date"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "cash": {
+            "type": "number",
+            "title": "Cash"
+          },
+          "n_positions": {
+            "type": "integer",
+            "title": "N Positions"
+          },
+          "n_lots": {
+            "type": "integer",
+            "title": "N Lots"
+          },
+          "ex_ante_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Ante Te"
+          },
+          "drift_tolerance_te": {
+            "type": "number",
+            "title": "Drift Tolerance Te"
+          },
+          "outside_tolerance": {
+            "type": "boolean",
+            "title": "Outside Tolerance"
+          },
+          "taxes_saved_ytd": {
+            "type": "number",
+            "title": "Taxes Saved Ytd"
+          },
+          "taxes_saved_since_inception": {
+            "type": "number",
+            "title": "Taxes Saved Since Inception"
+          },
+          "last_rebalance_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Rebalance Date"
+          },
+          "has_history": {
+            "type": "boolean",
+            "title": "Has History"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "account_type",
+          "taxable",
+          "custodian",
+          "nickname",
+          "target_model_id",
+          "onboarding_date",
+          "market_value",
+          "cash",
+          "n_positions",
+          "n_lots",
+          "ex_ante_te",
+          "drift_tolerance_te",
+          "outside_tolerance",
+          "taxes_saved_ytd",
+          "taxes_saved_since_inception",
+          "last_rebalance_date",
+          "has_history"
+        ],
+        "title": "AccountSummary",
+        "description": "Account card used in client detail and account lists."
+      },
+      "ActiveWeight": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "portfolio_weight": {
+            "type": "number",
+            "title": "Portfolio Weight"
+          },
+          "target_weight": {
+            "type": "number",
+            "title": "Target Weight"
+          },
+          "active_weight": {
+            "type": "number",
+            "title": "Active Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "sector",
+          "portfolio_weight",
+          "target_weight",
+          "active_weight"
+        ],
+        "title": "ActiveWeight"
+      },
+      "Activity": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "granularity": {
+            "$ref": "#/components/schemas/Granularity"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityPeriod"
+            },
+            "type": "array",
+            "title": "Periods"
+          }
+        },
+        "type": "object",
+        "required": [
+          "granularity",
+          "periods"
+        ],
+        "title": "Activity"
+      },
+      "ActivityPeriod": {
+        "properties": {
+          "period": {
+            "type": "string",
+            "title": "Period"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts",
+            "description": "Events per type (transition, rebalance, tax_loss_harvest, cash_flow, model_change)"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "aum": {
+            "type": "number",
+            "title": "Aum",
+            "description": "Total AUM at period end"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period",
+          "counts",
+          "total",
+          "aum"
+        ],
+        "title": "ActivityPeriod"
+      },
+      "BackRequest": {
+        "properties": {
+          "to_state": {
+            "type": "string",
+            "title": "To State",
+            "examples": [
+              "TRANSITION_SETUP"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "to_state"
+        ],
+        "title": "BackRequest"
+      },
+      "Body_upload_pdf_api_v1_ingest_pdf_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "transition_id"
+        ],
+        "title": "Body_upload_pdf_api_v1_ingest_pdf_post"
+      },
+      "Body_upload_regimes_api_v1_analytics_regimes_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_regimes_api_v1_analytics_regimes_post"
+      },
+      "BookSummary": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "n_clients": {
+            "type": "integer",
+            "title": "N Clients"
+          },
+          "n_accounts": {
+            "type": "integer",
+            "title": "N Accounts"
+          },
+          "total_aum": {
+            "type": "number",
+            "title": "Total Aum"
+          },
+          "taxes_saved_ytd": {
+            "type": "number",
+            "title": "Taxes Saved Ytd"
+          },
+          "taxes_saved_since_inception": {
+            "type": "number",
+            "title": "Taxes Saved Since Inception"
+          },
+          "avg_ex_ante_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Ex Ante Te",
+            "description": "AUM-weighted across accounts with a target"
+          },
+          "n_accounts_outside_tolerance": {
+            "type": "integer",
+            "title": "N Accounts Outside Tolerance"
+          },
+          "clients_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Clients By Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "n_clients",
+          "n_accounts",
+          "total_aum",
+          "taxes_saved_ytd",
+          "taxes_saved_since_inception",
+          "avg_ex_ante_te",
+          "n_accounts_outside_tolerance",
+          "clients_by_status"
+        ],
+        "title": "BookSummary"
+      },
+      "BookTEPoint": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "avg_te": {
+            "type": "number",
+            "title": "Avg Te",
+            "description": "AUM-weighted average rolling TE across accounts"
+          },
+          "p10": {
+            "type": "number",
+            "title": "P10"
+          },
+          "p90": {
+            "type": "number",
+            "title": "P90"
+          },
+          "n_accounts": {
+            "type": "integer",
+            "title": "N Accounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "avg_te",
+          "p10",
+          "p90",
+          "n_accounts"
+        ],
+        "title": "BookTEPoint"
+      },
+      "BookTrackingError": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "window": {
+            "type": "integer",
+            "title": "Window"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/BookTEPoint"
+            },
+            "type": "array",
+            "title": "Series"
+          }
+        },
+        "type": "object",
+        "required": [
+          "window",
+          "series"
+        ],
+        "title": "BookTrackingError"
+      },
+      "BuyOut": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "shares": {
+            "type": "number",
+            "title": "Shares"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "shares",
+          "price",
+          "value"
+        ],
+        "title": "BuyOut"
+      },
+      "ChatHistory": {
+        "properties": {
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChatHistoryItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "state",
+          "items"
+        ],
+        "title": "ChatHistory"
+      },
+      "ChatHistoryItem": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "text",
+          "state"
+        ],
+        "title": "ChatHistoryItem"
+      },
+      "ChatRequest": {
+        "properties": {
+          "message": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message",
+            "description": "Free text from the advisor"
+          },
+          "quick_reply": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quick Reply",
+            "description": "id of a quick reply"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "restart",
+                  "back",
+                  "approve"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "title": "ChatRequest"
+      },
+      "ChatTurn": {
+        "properties": {
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "assistant_message": {
+            "type": "string",
+            "title": "Assistant Message",
+            "description": "Markdown"
+          },
+          "quick_replies": {
+            "items": {
+              "$ref": "#/components/schemas/QuickReply"
+            },
+            "type": "array",
+            "title": "Quick Replies"
+          },
+          "ui_payload": {
+            "$ref": "#/components/schemas/UiPayload"
+          },
+          "allowed_actions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allowed Actions"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "interpretation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Interpretation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "llm_provider": {
+            "type": "string",
+            "title": "Llm Provider"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "state",
+          "assistant_message",
+          "quick_replies",
+          "ui_payload",
+          "allowed_actions",
+          "progress",
+          "llm_provider"
+        ],
+        "title": "ChatTurn",
+        "examples": [
+          {
+            "allowed_actions": [
+              "back",
+              "restart"
+            ],
+            "assistant_message": "Is the goal **income** or **total return**?",
+            "llm_provider": "mock",
+            "progress": {
+              "label": "Choose target",
+              "step": 2,
+              "total": 6
+            },
+            "quick_replies": [
+              {
+                "id": "income",
+                "label": "Income"
+              },
+              {
+                "id": "total_return",
+                "label": "Total return"
+              }
+            ],
+            "state": "Q_OBJECTIVE",
+            "transition_id": "trn_1a2b3c4d",
+            "ui_payload": {
+              "data": {},
+              "type": "none"
+            }
+          }
+        ]
+      },
+      "ClientAnalyticsSummary": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "aum_history": {
+            "items": {
+              "$ref": "#/components/schemas/DatedValueOut"
+            },
+            "type": "array",
+            "title": "Aum History",
+            "description": "Month-end AUM"
+          },
+          "by_year": {
+            "items": {
+              "$ref": "#/components/schemas/YearSummary"
+            },
+            "type": "array",
+            "title": "By Year"
+          },
+          "avg_annual_turnover": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Annual Turnover"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_id",
+          "aum_history",
+          "by_year",
+          "avg_annual_turnover"
+        ],
+        "title": "ClientAnalyticsSummary"
+      },
+      "ClientCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "examples": [
+              "Rivera Household"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "examples": [
+              "rivera@example.com"
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "examples": [
+              "555-0199"
+            ]
+          },
+          "client_type": {
+            "type": "string",
+            "pattern": "^(individual|couple|family|trust)$",
+            "title": "Client Type",
+            "examples": [
+              "couple"
+            ]
+          },
+          "tax_profile": {
+            "$ref": "#/components/schemas/TaxProfile"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "client_type",
+          "tax_profile"
+        ],
+        "title": "ClientCreate"
+      },
+      "ClientDetail": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "client_type": {
+            "type": "string",
+            "title": "Client Type"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClientStatus"
+          },
+          "tax_profile": {
+            "$ref": "#/components/schemas/TaxProfileOut"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountSummary"
+            },
+            "type": "array",
+            "title": "Accounts"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/ClientMetrics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "client_type",
+          "notes",
+          "status",
+          "tax_profile",
+          "accounts",
+          "metrics"
+        ],
+        "title": "ClientDetail"
+      },
+      "ClientList": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClientSummaryRow"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "ClientList",
+        "examples": [
+          {
+            "data_source": "mock_random",
+            "items": [
+              {
+                "client_type": "family",
+                "ex_ante_te": 0.0091,
+                "id": "cli_001",
+                "last_rebalance_date": "2026-10-16",
+                "market_value": 11880693.12,
+                "n_accounts": 3,
+                "name": "Okafor Family",
+                "status": "on_target",
+                "target_models": [
+                  "INC-MC",
+                  "TR-MC",
+                  "TR-MCF"
+                ],
+                "taxes_saved_ytd": 61234.55
+              }
+            ],
+            "total": 1
+          }
+        ]
+      },
+      "ClientMetrics": {
+        "properties": {
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "cash": {
+            "type": "number",
+            "title": "Cash"
+          },
+          "n_accounts": {
+            "type": "integer",
+            "title": "N Accounts"
+          },
+          "n_positions": {
+            "type": "integer",
+            "title": "N Positions"
+          },
+          "ex_ante_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Ante Te"
+          },
+          "taxes_saved_ytd": {
+            "type": "number",
+            "title": "Taxes Saved Ytd"
+          },
+          "taxes_saved_since_inception": {
+            "type": "number",
+            "title": "Taxes Saved Since Inception"
+          },
+          "unrealized_gain": {
+            "type": "number",
+            "title": "Unrealized Gain"
+          },
+          "last_rebalance_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Rebalance Date"
+          },
+          "first_onboarding_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Onboarding Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market_value",
+          "cash",
+          "n_accounts",
+          "n_positions",
+          "ex_ante_te",
+          "taxes_saved_ytd",
+          "taxes_saved_since_inception",
+          "unrealized_gain",
+          "last_rebalance_date",
+          "first_onboarding_date"
+        ],
+        "title": "ClientMetrics"
+      },
+      "ClientOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "client_type": {
+            "type": "string",
+            "title": "Client Type"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "tax_profile": {
+            "$ref": "#/components/schemas/TaxProfileOut"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClientStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "client_type",
+          "notes",
+          "tax_profile",
+          "status"
+        ],
+        "title": "ClientOut",
+        "description": "Returned by create / update."
+      },
+      "ClientStatus": {
+        "type": "string",
+        "enum": [
+          "on_target",
+          "drifting",
+          "needs_review",
+          "onboarding"
+        ],
+        "title": "ClientStatus"
+      },
+      "ClientSummaryRow": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "client_type": {
+            "type": "string",
+            "title": "Client Type"
+          },
+          "n_accounts": {
+            "type": "integer",
+            "title": "N Accounts"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "target_models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Target Models"
+          },
+          "ex_ante_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Ante Te",
+            "description": "Value-weighted across accounts with a target"
+          },
+          "taxes_saved_ytd": {
+            "type": "number",
+            "title": "Taxes Saved Ytd"
+          },
+          "last_rebalance_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Rebalance Date"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClientStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "client_type",
+          "n_accounts",
+          "market_value",
+          "target_models",
+          "ex_ante_te",
+          "taxes_saved_ytd",
+          "last_rebalance_date",
+          "status"
+        ],
+        "title": "ClientSummaryRow"
+      },
+      "ClientUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "client_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(individual|couple|family|trust)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Type"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "tax_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaxProfileUpdate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ClientUpdate"
+      },
+      "CompareRequest": {
+        "properties": {
+          "model_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Model Ids",
+            "examples": [
+              [
+                "SCHWAB-TR",
+                "SCHWAB-INC"
+              ]
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id",
+            "examples": [
+              "acc_017"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_ids",
+          "account_id"
+        ],
+        "title": "CompareRequest"
+      },
+      "ComparisonPayload": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "taxable": {
+            "type": "boolean",
+            "title": "Taxable"
+          },
+          "current": {
+            "$ref": "#/components/schemas/CurrentPortfolio"
+          },
+          "comparisons": {
+            "items": {
+              "$ref": "#/components/schemas/ModelComparison"
+            },
+            "type": "array",
+            "title": "Comparisons"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "default": "Illustrative, for advisor review. Not tax or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "taxable",
+          "current",
+          "comparisons"
+        ],
+        "title": "ComparisonPayload",
+        "examples": [
+          {
+            "as_of": "2026-10-30",
+            "comparisons": [
+              {
+                "full_transition": {
+                  "est_tax": 142000.0,
+                  "locked_value_retained": 290000.0,
+                  "n_buys": 4,
+                  "n_lot_sales": 96,
+                  "net_realized_gain": 587000.0,
+                  "post_te": 0.012,
+                  "realized_lt_gain": 610000.0,
+                  "realized_lt_loss": 41000.0,
+                  "realized_st_gain": 30000.0,
+                  "realized_st_loss": 12000.0,
+                  "turnover": 0.88
+                },
+                "model": {
+                  "id": "SCHWAB-TR",
+                  "name": "...",
+                  "stats": {}
+                },
+                "te_from_current": 0.041,
+                "yield_change": -0.001
+              }
+            ],
+            "current": {
+              "account_id": "acc_017",
+              "beta": 1.04,
+              "cash": 98000.0,
+              "dividend_yield": 0.018,
+              "factor_exposures": {
+                "quality": 0.2,
+                "value": 0.1
+              },
+              "locked_value": 310000.0,
+              "market_value": 2750000.0,
+              "n_positions": 38,
+              "sector_mix": {
+                "Cash": 0.036,
+                "Financials": 0.21
+              },
+              "unrealized_gain": 690000.0
+            },
+            "data_source": "mock_random",
+            "disclaimer": "Illustrative, for advisor review. Not tax or investment advice.",
+            "taxable": true
+          }
+        ]
+      },
+      "ConfirmRequest": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ConfirmRow"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Rows"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "append"
+            ],
+            "title": "Mode",
+            "description": "replace = the statement becomes the account's holdings",
+            "default": "replace"
+          },
+          "cash": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash",
+            "description": "Defaults to the detected cash, if any"
+          },
+          "assume_average_cost": {
+            "type": "boolean",
+            "title": "Assume Average Cost",
+            "description": "Fill missing basis with today's value (no embedded gain) and missing dates with as-of \u2212 366 days (long-term); affected lots are flagged basis_unknown",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "rows"
+        ],
+        "title": "ConfirmRequest"
+      },
+      "ConfirmResult": {
+        "properties": {
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "n_committed": {
+            "type": "integer",
+            "title": "N Committed"
+          },
+          "n_excluded": {
+            "type": "integer",
+            "title": "N Excluded"
+          },
+          "total_market_value": {
+            "type": "number",
+            "title": "Total Market Value"
+          },
+          "cash": {
+            "type": "number",
+            "title": "Cash"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "account_id",
+          "state",
+          "n_committed",
+          "n_excluded",
+          "total_market_value",
+          "cash",
+          "assumptions"
+        ],
+        "title": "ConfirmResult"
+      },
+      "ConfirmRow": {
+        "properties": {
+          "row_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row Id"
+          },
+          "lot_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot Ref",
+            "description": "Lot ID; one is assigned when missing"
+          },
+          "ticker": {
+            "type": "string",
+            "maxLength": 12,
+            "minLength": 1,
+            "title": "Ticker"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity"
+          },
+          "acquired_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired Date"
+          },
+          "cost_basis_total": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Basis Total"
+          },
+          "include": {
+            "type": "boolean",
+            "title": "Include",
+            "default": true
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "quantity"
+        ],
+        "title": "ConfirmRow"
+      },
+      "Constraints": {
+        "properties": {
+          "min_cash_buffer": {
+            "type": "number",
+            "maximum": 0.2,
+            "minimum": 0.0,
+            "title": "Min Cash Buffer",
+            "default": 0.005
+          },
+          "transaction_cost_bps": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Transaction Cost Bps",
+            "default": 5.0
+          },
+          "turnover_penalty": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Turnover Penalty",
+            "default": 0.0
+          },
+          "min_trade_value": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Min Trade Value",
+            "default": 0.0
+          },
+          "max_names": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Names"
+          },
+          "max_weight": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Weight"
+          },
+          "sector_band": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector Band"
+          },
+          "round_shares": {
+            "type": "boolean",
+            "title": "Round Shares",
+            "default": true
+          },
+          "lot_relief": {
+            "type": "string",
+            "enum": [
+              "optimizer",
+              "tax_optimal",
+              "hifo"
+            ],
+            "title": "Lot Relief",
+            "default": "optimizer"
+          }
+        },
+        "type": "object",
+        "title": "Constraints"
+      },
+      "CurrentPortfolio": {
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "cash": {
+            "type": "number",
+            "title": "Cash"
+          },
+          "n_positions": {
+            "type": "integer",
+            "title": "N Positions"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id"
+          },
+          "dividend_yield": {
+            "type": "number",
+            "title": "Dividend Yield"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "sector_mix": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Sector Mix",
+            "description": "Look-through, including Cash"
+          },
+          "factor_exposures": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Factor Exposures"
+          },
+          "unrealized_gain": {
+            "type": "number",
+            "title": "Unrealized Gain"
+          },
+          "locked_value": {
+            "type": "number",
+            "title": "Locked Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_id",
+          "market_value",
+          "cash",
+          "n_positions",
+          "target_model_id",
+          "dividend_yield",
+          "beta",
+          "sector_mix",
+          "factor_exposures",
+          "unrealized_gain",
+          "locked_value"
+        ],
+        "title": "CurrentPortfolio"
+      },
+      "DatedValueOut": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "value"
+        ],
+        "title": "DatedValueOut"
+      },
+      "Diagnostics": {
+        "properties": {
+          "solver": {
+            "type": "string",
+            "title": "Solver"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "solve_ms": {
+            "type": "number",
+            "title": "Solve Ms"
+          },
+          "binding_constraints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Binding Constraints"
+          },
+          "relaxations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Relaxations"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          },
+          "explanation": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Explanation",
+            "description": "Plain-English reasons the residual TE is not 0"
+          },
+          "te_contributions": {
+            "items": {
+              "$ref": "#/components/schemas/TEContributionOut"
+            },
+            "type": "array",
+            "title": "Te Contributions"
+          },
+          "wash_blocked_lot_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Wash Blocked Lot Ids"
+          },
+          "lot_relief_check": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Lot Relief Check"
+          }
+        },
+        "type": "object",
+        "required": [
+          "solver",
+          "status",
+          "solve_ms",
+          "binding_constraints",
+          "relaxations",
+          "notes",
+          "explanation",
+          "te_contributions",
+          "wash_blocked_lot_ids",
+          "lot_relief_check"
+        ],
+        "title": "Diagnostics"
+      },
+      "EventDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "account_nickname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Nickname"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger"
+          },
+          "n_trades": {
+            "type": "integer",
+            "title": "N Trades"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "est_taxes_saved": {
+            "type": "number",
+            "title": "Est Taxes Saved"
+          },
+          "te_before": {
+            "type": "number",
+            "title": "Te Before"
+          },
+          "te_after": {
+            "type": "number",
+            "title": "Te After"
+          },
+          "cash_flow_amount": {
+            "type": "number",
+            "title": "Cash Flow Amount"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "trades": {
+            "items": {
+              "$ref": "#/components/schemas/TradeOut"
+            },
+            "type": "array",
+            "title": "Trades"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "account_id",
+          "account_nickname",
+          "date",
+          "type",
+          "trigger",
+          "n_trades",
+          "turnover",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "losses_harvested",
+          "est_taxes_saved",
+          "te_before",
+          "te_after",
+          "cash_flow_amount",
+          "note",
+          "client_id",
+          "trades"
+        ],
+        "title": "EventDetail"
+      },
+      "EventList": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "EventList"
+      },
+      "EventMarker": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "account_id",
+          "date",
+          "type"
+        ],
+        "title": "EventMarker"
+      },
+      "EventOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "account_nickname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Nickname"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger"
+          },
+          "n_trades": {
+            "type": "integer",
+            "title": "N Trades"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "est_taxes_saved": {
+            "type": "number",
+            "title": "Est Taxes Saved"
+          },
+          "te_before": {
+            "type": "number",
+            "title": "Te Before"
+          },
+          "te_after": {
+            "type": "number",
+            "title": "Te After"
+          },
+          "cash_flow_amount": {
+            "type": "number",
+            "title": "Cash Flow Amount"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "account_id",
+          "account_nickname",
+          "date",
+          "type",
+          "trigger",
+          "n_trades",
+          "turnover",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "losses_harvested",
+          "est_taxes_saved",
+          "te_before",
+          "te_after",
+          "cash_flow_amount",
+          "note"
+        ],
+        "title": "EventOut"
+      },
+      "EventTypeOut": {
+        "type": "string",
+        "enum": [
+          "transition",
+          "rebalance",
+          "tax_loss_harvest",
+          "cash_flow",
+          "model_change"
+        ],
+        "title": "EventTypeOut"
+      },
+      "ExposuresOut": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id"
+          },
+          "sectors": {
+            "items": {
+              "$ref": "#/components/schemas/SectorWeight"
+            },
+            "type": "array",
+            "title": "Sectors"
+          },
+          "top_active_weights": {
+            "items": {
+              "$ref": "#/components/schemas/ActiveWeight"
+            },
+            "type": "array",
+            "title": "Top Active Weights"
+          },
+          "factor_exposures": {
+            "items": {
+              "$ref": "#/components/schemas/FactorWeight"
+            },
+            "type": "array",
+            "title": "Factor Exposures"
+          },
+          "top10_weight": {
+            "type": "number",
+            "title": "Top10 Weight"
+          },
+          "hhi": {
+            "type": "number",
+            "title": "Hhi"
+          },
+          "n_positions": {
+            "type": "integer",
+            "title": "N Positions"
+          },
+          "dividend_yield": {
+            "type": "number",
+            "title": "Dividend Yield"
+          },
+          "target_dividend_yield": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Dividend Yield"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "target_beta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Beta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_id",
+          "target_model_id",
+          "sectors",
+          "top_active_weights",
+          "factor_exposures",
+          "top10_weight",
+          "hhi",
+          "n_positions",
+          "dividend_yield",
+          "target_dividend_yield",
+          "beta",
+          "target_beta"
+        ],
+        "title": "ExposuresOut"
+      },
+      "FactorWeight": {
+        "properties": {
+          "factor": {
+            "type": "string",
+            "title": "Factor"
+          },
+          "portfolio": {
+            "type": "number",
+            "title": "Portfolio"
+          },
+          "target": {
+            "type": "number",
+            "title": "Target"
+          },
+          "active": {
+            "type": "number",
+            "title": "Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "factor",
+          "portfolio",
+          "target",
+          "active"
+        ],
+        "title": "FactorWeight"
+      },
+      "FrontierPointOut": {
+        "properties": {
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "est_tax": {
+            "type": "number",
+            "title": "Est Tax"
+          },
+          "net_gain": {
+            "type": "number",
+            "title": "Net Gain"
+          },
+          "te": {
+            "type": "number",
+            "title": "Te"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover"
+          }
+        },
+        "type": "object",
+        "required": [
+          "budget",
+          "est_tax",
+          "net_gain",
+          "te",
+          "turnover"
+        ],
+        "title": "FrontierPointOut"
+      },
+      "FrontierRequest": {
+        "properties": {
+          "n_points": {
+            "type": "integer",
+            "maximum": 25.0,
+            "minimum": 3.0,
+            "title": "N Points",
+            "default": 15
+          },
+          "budget_mode": {
+            "type": "string",
+            "enum": [
+              "net_gain",
+              "tax"
+            ],
+            "title": "Budget Mode",
+            "default": "tax"
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/Constraints"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id"
+          }
+        },
+        "type": "object",
+        "title": "FrontierRequest"
+      },
+      "FrontierResult": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "target_model_id": {
+            "type": "string",
+            "title": "Target Model Id"
+          },
+          "budget_mode": {
+            "type": "string",
+            "enum": [
+              "net_gain",
+              "tax"
+            ],
+            "title": "Budget Mode"
+          },
+          "max_budget": {
+            "type": "number",
+            "title": "Max Budget",
+            "description": "Budget needed for the full (unconstrained) transition"
+          },
+          "te_before": {
+            "type": "number",
+            "title": "Te Before"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/FrontierPointOut"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "chosen_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chosen Index",
+            "description": "Point closest to the last optimization's budget, if any"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "default": "Illustrative, for advisor review. Not tax or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "target_model_id",
+          "budget_mode",
+          "max_budget",
+          "te_before",
+          "points"
+        ],
+        "title": "FrontierResult"
+      },
+      "FullTransitionOut": {
+        "properties": {
+          "est_tax": {
+            "type": "number",
+            "title": "Est Tax"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_st_loss": {
+            "type": "number",
+            "title": "Realized St Loss"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "realized_lt_loss": {
+            "type": "number",
+            "title": "Realized Lt Loss"
+          },
+          "net_realized_gain": {
+            "type": "number",
+            "title": "Net Realized Gain"
+          },
+          "n_lot_sales": {
+            "type": "integer",
+            "title": "N Lot Sales"
+          },
+          "n_buys": {
+            "type": "integer",
+            "title": "N Buys"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover"
+          },
+          "locked_value_retained": {
+            "type": "number",
+            "title": "Locked Value Retained",
+            "description": "Value of locked lots above target that cannot be sold"
+          },
+          "post_te": {
+            "type": "number",
+            "title": "Post Te",
+            "description": "Ex-ante TE after the full transition (locked lots \u21d2 > 0)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "est_tax",
+          "realized_st_gain",
+          "realized_st_loss",
+          "realized_lt_gain",
+          "realized_lt_loss",
+          "net_realized_gain",
+          "n_lot_sales",
+          "n_buys",
+          "turnover",
+          "locked_value_retained",
+          "post_te"
+        ],
+        "title": "FullTransitionOut",
+        "description": "Reference point: sell/buy everything today to match the model exactly."
+      },
+      "GlideYearOut": {
+        "properties": {
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "est_tax": {
+            "type": "number",
+            "title": "Est Tax"
+          },
+          "net_gain": {
+            "type": "number",
+            "title": "Net Gain"
+          },
+          "te_after": {
+            "type": "number",
+            "title": "Te After"
+          },
+          "n_trades": {
+            "type": "integer",
+            "title": "N Trades"
+          }
+        },
+        "type": "object",
+        "required": [
+          "year",
+          "budget",
+          "est_tax",
+          "net_gain",
+          "te_after",
+          "n_trades"
+        ],
+        "title": "GlideYearOut"
+      },
+      "Granularity": {
+        "type": "string",
+        "enum": [
+          "month",
+          "year"
+        ],
+        "title": "Granularity"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HoldingOut": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "target_weight": {
+            "type": "number",
+            "title": "Target Weight"
+          },
+          "cost_basis_total": {
+            "type": "number",
+            "title": "Cost Basis Total"
+          },
+          "unrealized_gain": {
+            "type": "number",
+            "title": "Unrealized Gain"
+          },
+          "n_lots": {
+            "type": "integer",
+            "title": "N Lots"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "description": "True if any lot of this position is locked"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "sector",
+          "quantity",
+          "price",
+          "market_value",
+          "weight",
+          "target_weight",
+          "cost_basis_total",
+          "unrealized_gain",
+          "n_lots",
+          "locked"
+        ],
+        "title": "HoldingOut"
+      },
+      "Interpretation": {
+        "properties": {
+          "intent": {
+            "type": "string",
+            "title": "Intent"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "slots": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Slots"
+          },
+          "needs_confirmation": {
+            "type": "boolean",
+            "title": "Needs Confirmation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "intent",
+          "confidence",
+          "slots",
+          "needs_confirmation"
+        ],
+        "title": "Interpretation",
+        "description": "How free text was understood (shown for transparency; None for button clicks)."
+      },
+      "IssueOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "unknown_ticker | missing_ticker | missing_quantity | negative_quantity | zero_quantity | missing_date | invalid_date | future_date | missing_basis | estimated_basis | negative_basis | value_mismatch | duplicate_row | duplicate_lot_id | lot_id_exists",
+            "examples": [
+              "unknown_ticker"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning"
+            ],
+            "title": "Severity"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "title": "IssueOut"
+      },
+      "LinkTokenOut": {
+        "properties": {
+          "link_token": {
+            "type": "string",
+            "title": "Link Token"
+          },
+          "expiration": {
+            "type": "string",
+            "title": "Expiration"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "sandbox",
+              "mock"
+            ],
+            "title": "Mode"
+          },
+          "mock_public_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mock Public Token",
+            "description": "Mock mode only: pass this to /ingest/plaid/exchange instead of Link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "link_token",
+          "expiration",
+          "mode"
+        ],
+        "title": "LinkTokenOut"
+      },
+      "LocksRequest": {
+        "properties": {
+          "lot_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Lot Ids"
+          }
+        },
+        "type": "object",
+        "title": "LocksRequest"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "examples": [
+              "demo@advisor.test"
+            ]
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "examples": [
+              "demo1234"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LotOut": {
+        "properties": {
+          "lot_id": {
+            "type": "string",
+            "title": "Lot Id",
+            "description": "Internal id (used by the API, e.g. for locks)"
+          },
+          "lot_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot Ref",
+            "description": "Lot ID shown to people (statement lot number), unique in the account"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity"
+          },
+          "cost_basis_total": {
+            "type": "number",
+            "title": "Cost Basis Total"
+          },
+          "acquired_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Acquired Date"
+          },
+          "holding_period": {
+            "type": "string",
+            "title": "Holding Period",
+            "description": "\"ST\" (\u2264 1 year) or \"LT\""
+          },
+          "current_price": {
+            "type": "number",
+            "title": "Current Price"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "unrealized_gain": {
+            "type": "number",
+            "title": "Unrealized Gain"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "basis_unknown": {
+            "type": "boolean",
+            "title": "Basis Unknown",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "lot_id",
+          "account_id",
+          "ticker",
+          "quantity",
+          "cost_basis_total",
+          "acquired_date",
+          "holding_period",
+          "current_price",
+          "market_value",
+          "unrealized_gain",
+          "locked",
+          "source"
+        ],
+        "title": "LotOut"
+      },
+      "LotSellOut": {
+        "properties": {
+          "lot_id": {
+            "type": "string",
+            "title": "Lot Id"
+          },
+          "lot_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot Ref",
+            "description": "Lot ID shown to people (see LotOut.lot_ref)"
+          },
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "shares": {
+            "type": "number",
+            "title": "Shares"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "proceeds": {
+            "type": "number",
+            "title": "Proceeds"
+          },
+          "cost_basis": {
+            "type": "number",
+            "title": "Cost Basis"
+          },
+          "realized_gain": {
+            "type": "number",
+            "title": "Realized Gain"
+          },
+          "term": {
+            "type": "string",
+            "title": "Term"
+          },
+          "acquired_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Acquired Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lot_id",
+          "ticker",
+          "shares",
+          "price",
+          "proceeds",
+          "cost_basis",
+          "realized_gain",
+          "term",
+          "acquired_date"
+        ],
+        "title": "LotSellOut"
+      },
+      "ModelComparison": {
+        "properties": {
+          "model": {
+            "$ref": "#/components/schemas/ModelSummary"
+          },
+          "te_from_current": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Te From Current",
+            "description": "Ex-ante TE of today's holdings vs this model (None for an empty account)"
+          },
+          "yield_change": {
+            "type": "number",
+            "title": "Yield Change"
+          },
+          "full_transition": {
+            "$ref": "#/components/schemas/FullTransitionOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "te_from_current",
+          "yield_change",
+          "full_transition"
+        ],
+        "title": "ModelComparison"
+      },
+      "ModelDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective"
+          },
+          "construction": {
+            "type": "string",
+            "title": "Construction"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          },
+          "target_yield": {
+            "type": "number",
+            "title": "Target Yield"
+          },
+          "expected_te": {
+            "type": "number",
+            "title": "Expected Te",
+            "description": "Ex-ante TE vs the model's benchmark"
+          },
+          "fee_bps": {
+            "type": "number",
+            "title": "Fee Bps",
+            "description": "Weighted product expense ratio + advisory fee"
+          },
+          "regime_overlay": {
+            "type": "boolean",
+            "title": "Regime Overlay"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ModelStatsOut"
+          },
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "default": "mock_random"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/ModelHoldingOut"
+            },
+            "type": "array",
+            "title": "Holdings"
+          },
+          "regime_performance": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RegimePerformanceOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regime Performance",
+            "description": "Present when regime labels have been uploaded (/analytics/regimes)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "objective",
+          "construction",
+          "benchmark",
+          "description",
+          "rationale",
+          "target_yield",
+          "expected_te",
+          "fee_bps",
+          "regime_overlay",
+          "stats",
+          "holdings"
+        ],
+        "title": "ModelDetail"
+      },
+      "ModelHoldingOut": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "security_type": {
+            "type": "string",
+            "title": "Security Type"
+          },
+          "asset_class": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Class"
+          },
+          "expense_ratio_bps": {
+            "type": "number",
+            "title": "Expense Ratio Bps"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "security_type",
+          "asset_class",
+          "expense_ratio_bps",
+          "weight"
+        ],
+        "title": "ModelHoldingOut"
+      },
+      "ModelList": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ModelSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items"
+        ],
+        "title": "ModelList"
+      },
+      "ModelStatsOut": {
+        "properties": {
+          "annualized_return": {
+            "type": "number",
+            "title": "Annualized Return"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "sharpe": {
+            "type": "number",
+            "title": "Sharpe"
+          },
+          "max_drawdown": {
+            "type": "number",
+            "title": "Max Drawdown",
+            "description": "Peak-to-trough loss, positive (0.22 = \u221222%)"
+          },
+          "dividend_yield": {
+            "type": "number",
+            "title": "Dividend Yield"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "n_holdings": {
+            "type": "integer",
+            "title": "N Holdings",
+            "description": "Direct holdings (e.g. ETFs)"
+          },
+          "n_underlying": {
+            "type": "integer",
+            "title": "N Underlying",
+            "description": "Look-through stocks"
+          },
+          "sector_mix": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Sector Mix"
+          },
+          "factor_exposures": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Factor Exposures"
+          },
+          "history_start": {
+            "type": "string",
+            "format": "date",
+            "title": "History Start"
+          },
+          "history_end": {
+            "type": "string",
+            "format": "date",
+            "title": "History End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "annualized_return",
+          "volatility",
+          "sharpe",
+          "max_drawdown",
+          "dividend_yield",
+          "beta",
+          "n_holdings",
+          "n_underlying",
+          "sector_mix",
+          "factor_exposures",
+          "history_start",
+          "history_end"
+        ],
+        "title": "ModelStatsOut"
+      },
+      "ModelSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective"
+          },
+          "construction": {
+            "type": "string",
+            "title": "Construction"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          },
+          "target_yield": {
+            "type": "number",
+            "title": "Target Yield"
+          },
+          "expected_te": {
+            "type": "number",
+            "title": "Expected Te",
+            "description": "Ex-ante TE vs the model's benchmark"
+          },
+          "fee_bps": {
+            "type": "number",
+            "title": "Fee Bps",
+            "description": "Weighted product expense ratio + advisory fee"
+          },
+          "regime_overlay": {
+            "type": "boolean",
+            "title": "Regime Overlay"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ModelStatsOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "objective",
+          "construction",
+          "benchmark",
+          "description",
+          "rationale",
+          "target_yield",
+          "expected_te",
+          "fee_bps",
+          "regime_overlay",
+          "stats"
+        ],
+        "title": "ModelSummary"
+      },
+      "OptimizationResult": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "target_model_id": {
+            "type": "string",
+            "title": "Target Model Id"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "taxable": {
+            "type": "boolean",
+            "title": "Taxable"
+          },
+          "budget_mode": {
+            "type": "string",
+            "enum": [
+              "net_gain",
+              "tax",
+              "none"
+            ],
+            "title": "Budget Mode"
+          },
+          "budget_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Value"
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/Constraints"
+          },
+          "trades": {
+            "$ref": "#/components/schemas/Trades"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/TradeSummary"
+          },
+          "realized": {
+            "$ref": "#/components/schemas/RealizedSummary"
+          },
+          "pre": {
+            "$ref": "#/components/schemas/PortfolioSnapshot"
+          },
+          "post": {
+            "$ref": "#/components/schemas/PortfolioSnapshot"
+          },
+          "glide_path": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GlideYearOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glide Path"
+          },
+          "diagnostics": {
+            "$ref": "#/components/schemas/Diagnostics"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "default": "Illustrative, for advisor review. Not tax or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "account_id",
+          "target_model_id",
+          "as_of",
+          "taxable",
+          "budget_mode",
+          "budget_value",
+          "constraints",
+          "trades",
+          "summary",
+          "realized",
+          "pre",
+          "post",
+          "diagnostics"
+        ],
+        "title": "OptimizationResult",
+        "examples": [
+          {
+            "account_id": "acc_017",
+            "as_of": "2026-10-30",
+            "budget_mode": "tax",
+            "budget_value": 25000,
+            "constraints": {
+              "min_cash_buffer": 0.005
+            },
+            "data_source": "mock_random",
+            "diagnostics": {
+              "binding_constraints": [
+                "tax budget",
+                "cash buffer",
+                "locked lots"
+              ],
+              "explanation": [
+                "Locked lots in JUP contribute 2.93% of the 4.15% residual TE."
+              ],
+              "lot_relief_check": {
+                "optimizer_tax": 24999.77
+              },
+              "notes": [],
+              "relaxations": [],
+              "solve_ms": 24.0,
+              "solver": "CLARABEL",
+              "status": "optimal",
+              "te_contributions": [
+                {
+                  "active_weight": 0.104,
+                  "reason": "locked",
+                  "te_contribution": 0.0293,
+                  "ticker": "JUP"
+                }
+              ],
+              "wash_blocked_lot_ids": []
+            },
+            "disclaimer": "Illustrative, for advisor review. Not tax or investment advice.",
+            "post": {
+              "beta": 1.06,
+              "dividend_yield": 0.017,
+              "factor_active": {
+                "value": 0.04
+              },
+              "n_holdings": 12,
+              "sector_active": {
+                "Financials": 0.02
+              },
+              "te": 0.0415
+            },
+            "pre": {
+              "beta": 1.04,
+              "dividend_yield": 0.019,
+              "factor_active": {
+                "value": 0.12
+              },
+              "n_holdings": 38,
+              "sector_active": {
+                "Financials": 0.06
+              },
+              "te": 0.0853
+            },
+            "realized": {
+              "budget_used_pct": 99.99,
+              "est_tax": 24999.77,
+              "lt_gain": 168000.0,
+              "lt_loss": 61000.0,
+              "net_gain": 88600.0,
+              "st_gain": 3100.0,
+              "st_loss": 21500.0
+            },
+            "summary": {
+              "cash_after": 13800.0,
+              "cash_before": 98000.0,
+              "n_buys": 3,
+              "n_lot_sells": 47,
+              "proceeds": 1410000.0,
+              "purchases": 1396000.0,
+              "total_value": 2750000.0,
+              "turnover": 0.51
+            },
+            "target_model_id": "SCHWAB-TR",
+            "taxable": true,
+            "trades": {
+              "buys": [
+                {
+                  "price": 27.22,
+                  "shares": 7081,
+                  "ticker": "SCHX",
+                  "value": 192744.82
+                }
+              ],
+              "sells": [
+                {
+                  "acquired_date": "2019-03-14",
+                  "cost_basis": 4129.7,
+                  "lot_id": "lot_001650",
+                  "price": 494.62,
+                  "proceeds": 6182.75,
+                  "realized_gain": 2053.05,
+                  "shares": 12.5,
+                  "term": "LT",
+                  "ticker": "BPC"
+                }
+              ]
+            },
+            "transition_id": "trn_1a2b3c4d"
+          }
+        ]
+      },
+      "OptimizeRequest": {
+        "properties": {
+          "budget_mode": {
+            "type": "string",
+            "enum": [
+              "net_gain",
+              "tax",
+              "none"
+            ],
+            "title": "Budget Mode",
+            "default": "tax",
+            "examples": [
+              "tax"
+            ]
+          },
+          "budget_value": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Value",
+            "description": "USD. Ignored when budget_mode='none'.",
+            "examples": [
+              20000
+            ]
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/Constraints"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id",
+            "description": "Defaults to the transition's chosen target, then the account's target"
+          },
+          "glide_path_budgets": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glide Path Budgets",
+            "description": "Optional annual budgets (same mode) to split the transition over 1\u20133 years"
+          }
+        },
+        "type": "object",
+        "title": "OptimizeRequest"
+      },
+      "ParsePreview": {
+        "properties": {
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "plaid"
+            ],
+            "title": "Source"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "table",
+              "llm",
+              "plaid"
+            ],
+            "title": "Method"
+          },
+          "llm_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Provider",
+            "description": "\"anthropic\" or \"mock\" (offline rule-based stand-in) when method=llm"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "statement_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement Date"
+          },
+          "cash_detected": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash Detected"
+          },
+          "requires_basis_decision": {
+            "type": "boolean",
+            "title": "Requires Basis Decision",
+            "description": "True if some lots lack basis or dates: upload a lot file, or confirm with assume_average_cost=true"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PreviewSummary"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "account_id",
+          "source",
+          "method",
+          "confidence",
+          "statement_date",
+          "cash_detected",
+          "requires_basis_decision",
+          "summary",
+          "rows",
+          "notes"
+        ],
+        "title": "ParsePreview",
+        "examples": [
+          {
+            "account_id": "acc_017",
+            "cash_detected": 87517.86,
+            "confidence": 0.946,
+            "llm_provider": "mock",
+            "method": "llm",
+            "notes": [
+              "No lot table found"
+            ],
+            "requires_basis_decision": false,
+            "rows": [
+              {
+                "acquired_date": "2019-04-02",
+                "basis_estimated": false,
+                "confidence": 0.523,
+                "cost_basis_total": 5120.4,
+                "description": "Juniper Rail",
+                "holding_period": "LT",
+                "include": false,
+                "issues": [
+                  {
+                    "code": "unknown_ticker",
+                    "message": "JUWQ is not tradable \u2014 did you mean JUWL?",
+                    "severity": "error"
+                  }
+                ],
+                "quantity": 120.5,
+                "row_id": 34,
+                "statement_value": 9876.1,
+                "suggested_ticker": "JUWL",
+                "ticker": "JUWQ"
+              }
+            ],
+            "source": "pdf",
+            "statement_date": "2026-10-30",
+            "summary": {
+              "n_basis_unknown": 0,
+              "n_error_rows": 1,
+              "n_missing_dates": 0,
+              "n_rows": 102,
+              "n_warning_rows": 0,
+              "total_cost_basis": 1972331.6,
+              "total_market_value": 2662482.03
+            },
+            "transition_id": "trn_1a2b3c4d"
+          }
+        ]
+      },
+      "PlaidExchangeRequest": {
+        "properties": {
+          "public_token": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Public Token"
+          },
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "public_token",
+          "transition_id"
+        ],
+        "title": "PlaidExchangeRequest"
+      },
+      "PortfolioSnapshot": {
+        "properties": {
+          "te": {
+            "type": "number",
+            "title": "Te"
+          },
+          "n_holdings": {
+            "type": "integer",
+            "title": "N Holdings"
+          },
+          "dividend_yield": {
+            "type": "number",
+            "title": "Dividend Yield"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "sector_active": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Sector Active",
+            "description": "Look-through sector weight \u2212 target"
+          },
+          "factor_active": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Factor Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "te",
+          "n_holdings",
+          "dividend_yield",
+          "beta",
+          "sector_active",
+          "factor_active"
+        ],
+        "title": "PortfolioSnapshot"
+      },
+      "PreviewRow": {
+        "properties": {
+          "row_id": {
+            "type": "integer",
+            "title": "Row Id"
+          },
+          "lot_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot Ref",
+            "description": "Lot ID printed on the statement (one is assigned on confirm if missing)"
+          },
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticker"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "acquired_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired Date"
+          },
+          "cost_basis_total": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Basis Total"
+          },
+          "statement_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement Value",
+            "description": "Value printed on the statement"
+          },
+          "current_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Price"
+          },
+          "market_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Value",
+            "description": "quantity \u00d7 current price"
+          },
+          "unrealized_gain": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealized Gain"
+          },
+          "holding_period": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "ST",
+                  "LT"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holding Period"
+          },
+          "basis_estimated": {
+            "type": "boolean",
+            "title": "Basis Estimated",
+            "description": "Basis missing or average-cost, not lot-level"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/IssueOut"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "suggested_ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Ticker"
+          },
+          "include": {
+            "type": "boolean",
+            "title": "Include",
+            "description": "Default: rows without errors are included"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_id",
+          "ticker",
+          "description",
+          "quantity",
+          "acquired_date",
+          "cost_basis_total",
+          "statement_value",
+          "current_price",
+          "market_value",
+          "unrealized_gain",
+          "holding_period",
+          "basis_estimated",
+          "confidence",
+          "issues",
+          "suggested_ticker",
+          "include"
+        ],
+        "title": "PreviewRow"
+      },
+      "PreviewSummary": {
+        "properties": {
+          "n_rows": {
+            "type": "integer",
+            "title": "N Rows"
+          },
+          "n_error_rows": {
+            "type": "integer",
+            "title": "N Error Rows"
+          },
+          "n_warning_rows": {
+            "type": "integer",
+            "title": "N Warning Rows"
+          },
+          "n_basis_unknown": {
+            "type": "integer",
+            "title": "N Basis Unknown"
+          },
+          "n_missing_dates": {
+            "type": "integer",
+            "title": "N Missing Dates"
+          },
+          "total_market_value": {
+            "type": "number",
+            "title": "Total Market Value"
+          },
+          "total_cost_basis": {
+            "type": "number",
+            "title": "Total Cost Basis"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n_rows",
+          "n_error_rows",
+          "n_warning_rows",
+          "n_basis_unknown",
+          "n_missing_dates",
+          "total_market_value",
+          "total_cost_basis"
+        ],
+        "title": "PreviewSummary"
+      },
+      "Progress": {
+        "properties": {
+          "step": {
+            "type": "integer",
+            "title": "Step"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "total",
+          "label"
+        ],
+        "title": "Progress"
+      },
+      "QuickReply": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "QuickReply"
+      },
+      "RealizedSummary": {
+        "properties": {
+          "st_gain": {
+            "type": "number",
+            "title": "St Gain"
+          },
+          "st_loss": {
+            "type": "number",
+            "title": "St Loss"
+          },
+          "lt_gain": {
+            "type": "number",
+            "title": "Lt Gain"
+          },
+          "lt_loss": {
+            "type": "number",
+            "title": "Lt Loss"
+          },
+          "net_gain": {
+            "type": "number",
+            "title": "Net Gain"
+          },
+          "est_tax": {
+            "type": "number",
+            "title": "Est Tax",
+            "description": "Exact tax after ST/LT netting at the household's rates"
+          },
+          "budget_used_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Used Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "st_gain",
+          "st_loss",
+          "lt_gain",
+          "lt_loss",
+          "net_gain",
+          "est_tax",
+          "budget_used_pct"
+        ],
+        "title": "RealizedSummary"
+      },
+      "RegimePerformanceOut": {
+        "properties": {
+          "regime": {
+            "type": "string",
+            "title": "Regime"
+          },
+          "n_days": {
+            "type": "integer",
+            "title": "N Days"
+          },
+          "annualized_return": {
+            "type": "number",
+            "title": "Annualized Return"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          }
+        },
+        "type": "object",
+        "required": [
+          "regime",
+          "n_days",
+          "annualized_return",
+          "volatility"
+        ],
+        "title": "RegimePerformanceOut"
+      },
+      "RegimeUploadResult": {
+        "properties": {
+          "n_dates": {
+            "type": "integer",
+            "title": "N Dates"
+          },
+          "first_date": {
+            "type": "string",
+            "format": "date",
+            "title": "First Date"
+          },
+          "last_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Last Date"
+          },
+          "regimes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Regimes",
+            "description": "Label \u2192 number of dates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n_dates",
+          "first_date",
+          "last_date",
+          "regimes"
+        ],
+        "title": "RegimeUploadResult"
+      },
+      "SectorWeight": {
+        "properties": {
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "portfolio_weight": {
+            "type": "number",
+            "title": "Portfolio Weight"
+          },
+          "target_weight": {
+            "type": "number",
+            "title": "Target Weight"
+          },
+          "active_weight": {
+            "type": "number",
+            "title": "Active Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sector",
+          "portfolio_weight",
+          "target_weight",
+          "active_weight"
+        ],
+        "title": "SectorWeight"
+      },
+      "TEContributionOut": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "active_weight": {
+            "type": "number",
+            "title": "Active Weight"
+          },
+          "te_contribution": {
+            "type": "number",
+            "title": "Te Contribution",
+            "description": "Contributions sum to the residual TE"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "locked",
+              "wash_sale",
+              "budget",
+              "underweight",
+              "other"
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "active_weight",
+          "te_contribution",
+          "reason"
+        ],
+        "title": "TEContributionOut"
+      },
+      "TEPoint": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "te": {
+            "type": "number",
+            "title": "Te"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "te"
+        ],
+        "title": "TEPoint"
+      },
+      "TEWindow": {
+        "type": "integer",
+        "enum": [
+          63,
+          252
+        ],
+        "title": "TEWindow",
+        "description": "Rolling TE window in trading days (63 \u2248 3 months, 252 \u2248 1 year)."
+      },
+      "TaxHistory": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "granularity": {
+            "$ref": "#/components/schemas/Granularity"
+          },
+          "taxable": {
+            "type": "boolean",
+            "title": "Taxable"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/TaxHistoryPeriod"
+            },
+            "type": "array",
+            "title": "Periods"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/TaxHistoryPeriod"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_id",
+          "granularity",
+          "taxable",
+          "periods",
+          "totals"
+        ],
+        "title": "TaxHistory"
+      },
+      "TaxHistoryPeriod": {
+        "properties": {
+          "period": {
+            "type": "string",
+            "title": "Period"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "est_tax_paid": {
+            "type": "number",
+            "title": "Est Tax Paid"
+          },
+          "taxes_saved": {
+            "type": "number",
+            "title": "Taxes Saved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "losses_harvested",
+          "est_tax_paid",
+          "taxes_saved"
+        ],
+        "title": "TaxHistoryPeriod"
+      },
+      "TaxImpact": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "granularity": {
+            "$ref": "#/components/schemas/Granularity"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/TaxImpactPeriod"
+            },
+            "type": "array",
+            "title": "Periods"
+          }
+        },
+        "type": "object",
+        "required": [
+          "granularity",
+          "periods"
+        ],
+        "title": "TaxImpact"
+      },
+      "TaxImpactPeriod": {
+        "properties": {
+          "period": {
+            "type": "string",
+            "title": "Period",
+            "examples": [
+              "2026-03"
+            ]
+          },
+          "taxes_saved": {
+            "type": "number",
+            "title": "Taxes Saved"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "realized_st_loss": {
+            "type": "number",
+            "title": "Realized St Loss",
+            "description": "Short-term part of losses_harvested (positive)"
+          },
+          "realized_lt_loss": {
+            "type": "number",
+            "title": "Realized Lt Loss",
+            "description": "Long-term part of losses_harvested (positive)"
+          },
+          "cum_taxes_saved": {
+            "type": "number",
+            "title": "Cum Taxes Saved"
+          },
+          "cum_losses_harvested": {
+            "type": "number",
+            "title": "Cum Losses Harvested"
+          },
+          "cum_realized_st_gain": {
+            "type": "number",
+            "title": "Cum Realized St Gain"
+          },
+          "cum_realized_lt_gain": {
+            "type": "number",
+            "title": "Cum Realized Lt Gain"
+          },
+          "cum_realized_st_loss": {
+            "type": "number",
+            "title": "Cum Realized St Loss"
+          },
+          "cum_realized_lt_loss": {
+            "type": "number",
+            "title": "Cum Realized Lt Loss"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period",
+          "taxes_saved",
+          "losses_harvested",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "realized_st_loss",
+          "realized_lt_loss",
+          "cum_taxes_saved",
+          "cum_losses_harvested",
+          "cum_realized_st_gain",
+          "cum_realized_lt_gain",
+          "cum_realized_st_loss",
+          "cum_realized_lt_loss"
+        ],
+        "title": "TaxImpactPeriod"
+      },
+      "TaxProfile": {
+        "properties": {
+          "federal_st_rate": {
+            "type": "number",
+            "maximum": 0.6,
+            "minimum": 0.0,
+            "title": "Federal St Rate",
+            "examples": [
+              0.37
+            ]
+          },
+          "federal_lt_rate": {
+            "type": "number",
+            "maximum": 0.4,
+            "minimum": 0.0,
+            "title": "Federal Lt Rate",
+            "examples": [
+              0.238
+            ]
+          },
+          "state": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "State",
+            "examples": [
+              "CA"
+            ]
+          },
+          "state_rate": {
+            "type": "number",
+            "maximum": 0.2,
+            "minimum": 0.0,
+            "title": "State Rate",
+            "examples": [
+              0.133
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "federal_st_rate",
+          "federal_lt_rate",
+          "state",
+          "state_rate"
+        ],
+        "title": "TaxProfile"
+      },
+      "TaxProfileOut": {
+        "properties": {
+          "federal_st_rate": {
+            "type": "number",
+            "maximum": 0.6,
+            "minimum": 0.0,
+            "title": "Federal St Rate",
+            "examples": [
+              0.37
+            ]
+          },
+          "federal_lt_rate": {
+            "type": "number",
+            "maximum": 0.4,
+            "minimum": 0.0,
+            "title": "Federal Lt Rate",
+            "examples": [
+              0.238
+            ]
+          },
+          "state": {
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "State",
+            "examples": [
+              "CA"
+            ]
+          },
+          "state_rate": {
+            "type": "number",
+            "maximum": 0.2,
+            "minimum": 0.0,
+            "title": "State Rate",
+            "examples": [
+              0.133
+            ]
+          },
+          "st_rate": {
+            "type": "number",
+            "title": "St Rate",
+            "description": "Combined federal + state short-term rate"
+          },
+          "lt_rate": {
+            "type": "number",
+            "title": "Lt Rate",
+            "description": "Combined federal + state long-term rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "federal_st_rate",
+          "federal_lt_rate",
+          "state",
+          "state_rate",
+          "st_rate",
+          "lt_rate"
+        ],
+        "title": "TaxProfileOut"
+      },
+      "TaxProfileUpdate": {
+        "properties": {
+          "federal_st_rate": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.6,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Federal St Rate"
+          },
+          "federal_lt_rate": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.4,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Federal Lt Rate"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "state_rate": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.2,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Rate"
+          }
+        },
+        "type": "object",
+        "title": "TaxProfileUpdate"
+      },
+      "TaxSavings": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "granularity": {
+            "$ref": "#/components/schemas/Granularity"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/TaxSavingsPeriod"
+            },
+            "type": "array",
+            "title": "Periods"
+          },
+          "taxes_saved_ytd": {
+            "type": "number",
+            "title": "Taxes Saved Ytd"
+          },
+          "taxes_saved_since_inception": {
+            "type": "number",
+            "title": "Taxes Saved Since Inception"
+          }
+        },
+        "type": "object",
+        "required": [
+          "granularity",
+          "account_id",
+          "periods",
+          "taxes_saved_ytd",
+          "taxes_saved_since_inception"
+        ],
+        "title": "TaxSavings"
+      },
+      "TaxSavingsPeriod": {
+        "properties": {
+          "period": {
+            "type": "string",
+            "title": "Period"
+          },
+          "taxes_saved": {
+            "type": "number",
+            "title": "Taxes Saved"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "cum_taxes_saved": {
+            "type": "number",
+            "title": "Cum Taxes Saved"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "realized_st_loss": {
+            "type": "number",
+            "title": "Realized St Loss",
+            "description": "Short-term part of losses_harvested (positive)"
+          },
+          "realized_lt_loss": {
+            "type": "number",
+            "title": "Realized Lt Loss",
+            "description": "Long-term part of losses_harvested (positive)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period",
+          "taxes_saved",
+          "losses_harvested",
+          "cum_taxes_saved",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "realized_st_loss",
+          "realized_lt_loss"
+        ],
+        "title": "TaxSavingsPeriod"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "TokenResponse"
+      },
+      "TrackingError": {
+        "properties": {
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "description": "Origin of the analytics numbers. \"mock_random\" = simulated analytics.",
+            "default": "mock_random",
+            "examples": [
+              "mock_random"
+            ]
+          },
+          "window": {
+            "type": "integer",
+            "title": "Window"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/TEPoint"
+            },
+            "type": "array",
+            "title": "Series"
+          },
+          "ex_ante_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Ante Te"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventMarker"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "window",
+          "account_id",
+          "series",
+          "ex_ante_te",
+          "events"
+        ],
+        "title": "TrackingError",
+        "description": "Rolling ex-post TE vs target (value-weighted across accounts at client level).",
+        "examples": [
+          {
+            "data_source": "mock_random",
+            "events": [
+              {
+                "account_id": "acc_001",
+                "date": "2026-10-16",
+                "event_id": "evt_00042",
+                "type": "rebalance"
+              }
+            ],
+            "ex_ante_te": 0.0101,
+            "series": [
+              {
+                "date": "2026-10-29",
+                "te": 0.0094
+              }
+            ],
+            "window": 63
+          }
+        ]
+      },
+      "TradeOut": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "side": {
+            "type": "string",
+            "title": "Side"
+          },
+          "shares": {
+            "type": "number",
+            "title": "Shares"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "realized_gain": {
+            "type": "number",
+            "title": "Realized Gain"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "side",
+          "shares",
+          "price",
+          "value",
+          "realized_gain",
+          "term"
+        ],
+        "title": "TradeOut"
+      },
+      "TradeSummary": {
+        "properties": {
+          "n_lot_sells": {
+            "type": "integer",
+            "title": "N Lot Sells"
+          },
+          "n_buys": {
+            "type": "integer",
+            "title": "N Buys"
+          },
+          "proceeds": {
+            "type": "number",
+            "title": "Proceeds"
+          },
+          "purchases": {
+            "type": "number",
+            "title": "Purchases"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover"
+          },
+          "cash_before": {
+            "type": "number",
+            "title": "Cash Before"
+          },
+          "cash_after": {
+            "type": "number",
+            "title": "Cash After"
+          },
+          "total_value": {
+            "type": "number",
+            "title": "Total Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n_lot_sells",
+          "n_buys",
+          "proceeds",
+          "purchases",
+          "turnover",
+          "cash_before",
+          "cash_after",
+          "total_value"
+        ],
+        "title": "TradeSummary"
+      },
+      "Trades": {
+        "properties": {
+          "sells": {
+            "items": {
+              "$ref": "#/components/schemas/LotSellOut"
+            },
+            "type": "array",
+            "title": "Sells"
+          },
+          "buys": {
+            "items": {
+              "$ref": "#/components/schemas/BuyOut"
+            },
+            "type": "array",
+            "title": "Buys"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sells",
+          "buys"
+        ],
+        "title": "Trades"
+      },
+      "TransitionCreate": {
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id",
+            "examples": [
+              "cli_009"
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id",
+            "examples": [
+              "acc_017"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_id",
+          "account_id"
+        ],
+        "title": "TransitionCreate"
+      },
+      "TransitionOut": {
+        "properties": {
+          "transition_id": {
+            "type": "string",
+            "title": "Transition Id"
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "target_model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Model Id"
+          },
+          "locked_lot_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Locked Lot Ids",
+            "description": "Locks set in this transition"
+          },
+          "account_locked_lot_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Account Locked Lot Ids",
+            "description": "Locked on the account (always held)"
+          },
+          "has_optimization": {
+            "type": "boolean",
+            "title": "Has Optimization"
+          },
+          "has_frontier": {
+            "type": "boolean",
+            "title": "Has Frontier"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transition_id",
+          "client_id",
+          "account_id",
+          "state",
+          "target_model_id",
+          "locked_lot_ids",
+          "account_locked_lot_ids",
+          "has_optimization",
+          "has_frontier",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "TransitionOut"
+      },
+      "UiPayload": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "none",
+              "ingest_choice",
+              "parse_preview",
+              "model_list",
+              "model_comparison",
+              "transition_setup",
+              "transition_results"
+            ],
+            "title": "Type",
+            "default": "none"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "title": "UiPayload"
+      },
+      "UnrealizedSplit": {
+        "properties": {
+          "st_gains": {
+            "type": "number",
+            "title": "St Gains"
+          },
+          "st_losses": {
+            "type": "number",
+            "title": "St Losses"
+          },
+          "lt_gains": {
+            "type": "number",
+            "title": "Lt Gains"
+          },
+          "lt_losses": {
+            "type": "number",
+            "title": "Lt Losses"
+          },
+          "net": {
+            "type": "number",
+            "title": "Net"
+          }
+        },
+        "type": "object",
+        "required": [
+          "st_gains",
+          "st_losses",
+          "lt_gains",
+          "lt_losses",
+          "net"
+        ],
+        "title": "UnrealizedSplit"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "advisor_id": {
+            "type": "string",
+            "title": "Advisor Id"
+          },
+          "firm": {
+            "type": "string",
+            "title": "Firm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role",
+          "advisor_id",
+          "firm"
+        ],
+        "title": "UserOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "YearSummary": {
+        "properties": {
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "realized_st_gain": {
+            "type": "number",
+            "title": "Realized St Gain"
+          },
+          "realized_lt_gain": {
+            "type": "number",
+            "title": "Realized Lt Gain"
+          },
+          "losses_harvested": {
+            "type": "number",
+            "title": "Losses Harvested"
+          },
+          "taxes_saved": {
+            "type": "number",
+            "title": "Taxes Saved"
+          },
+          "n_rebalances": {
+            "type": "integer",
+            "title": "N Rebalances"
+          },
+          "turnover": {
+            "type": "number",
+            "title": "Turnover",
+            "description": "Annual turnover: sum of event turnover in the year, averaged across accounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "year",
+          "realized_st_gain",
+          "realized_lt_gain",
+          "losses_harvested",
+          "taxes_saved",
+          "n_rebalances",
+          "turnover"
+        ],
+        "title": "YearSummary"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "JWT from POST /api/v1/auth/login",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

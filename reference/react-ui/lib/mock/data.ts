@@ -1,0 +1,18 @@
+import type { Account, AnalyticsSeries, BookSummary, Client, Model } from '@/lib/api/types'
+
+const clients: Client[] = [
+  { id: 'cl-001', name: 'Maya & Daniel Chen', email: 'chen@example.com', client_type: 'joint', account_count: 3, market_value: 1842300, target_models: ['TR-MCFA'], tracking_error: 0.72, taxes_saved_ytd: 18420, last_rebalance: '2026-09-18', status: 'on_target', onboarding_date: '2021-04-12', tax_profile: { federal_st_rate: 0.37, federal_lt_rate: 0.2, state: 'CA', state_rate: 0.133 } },
+  { id: 'cl-002', name: 'Robert Williams', email: 'robert@example.com', client_type: 'individual', account_count: 2, market_value: 967450, target_models: ['INC-MCF'], tracking_error: 1.18, taxes_saved_ytd: 9210, last_rebalance: '2026-06-04', status: 'drifting', onboarding_date: '2022-01-08', tax_profile: { federal_st_rate: 0.32, federal_lt_rate: 0.2, state: 'NY', state_rate: 0.109 } },
+  { id: 'cl-003', name: 'Priya Shah Family Trust', email: 'shah@example.com', client_type: 'trust', account_count: 1, market_value: 3215800, target_models: ['TR-MC'], tracking_error: 0.54, taxes_saved_ytd: 32760, last_rebalance: '2026-10-07', status: 'on_target', onboarding_date: '2019-10-23', tax_profile: { federal_st_rate: 0.37, federal_lt_rate: 0.2, state: 'MA', state_rate: 0.09 } },
+  { id: 'cl-004', name: 'Eleanor Foster', email: 'eleanor@example.com', client_type: 'individual', account_count: 2, market_value: 741200, target_models: ['TR-MCFA'], tracking_error: 1.64, taxes_saved_ytd: 4680, last_rebalance: '2025-12-11', status: 'needs_review', onboarding_date: '2023-07-17', tax_profile: { federal_st_rate: 0.24, federal_lt_rate: 0.15, state: 'TX', state_rate: 0 } },
+  { id: 'cl-005', name: 'James & Ava Rodriguez', email: 'rodriguez@example.com', client_type: 'joint', account_count: 3, market_value: 1289400, target_models: ['INC-MCFA'], tracking_error: 0.81, taxes_saved_ytd: 12890, last_rebalance: '2026-08-22', status: 'on_target', onboarding_date: '2020-05-29', tax_profile: { federal_st_rate: 0.35, federal_lt_rate: 0.2, state: 'IL', state_rate: 0.0495 } },
+]
+
+export const mockSummary: BookSummary = { clients: 5, accounts: 11, aum: 8056150, taxes_saved_ytd: 77960, taxes_saved_since_inception: 246180, drifting_accounts: 2, average_te: 0.98 }
+export const mockClients = clients
+export const mockAccounts: Account[] = clients.flatMap((client, clientIndex) => Array.from({ length: client.account_count }, (_, index) => ({ id: `${client.id}-acct-${index + 1}`, client_id: client.id, account_type: index === 0 ? 'individual' : index === 1 ? 'ira' : 'joint', custodian: index % 2 ? 'Fidelity' : 'Schwab', nickname: index === 0 ? 'Core portfolio' : `Account ${index + 1}`, market_value: Math.round(client.market_value / client.account_count), unrealized_gain: Math.round(client.market_value / client.account_count * (0.12 + index * 0.03)), target_model_id: client.target_models[0], tracking_error: client.tracking_error + index * 0.08 })))
+export const mockModels: Model[] = ['TR-MC', 'TR-MCF', 'TR-MCFA', 'INC-MC', 'INC-MCF', 'INC-MCFA'].map((id, index) => ({ id, name: id, objective: id.startsWith('INC') ? 'income' : 'total_return', construction: ['Market cap', 'Market cap + fundamental', 'Market cap + fundamental + active'][index % 3], fee: 0.18 + (index % 3) * 0.07, holdings: 240 - index * 18 }))
+
+const dates = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+export const mockTrackingError: AnalyticsSeries = { data_source: 'mock_random', points: dates.map((date, i) => ({ date, value: 1.14 - i * 0.025, lower: 0.82 - i * 0.012, upper: 1.42 - i * 0.02 })) }
+export const mockTaxImpact: AnalyticsSeries = { data_source: 'mock_random', points: dates.map((date, i) => ({ date, value: 4200 + i * 940 })) }

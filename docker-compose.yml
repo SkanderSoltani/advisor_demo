@@ -1,0 +1,31 @@
+# Transition Studio demo: FastAPI backend + Plotly Dash front end. Synthetic data only.
+#   make demo        (or: docker compose up --build)
+#   UI  → http://localhost:8050   (demo@advisor.test / demo1234)
+#   API → http://localhost:8000/docs
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    env_file: [.env.example]
+    environment:
+      DATABASE_URL: sqlite:////srv/data/transition_studio.db
+    volumes:
+      - ts-data:/srv/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+
+  web:
+    build: ./frontend
+    ports: ["8050:8050"]
+    environment:
+      USE_MOCKS: "false"
+      API_BASE_URL: http://api:8000/api/v1
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  ts-data:
