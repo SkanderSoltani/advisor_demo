@@ -1,9 +1,12 @@
 .venv
+**/.venv
 **/__pycache__
 .pytest_cache
 .ruff_cache
 .mypy_cache
-frontend
 reference
 data/*.db
 .env
+frontend/tests
+frontend/.screens
+docs

@@ -19,7 +19,7 @@ See [`frontend/README.md`](frontend/README.md) for the front end on its own (inc
 
 ## Deploy on Railway
 
-Two services (api + web) and a volume; step-by-step in [docs/deploy_railway.md](docs/deploy_railway.md).
+One service: connect the GitHub repo, add `JWT_SECRET`, generate a domain. Details in [docs/deploy_railway.md](docs/deploy_railway.md).
 
 ## Quick start: backend only (offline demo)
 
