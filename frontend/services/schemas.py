@@ -193,6 +193,7 @@ class ClientSummaryRow(BaseModel):
     n_accounts: int = Field(..., title="N Accounts")
     market_value: float = Field(..., title="Market Value")
     target_models: list[str] = Field(..., title="Target Models")
+    target_model_names: list[str] = Field(default_factory=list, title="Target Model Names")
     ex_ante_te: float | None = Field(
         ..., description="Value-weighted across accounts with a target", title="Ex Ante Te"
     )

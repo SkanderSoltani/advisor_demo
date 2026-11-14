@@ -265,13 +265,22 @@ class PortfolioService:
     def client_row(self, c: m.Client) -> sc.ClientSummaryRow:
         views = [self.view(a) for a in c.accounts]
         last = [v.last_rebalance for v in views if v.last_rebalance]
+        value: dict[str, float] = {}
+        for v in views:  # main model (most money in it) first
+            mid = v.acct.target_model_id
+            if mid:
+                value[mid] = value.get(mid, 0.0) + v.market_value
+        ids = sorted(value, key=lambda i: (-value[i], i))
+        names = {a.target_model_id: a.target_model.name for a in c.accounts
+                 if a.target_model_id and a.target_model is not None}
         return sc.ClientSummaryRow(
             id=c.id,
             name=c.name,
             client_type=c.client_type,
             n_accounts=len(views),
             market_value=round(sum(v.market_value for v in views), 2),
-            target_models=sorted({a.target_model_id for a in c.accounts if a.target_model_id}),
+            target_models=ids,
+            target_model_names=[names.get(i, i) for i in ids],
             ex_ante_te=self._te_weighted(views),
             taxes_saved_ytd=round(sum(v.taxes_saved_ytd for v in views), 2),
             last_rebalance_date=max(last) if last else None,

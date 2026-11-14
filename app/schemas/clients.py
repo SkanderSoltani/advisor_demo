@@ -93,6 +93,9 @@ class ClientSummaryRow(Schema):
     n_accounts: int
     market_value: float
     target_models: list[str]
+    target_model_names: list[str] = Field(
+        default_factory=list, description="Display names of target_models, same order"
+    )
     ex_ante_te: float | None = Field(description="Value-weighted across accounts with a target")
     taxes_saved_ytd: float
     last_rebalance_date: date | None

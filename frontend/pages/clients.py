@@ -36,7 +36,7 @@ COLUMNS = [
      "cellClass": "ts-num", "headerTooltip": "Number of accounts in the household"},
     {"field": "market_value", "headerName": "Market value", "flex": 132, "minWidth": 92,
      "cellClass": "ts-num ts-fw-500", "valueFormatter": {"function": "money(params.value)"}},
-    {"field": "target_models", "headerName": "Target model", "flex": 136, "minWidth": 104,
+    {"field": "target_models", "headerName": "Target model", "flex": 190, "minWidth": 180,
      "cellRenderer": "ModelChips", "sortable": False, "cellDataType": False},
     {"field": "ex_ante_te", "headerName": "Current TE", "flex": 117, "minWidth": 78,
      "cellClass": "ts-num", "valueFormatter": {"function": "pct(params.value)"},

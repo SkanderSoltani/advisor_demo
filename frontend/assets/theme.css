@@ -792,3 +792,8 @@ button.ts-choice-card:hover, button.ts-model-card:hover { border-color: var(--br
 .ts-ai-checks label { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 14px; cursor: pointer; }
 .ts-ai-check-input { margin-top: 3px; accent-color: var(--brand-primary, #00A0DF); }
 .ts-ai-card .ts-row { flex-wrap: wrap; }
+
+/* client book: target model cell */
+.ts-model-cell { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+.ts-model-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 500; color: var(--brand-navy); }
+.ts-model-more { flex: none; align-self: center; height: 18px; line-height: 18px; border-radius: 9999px; background: var(--surface-100); color: var(--ink-600); font-size: 11px; font-weight: 600; padding: 0 7px; }

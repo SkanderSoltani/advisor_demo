@@ -26,10 +26,15 @@ dagcomponentfuncs.ClientName = function (props) {
 };
 
 dagcomponentfuncs.ModelChips = function (props) {
-  var v = props.value || [];
-  if (!v.length) return h('span', { className: 'ts-c-ink600' }, '—');
-  return h('span', { className: 'ts-row ts-gap-1' },
-    v.map(function (m) { return h('span', { key: m, className: 'ts-chip' }, m); }));
+  // one clean model name per row (e.g. "Core 96/04"); more models collapse into "+N"
+  var ids = props.value || [];
+  if (!ids.length) return h('span', { className: 'ts-c-ink600' }, '—');
+  var names = (props.data && props.data.target_model_names) || [];
+  var label = function (i) { return names[i] || ids[i]; };
+  var all = ids.map(function (id, i) { return label(i) + ' (' + id + ')'; }).join('\n');
+  return h('span', { className: 'ts-model-cell', title: all },
+    h('span', { className: 'ts-model-name' }, label(0)),
+    ids.length > 1 ? h('span', { className: 'ts-model-more' }, '+' + (ids.length - 1)) : null);
 };
 
 dagcomponentfuncs.Signed = function (props) {
