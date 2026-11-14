@@ -27,7 +27,7 @@ MAX_REGIME_CSV_BYTES = 2 * 1024 * 1024
 @router.get("/models", response_model=ModelList, summary="Target-model catalog")
 def list_models(
     svc: Service,
-    objective: Literal["total_return", "income"] | None = None,
+    objective: Literal["total_return", "income", "tax_efficient"] | None = None,
     construction: str | None = Query(None, examples=["market_cap"]),
 ) -> ModelList:
     return ModelService(svc).list_models(objective, construction)

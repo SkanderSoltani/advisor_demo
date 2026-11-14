@@ -34,8 +34,8 @@ from tests.conftest import TEST_SEED
 
 API = "/api/v1"
 MODELS = [
-    ModelRef("SCHWAB-TR", "Schwab Core Equity — Total Return", "total_return", "market_cap"),
-    ModelRef("SCHWAB-INC", "Schwab Dividend Income", "income", "market_cap_fundamental"),
+    ModelRef("TR-CORE-96-04", "Schwab Core Equity — Total Return", "total_return", "market_cap"),
+    ModelRef("INC-60-40", "Schwab Dividend Income", "income", "market_cap_fundamental"),
 ]
 
 
@@ -61,7 +61,7 @@ MODELS = [
             "set_budget",
             {"budget_mode": "none"},
         ),
-        (State.TRANSITION_SETUP, "don't sell JUP or BPC", "lock", {"tickers": ["JUP", "BPC"]}),
+        (State.TRANSITION_SETUP, "don't sell AAPL or MSFT", "lock", {"tickers": ["AAPL", "MSFT"]}),
         (State.TRANSITION_SETUP, "keep 2% in cash", "set_cash", {"cash_buffer": 0.02}),
         (State.TRANSITION_RESULTS, "looks good, approve", "approve", {}),
         (State.Q_OBJECTIVE, "we want dividends", "set_objective", {"objective": "income"}),
@@ -76,11 +76,11 @@ MODELS = [
             State.TARGET_PICK_LIST,
             "the dividend income one",
             "choose_model",
-            {"model_id": "SCHWAB-INC"},
+            {"model_id": "INC-60-40"},
         ),
         (State.INGEST_CHOICE, "I'll upload a statement", "upload_pdf", {}),
         (State.TARGET_CONFIRM, "yes go ahead", "yes", {}),
-        (State.TARGET_CONFIRM, "what is the TE to SCHWAB-INC?", "question", {}),
+        (State.TARGET_CONFIRM, "what is the TE to INC-60-40?", "question", {}),
         (State.TRANSITION_SETUP, "go back", "back", {}),
         (State.TRANSITION_SETUP, "blorp", "unknown", {}),
         (State.INGEST_CHOICE, "hey are you here?", "smalltalk", {}),
@@ -98,7 +98,7 @@ MODELS = [
     ],
 )
 def test_rule_interpret(state: State, text: str, intent: str, slots: dict[str, Any]) -> None:
-    it = rule_interpret(state, text, MODELS, {"JUP", "BPC", "SCHX"})
+    it = rule_interpret(state, text, MODELS, {"AAPL", "MSFT", "SCHX"})
     assert it.intent == intent
     for k, v in slots.items():
         assert getattr(it, k) == v
@@ -136,7 +136,7 @@ def test_number_guard() -> None:
 
 # ---------------------------------------------------------------- Anthropic adapter (no network)
 def _ctx(state: State = State.TRANSITION_SETUP) -> InterpretContext:
-    return InterpretContext(state, allowed_intents(state), MODELS, {"JUP"})
+    return InterpretContext(state, allowed_intents(state), MODELS, {"AAPL"})
 
 
 def test_anthropic_interpret_validates_intent(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -164,7 +164,7 @@ def test_anthropic_interpret_validates_intent(monkeypatch: pytest.MonkeyPatch) -
             stop_reason="end_turn", parsed_output=Intent(intent="launch_rockets", confidence=1)
         ),
     )
-    assert llm.interpret(_ctx(), "lock JUP").intent == "lock"
+    assert llm.interpret(_ctx(), "lock AAPL").intent == "lock"
 
 
 def _block(**kw: Any) -> SimpleNamespace:
@@ -180,14 +180,14 @@ def test_anthropic_question_tool_loop(monkeypatch: pytest.MonkeyPatch) -> None:
             content=[
                 _block(type="text", text="Checking."),
                 _block(
-                    type="tool_use", id="tu_1", name="te_to_model", input={"model_id": "SCHWAB-INC"}
+                    type="tool_use", id="tu_1", name="te_to_model", input={"model_id": "INC-60-40"}
                 ),
             ],
         ),
         SimpleNamespace(
             stop_reason="end_turn",
             content=[
-                _block(type="text", text="TE to SCHWAB-INC is 6.15%."),
+                _block(type="text", text="TE to INC-60-40 is 6.15%."),
             ],
         ),
     ]
@@ -203,8 +203,8 @@ def test_anthropic_question_tool_loop(monkeypatch: pytest.MonkeyPatch) -> None:
         }
     )
     answer, outputs = llm.answer_question("TE to income?", tools, "ctx")
-    assert answer == "TE to SCHWAB-INC is 6.15%."
-    assert outputs == [{"model_id": "SCHWAB-INC", "te_from_current": 0.0615}]
+    assert answer == "TE to INC-60-40 is 6.15%."
+    assert outputs == [{"model_id": "INC-60-40", "te_from_current": 0.0615}]
     assert calls[0]["tool_choice"] == {"type": "auto"}
     assert all(t["strict"] for t in calls[0]["tools"])
     second = calls[1]["messages"]
@@ -274,20 +274,40 @@ def test_full_guided_flow(api: TestClient) -> None:
     assert t["ui_payload"]["type"] == "ingest_choice" and t["llm_provider"] == "mock"
 
     t = chat(quick_reply="use_existing")
-    assert t["state"] == "TARGET_KNOWLEDGE"
+    # the guide reviews the account first: findings, fixes as chips, then the target
+    assert t["state"] == "ACCOUNT_REVIEW" and t["ui_payload"]["type"] == "account_review"
+    d = t["ui_payload"]["data"]
+    assert d["benchmark_kind"] == "blend" and d["findings"]
+    assert "I took a look at this account" in t["assistant_message"]
+    ids = [q["id"] for q in t["quick_replies"]]
+    assert ids[-1] == "continue" and any(i.startswith("fix:") for i in ids)
+    t = chat(message="the client is worried about having too much in one stock")
+    assert t["interpretation"]["intent"] == "apply_fix" and t["state"] == "ACCOUNT_REVIEW"
+    assert t["ui_payload"]["data"]["applied"] == ["cap_stocks"]
+    t = chat(quick_reply="fix:harvest")
+    t = chat(quick_reply="fix:spread_gains")  # replaces harvest (one budget preference)
+    assert t["ui_payload"]["data"]["applied"] == ["cap_stocks", "spread_gains"]
+    t = chat(quick_reply="continue")
+    assert t["state"] == "TARGET_KNOWLEDGE" and "cap single stocks" in t["assistant_message"]
     t = chat(message="I'm not sure, help me choose")
     assert t["state"] == "Q_OBJECTIVE" and t["interpretation"]["intent"] == "help"
     t = chat(quick_reply="objective:total_return")
+    if t["state"] == "Q_CONSTRUCTION":  # the catalog has several total-return styles
+        t = chat(quick_reply="construction:market_cap")
     assert t["state"] == "TARGET_COMPARE" and t["ui_payload"]["type"] == "model_comparison"
     ids = [c["model"]["id"] for c in t["ui_payload"]["data"]["comparisons"]]
-    assert ids[0] == "SCHWAB-TR" and 2 <= len(ids) <= 3
+    # closest market-cap (Core) models to today's holdings come first
+    assert ids[0].startswith("TR-CORE-") and 2 <= len(ids) <= 3
     assert "Not tax or investment advice" in t["assistant_message"]
 
-    t = chat(quick_reply="choose:SCHWAB-TR")
+    t = chat(quick_reply="choose:TR-CORE-96-04")
     assert t["state"] == "TARGET_CONFIRM"
     t = chat(message="yes")
     assert t["state"] == "TRANSITION_SETUP" and t["ui_payload"]["type"] == "transition_setup"
     assert t["progress"]["step"] == 4
+    # review preferences: the recommended budget comes first, the cap is announced
+    assert "(recommended)" in t["quick_replies"][0]["label"]
+    assert "cap single stocks at 5%" in t["assistant_message"]
 
     t = chat(message="I'd rather not pay more than 20k in taxes")
     assert t["interpretation"]["slots"] == {"budget_mode": "tax", "budget_value": 20000.0}
@@ -325,7 +345,7 @@ def test_full_guided_flow(api: TestClient) -> None:
     ev = api.get(f"{API}/events/{event_id}").json()
     assert ev["type"] == "transition" and ev["n_trades"] == len(ev["trades"]) > 0
     acct = api.get(f"{API}/accounts/acc_017").json()["account"]
-    assert acct["target_model_id"] == "SCHWAB-TR"
+    assert acct["target_model_id"] == "TR-CORE-96-04"
     assert acct["ex_ante_te"] == pytest.approx(te_after, abs=1e-4)
     assert (
         api.post(
@@ -352,8 +372,10 @@ def test_ingest_through_chat_and_confirmation(api: TestClient) -> None:
     t = chat(quick_reply="confirm")  # blocked: rows would be silently left out
     assert t["state"] == "INGEST_REVIEW" and "couldn't save" in t["assistant_message"]
     t = chat(message="ok, assume average cost")
-    assert t["state"] == "TARGET_KNOWLEDGE" and "Assumptions" in t["assistant_message"]
-    t = chat(message="I want SCHWAB-INC")
+    assert t["state"] == "ACCOUNT_REVIEW" and "Assumptions" in t["assistant_message"]
+    t = chat(message="looks fine, continue")
+    assert t["state"] == "TARGET_KNOWLEDGE"
+    t = chat(message="I want INC-60-40")
     assert t["state"] == "TARGET_CONFIRM"
     t = chat(message="yes")
     t = chat(message="15k")  # ambiguous: asks to confirm
@@ -370,7 +392,7 @@ def test_number_guard_in_engine(api: TestClient) -> None:
     chat = Chat(api, "cli_009", "acc_017")
     chat(quick_reply="use_existing")
     chat(quick_reply="knows")
-    t = chat(quick_reply="choose:SCHWAB-TR")
+    t = chat(quick_reply="choose:TR-CORE-96-04")
     t = chat(quick_reply="yes")
     assert "123,456" not in t["assistant_message"]  # invented number rejected, template kept
     q = chat(message="what would the TE be?")
@@ -386,7 +408,7 @@ def test_number_guard_in_engine(api: TestClient) -> None:
         ("how are you", "how_are_you"),
         ("thank you", "thanks"),
         ("who are you?", "capabilities"),
-        ("what is the tracking error of SCHWAB-TR?", None),
+        ("what is the tracking error of TR-CORE-96-04?", None),
     ],
 )
 def test_smalltalk_kind(text: str, kind: str | None) -> None:

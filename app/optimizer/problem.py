@@ -92,6 +92,8 @@ class OptimizationProblem:
     # Optional factorisation of cov as a list of matrices M_k with Σ_k M_kᵀ M_k = cov.
     # Factor-model structure makes the QP far sparser (see risk_factors_from_model).
     cov_factors: tuple[Mat, ...] = ()
+    # which securities are single stocks (for ``max_stock_weight``); None = treat all as stocks
+    single_stock: BoolVec | None = None
 
     @property
     def held_shares(self) -> Vec:
@@ -116,6 +118,7 @@ class OptimizerSettings:
     min_trade_value: float = 0.0
     max_names: int | None = None
     max_weight: float | None = None
+    max_stock_weight: float | None = None  # cap on single stocks only (funds are not capped)
     sector_band: float | None = None
     round_shares: bool = True
     lot_relief: LotRelief = LotRelief.OPTIMIZER
@@ -320,13 +323,21 @@ class TransitionOptimizer:
             st_net, lt_net = g_st @ u, g_lt @ u
             cons.append(p.st_rate * st_net + p.lt_rate * lt_net <= budget)
             cons.append(p.lt_rate * (st_net + lt_net) <= budget)
-        if self.s.max_weight is not None:
+        if self.s.max_weight is not None or self.s.max_stock_weight is not None:
             locked_w = np.zeros(self.n)
             for j, lot in enumerate(p.lots):
                 if ub[j] == 0:
                     locked_w[lot.sec] += self.lot_value[j] / V
-            cap = np.maximum(self.s.max_weight, locked_w + 1e-9)
-            cons.append(x <= cap)
+            cap = np.full(self.n, np.inf)
+            if self.s.max_weight is not None:
+                cap = np.minimum(cap, self.s.max_weight)
+            if self.s.max_stock_weight is not None:
+                stock = p.single_stock if p.single_stock is not None else np.ones(self.n, bool)
+                cap = np.where(stock, np.minimum(cap, self.s.max_stock_weight), cap)
+            cap = np.maximum(cap, locked_w + 1e-9)  # locked lots can't be sold down
+            idx = np.flatnonzero(np.isfinite(cap))
+            if idx.size:
+                cons.append(x[idx] <= cap[idx])
         if use_sector and self.s.sector_band is not None and p.sector_loadings.size:
             target_sec = p.sector_loadings.T @ p.target
             band = self.s.sector_band

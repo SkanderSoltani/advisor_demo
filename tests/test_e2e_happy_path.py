@@ -84,7 +84,11 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     book = ok(c.get(f"{API}/book/summary"))
     assert book["data_source"] == "mock_random" and book["n_clients"] == 9
     assert ok(c.get(f"{API}/book/analytics/tracking-error?window=63"))["series"]
-    assert ok(c.get(f"{API}/models"))["total"] == 2
+    from app.core.config import get_settings
+    from app.db.catalog import load_catalog
+
+    n_models = len(load_catalog(get_settings().MODELS_FILE).models)
+    assert ok(c.get(f"{API}/models"))["total"] == n_models
 
     # ---- 2. onboard a household and an empty taxable account
     client = ok(
@@ -144,6 +148,8 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     turn = chat()
     assert turn["state"] == "INGEST_REVIEW" and turn["ui_payload"]["type"] == "parse_preview"
     turn = chat(quick_reply="confirm")
+    assert turn["state"] == "ACCOUNT_REVIEW"
+    turn = chat(quick_reply="continue")
     assert turn["state"] == "TARGET_KNOWLEDGE"
     detail = ok(c.get(f"{API}/accounts/{acct['id']}"))
     assert detail["account"]["n_lots"] == preview["summary"]["n_rows"]
@@ -153,12 +159,14 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     turn = chat(message="not sure — help me choose")
     assert turn["state"] == "Q_OBJECTIVE"
     turn = chat(message="total return please")
+    if turn["state"] == "Q_CONSTRUCTION":  # the catalog has several total-return styles
+        turn = chat(quick_reply="construction:market_cap")
     assert turn["state"] == "TARGET_COMPARE"
     comparison = turn["ui_payload"]["data"]["comparisons"]
-    assert comparison[0]["model"]["id"] == "SCHWAB-TR"
+    assert comparison[0]["model"]["id"].startswith("TR-CORE-")
     full_tax = comparison[0]["full_transition"]["est_tax"]
     assert full_tax > max(BUDGETS[:-1])
-    turn = chat(quick_reply="choose:SCHWAB-TR")
+    turn = chat(quick_reply="choose:TR-CORE-96-04")
     turn = chat(message="yes")
     assert turn["state"] == "TRANSITION_SETUP"
 
@@ -199,7 +207,7 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     assert all(s["lot_ref"] in csv.text for s in final["trades"]["sells"])
     pdf_bytes = c.get(f"{API}/transitions/{tid}/summary.pdf").content
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as doc:
-        assert "SCHWAB-TR" in (doc.pages[0].extract_text() or "")
+        assert "TR-CORE-96-04" in (doc.pages[0].extract_text() or "")
 
     turn = chat(quick_reply="approve")
     assert turn["state"] == "TRANSITION_APPROVE"
@@ -212,7 +220,7 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     assert event["type"] == "transition" and event["te_after"] == pytest.approx(final["post"]["te"])
     assert event["n_trades"] == len(final["trades"]["sells"]) + len(final["trades"]["buys"])
     after = ok(c.get(f"{API}/accounts/{acct['id']}"))
-    assert after["account"]["target_model_id"] == "SCHWAB-TR"
+    assert after["account"]["target_model_id"] == "TR-CORE-96-04"
     assert after["account"]["ex_ante_te"] == pytest.approx(final["post"]["te"], abs=1e-4)
     assert {h["ticker"] for h in after["holdings"]} >= {
         b["ticker"] for b in final["trades"]["buys"]
@@ -229,4 +237,4 @@ def test_happy_path(world: tuple[TestClient, Path]) -> None:
     book_after = ok(c.get(f"{API}/book/summary"))
     assert book_after["n_clients"] == 10 and book_after["n_accounts"] == book["n_accounts"] + 1
     row = next(r for r in ok(c.get(f"{API}/clients?search=rivera"))["items"])
-    assert row["status"] != "onboarding" and row["target_models"] == ["SCHWAB-TR"]
+    assert row["status"] != "onboarding" and row["target_models"] == ["TR-CORE-96-04"]

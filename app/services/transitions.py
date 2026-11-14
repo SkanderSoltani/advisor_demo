@@ -14,6 +14,9 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from app.analytics.types import AccountContext, LotInput
 from app.db import models as m
+from app.model_builder.analytics import BuilderData
+from app.model_builder.diagnosis import FIXES
+from app.model_builder.transition_view import TransitionAnalytics, transition_analytics
 from app.optimizer.problem import (
     BudgetMode,
     LotRelief,
@@ -56,7 +59,8 @@ class TransitionService:
             raise _err(status.HTTP_404_NOT_FOUND, f"Account {t.account_id} not found")
         return a
 
-    def create(self, client_id: str, account_id: str) -> m.Transition:
+    def create(self, client_id: str, account_id: str, fixes: list[str] | None = None
+               ) -> m.Transition:
         c = self.ps.client(client_id)
         if c is None:
             raise _err(status.HTTP_404_NOT_FOUND, f"Client {client_id} not found")
@@ -68,7 +72,8 @@ class TransitionService:
             client_id=c.id,
             account_id=a.id,
             state=INITIAL_STATE,
-            data={"target_model_id": a.target_model_id, "locks": [], "path": [INITIAL_STATE]},
+            data={"target_model_id": a.target_model_id, "locks": [], "path": [INITIAL_STATE],
+                  "fixes": [f for f in (fixes or []) if f in FIXES]},
         )
         self.db.add(t)
         self.db.commit()
@@ -168,6 +173,9 @@ class TransitionService:
             ),
             cash=a.cash,
             as_of=self.ps.as_of,
+            single_stock=np.array(
+                [tk in BuilderData.get(self.p).stocks for tk in tickers], dtype=bool
+            ),
             st_rate=ctx.st_rate,
             lt_rate=ctx.lt_rate,
             taxable=ctx.taxable,
@@ -194,6 +202,7 @@ class TransitionService:
             min_trade_value=c.min_trade_value,
             max_names=c.max_names,
             max_weight=c.max_weight,
+            max_stock_weight=c.max_stock_weight,
             sector_band=c.sector_band,
             round_shares=c.round_shares,
             lot_relief=LotRelief(c.lot_relief),
@@ -222,6 +231,26 @@ class TransitionService:
         return replace(
             ctx, lots=lots, cash=sol.post_cash, events=(), account_id=f"{ctx.account_id}:post"
         )
+
+    @staticmethod
+    def weights(
+        prob: OptimizationProblem, sol: Solution, target: dict[str, float]
+    ) -> st.PortfolioWeights:
+        """Current, post-trade and target weights of total value; cash under ``CASH``."""
+        held = np.zeros(len(prob.tickers))
+        for lot in prob.lots:
+            held[lot.sec] += lot.quantity * prob.prices[lot.sec]
+
+        def norm(vals: dict[str, float]) -> dict[str, float]:
+            tot = sum(v for v in vals.values() if v > 0)
+            return {k: round(v / tot, 6) for k, v in vals.items() if v > 0 and v / tot > 1e-6}
+
+        cur = {tk: float(v) for tk, v in zip(prob.tickers, held, strict=True)}
+        cur["CASH"] = cur.get("CASH", 0.0) + float(prob.cash)
+        V = sol.total_value or 1.0
+        post = {tk: float(w) * V for tk, w in zip(prob.tickers, sol.post_weights, strict=True)}
+        post["CASH"] = post.get("CASH", 0.0) + float(sol.post_cash)
+        return st.PortfolioWeights(current=norm(cur), transition=norm(post), target=norm(target))
 
     @staticmethod
     def explain(sol: Solution, mode: str, budget: float | None) -> list[str]:
@@ -376,6 +405,7 @@ class TransitionService:
                 wash_blocked_lot_ids=sol.wash_blocked_lots,
                 lot_relief_check=sol.lot_relief_check,
             ),
+            portfolios=self.weights(prob, sol, ctx.target_weights),
         )
         self._save(t, target_model_id=target, optimization=result.model_dump(mode="json"))
         return result
@@ -417,6 +447,31 @@ class TransitionService:
         )
         self._save(t, target_model_id=target, frontier=result.model_dump(mode="json"))
         return result
+
+    # ------------------------------------------------------------------ analytics
+    def analytics(self, t: m.Transition) -> TransitionAnalytics:
+        """Model Builder analytics for current / post-trade / target, measured against the
+        target. Results saved before weights were stored are re-solved (not re-saved)."""
+        r = self.last_result(t)
+        w = r.portfolios
+        if w is None:
+            prob, ctx = self.problem(t, r.target_model_id)
+            mode = BudgetMode(r.budget_mode)
+            sol = TransitionOptimizer(prob, self.settings(r.constraints)).solve(
+                mode, None if mode is BudgetMode.NONE else r.budget_value
+            )
+            w = self.weights(prob, sol, ctx.target_weights)
+        mp = self.db.get(m.ModelPortfolio, r.target_model_id)
+        try:
+            return transition_analytics(
+                r.target_model_id,
+                mp.name if mp else r.target_model_id,
+                w.model_dump(),
+                {"current": r.pre.te, "transition": r.post.te, "target": 0.0},
+                BuilderData.get(self.p),
+            )
+        except ValueError as exc:
+            raise _err(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
 
     # ------------------------------------------------------------------ exports
     def last_result(self, t: m.Transition) -> st.OptimizationResult:

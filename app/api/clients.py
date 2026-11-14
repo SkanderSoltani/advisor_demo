@@ -11,6 +11,7 @@ from sqlalchemy import delete, select
 from app.analytics.types import Granularity as AGranularity
 from app.api.deps import DB, Service, client_or_404, scoped_accounts
 from app.db import models as m
+from app.model_builder.diagnosis import Diagnosis
 from app.schemas.accounts import EventList
 from app.schemas.analytics import ClientAnalyticsSummary, TaxSavings, TrackingError
 from app.schemas.clients import (
@@ -24,9 +25,19 @@ from app.schemas.clients import (
     ClientUpdate,
 )
 from app.schemas.common import ClientStatus, EventTypeOut, Granularity, TEWindow
+from app.services.diagnosis import DiagnosisService
 from app.services.events import event_out
 
 router = APIRouter(prefix="/clients", tags=["clients"])
+
+
+@router.get(
+    "/{client_id}/diagnosis",
+    response_model=Diagnosis,
+    summary="AI review checks for the whole household (all accounts combined)",
+)
+def client_diagnosis(client_id: str, svc: Service) -> Diagnosis:
+    return DiagnosisService(svc).client(client_or_404(svc, client_id))
 
 
 @router.get("", response_model=ClientList, summary="Client list with summary rows")

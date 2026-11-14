@@ -61,7 +61,18 @@ app.layout = dmc.MantineProvider(
 )
 
 # callbacks register on import
-from callbacks import auth, book, client_detail, modals, transition  # noqa: E402,F401
+from callbacks import (  # noqa: E402,F401
+    auth,
+    book,
+    client_detail,
+    diagnosis,
+    fold,
+    modals,
+    model_builder,
+    models,
+    risk,
+    transition,
+)
 
 if __name__ == "__main__":
     app.run(debug=os.environ.get("DASH_DEBUG", "true").lower() == "true",

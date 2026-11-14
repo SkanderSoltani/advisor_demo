@@ -1,4 +1,5 @@
-"""Deterministic synthetic market: a ~300-name US large/mid-cap universe and 5 years of daily
+"""Deterministic synthetic market: a ~300-name large/mid-cap universe labelled with real company
+names (app.db.real_universe; prices and fundamentals stay simulated) and 5 years of daily
 prices simulated from a multi-factor model (market + sector + style factors + idiosyncratic noise).
 
 Everything is driven by a single seed so the demo is reproducible. Nothing here is real data.
@@ -13,6 +14,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from app.db.real_universe import assign
 
 TRADING_DAYS = 252
 MARKET_GEOMETRIC_RETURN = 0.12
@@ -204,6 +207,12 @@ def generate_market(
     rank = np.arange(1, n_names + 1)
     market_cap = 2.5e9 * (n_names / rank) ** 1.2 * np.exp(rng.normal(0, 0.12, n_names))
     market_cap = np.sort(market_cap)[::-1]  # rank order is random w.r.t. sector
+    # label each slot with a real company of its sector, biggest first (numbers stay simulated);
+    # the random tickers/names above are only drawn to keep the random stream (and prices) unchanged
+    real = assign(sectors, [float(x) for x in market_cap])
+    tickers = [r[0] for r in real]
+    names = [r[1] for r in real]
+    sectors = [r[3] for r in real]  # unchanged unless a sector ran out of real companies
 
     # correlated fundamental scores: value, quality, profitability
     corr = np.array([[1.0, -0.15, 0.0], [-0.15, 1.0, 0.6], [0.0, 0.6, 1.0]])

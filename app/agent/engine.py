@@ -29,6 +29,7 @@ from app.agent.tools import AgentTools
 from app.core.config import get_settings
 from app.db import models as m
 from app.ingest.plaid_client import MOCK_PUBLIC_TOKEN, PlaidError, PlaidGateway
+from app.model_builder import diagnosis as dg
 from app.schemas.chat import (
     ChatRequest,
     ChatTurn,
@@ -40,6 +41,7 @@ from app.schemas.chat import (
 from app.schemas.common import DISCLAIMER
 from app.schemas.ingest import ConfirmRequest, ConfirmRow, ParsePreview
 from app.services.approval import approve_transition
+from app.services.diagnosis import DiagnosisService
 from app.services.ingest import IngestService
 from app.services.transitions import TransitionService
 
@@ -60,8 +62,13 @@ CONSTRUCTION_LABELS = {
     "market_cap": "Market cap",
     "market_cap_fundamental": "Market cap + Fundamental",
     "market_cap_fundamental_active": "Market cap + Fundamental + Active",
+    "factor_tilt": "Factor tilt (enhanced)",
 }
-OBJECTIVE_LABELS = {"income": "Income", "total_return": "Total return"}
+OBJECTIVE_LABELS = {
+    "income": "Income",
+    "total_return": "Total return",
+    "tax_efficient": "Tax efficient",
+}
 
 
 @dataclass(slots=True)
@@ -229,6 +236,9 @@ class ConversationEngine:
             return Intent(intent="set_objective", confidence=1, objective=arg)
         if name == "construction":
             return Intent(intent="set_construction", confidence=1, construction=arg)
+        if name in ("fix", "unfix"):
+            return Intent(intent="apply_fix" if name == "fix" else "remove_fix", confidence=1,
+                          fix=arg)
         if name == "budget":
             mode, _, val = arg.partition(":")
             return Intent(
@@ -287,6 +297,8 @@ class ConversationEngine:
             return self._on_ingest_choice(name)
         if s is State.INGEST_REVIEW:
             return self._on_ingest_review(name)
+        if s is State.ACCOUNT_REVIEW:
+            return self._on_account_review(it)
         if s is State.TARGET_KNOWLEDGE:
             if name == "knows":
                 self._goto(State.TARGET_PICK_LIST)
@@ -297,9 +309,12 @@ class ConversationEngine:
             return ""
         if s in (State.TARGET_PICK_LIST, State.TARGET_COMPARE) and name == "choose_model":
             return self._choose(it.model_id)
+        if s is State.TARGET_PICK_LIST and name == "help":
+            self._goto(State.Q_OBJECTIVE)
+            return ""
         if s is State.Q_OBJECTIVE and name == "set_objective":
             if it.objective not in OBJECTIVE_LABELS:
-                return "Please pick income or total return."
+                return "Please pick income, total return or tax efficient."
             self._save(objective=it.objective, drop=("construction", "candidates", "comparison"))
             options = self._constructions(it.objective)
             if len(options) > 1:
@@ -342,7 +357,7 @@ class ConversationEngine:
         if name == "use_existing":
             if not self.tools.account.lots:
                 return "This account has no holdings yet — upload a statement or connect Plaid."
-            self._goto(State.TARGET_KNOWLEDGE)
+            self._goto(State.ACCOUNT_REVIEW)
             return "Using the holdings already on the account."
         if name == "upload_pdf":
             self._save(ingest_mode="pdf")
@@ -424,11 +439,59 @@ class ConversationEngine:
             return f"I couldn't save yet: {detail.get('message')}" + (
                 f" ({n} rows need attention)." if n else "."
             )
-        self.t.state = State.TARGET_KNOWLEDGE.value
-        self._goto(State.TARGET_KNOWLEDGE)
+        self._save(drop=("diagnosis",))
+        self._goto(State.ACCOUNT_REVIEW)
         extra = f" Assumptions: {'; '.join(res.assumptions)}." if res.assumptions else ""
         skipped = f" {res.n_excluded} rows were left out." if res.n_excluded else ""
         return f"Saved {res.n_committed} lots ({money(res.total_market_value)}).{skipped}{extra}"
+
+    # ------------------------------------------------------------------ account review
+    @property
+    def fixes(self) -> list[str]:
+        return [f for f in self.data.get("fixes", []) if f in dg.FIXES]
+
+    def _diagnosis(self) -> dg.Diagnosis:
+        """Checks against the auto blend (no target yet); cached on the session."""
+        raw = self.data.get("diagnosis")
+        if raw:
+            return dg.Diagnosis.model_validate(raw)
+        d = DiagnosisService(self.ts.ps).account(self.tools.account, use_target=False)
+        self._save(diagnosis=d.model_dump(mode="json"))
+        return d
+
+    def _on_account_review(self, it: Intent) -> str:
+        fixes = self.fixes
+        if it.intent == "continue":
+            self._goto(State.TARGET_KNOWLEDGE)
+            if not fixes:
+                return "Noted: no changes for now."
+            return "Noted. I'll apply: " + "; ".join(
+                dg.FIXES[f].label.lower() for f in fixes) + "."
+        fx = dg.FIXES.get(it.fix or "")
+        offered = {x for fd in self._diagnosis().findings for x in fd.fixes}
+        # "taxes" → the tax fix this account actually needs (gains to spread vs losses to harvest)
+        alt = {"spread_gains": "harvest", "harvest": "spread_gains"}.get(it.fix or "")
+        if fx and it.intent == "apply_fix" and it.confidence < 1 and fx.id not in offered \
+                and alt in offered:
+            fx = dg.FIXES[alt]
+        if fx is None:
+            return ("Tell me which of these concerns the client, pick a fix below, or say "
+                    "“continue”.")
+        if it.intent == "remove_fix":
+            self._save(fixes=[f for f in fixes if f != fx.id])
+            return f"Removed: {fx.label.lower()}."
+        if fx.id not in fixes:
+            # the two budget preferences exclude each other
+            other = {"spread_gains": "harvest", "harvest": "spread_gains"}.get(fx.id)
+            self._save(fixes=[f for f in fixes if f != other] + [fx.id])
+        return f"Got it: {fx.label.lower()}. {fx.description}"
+
+    def _fix_constraints(self) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+        for f in self.fixes:
+            if dg.FIXES[f].kind == "constraint":
+                out.update(dg.FIXES[f].setting)
+        return out
 
     # ------------------------------------------------------------------ target
     def _constructions(self, objective: str) -> list[str]:
@@ -450,12 +513,29 @@ class ConversationEngine:
             for x in models
             if x.objective == obj and (cons is None or x.construction == cons)
         ]
+        primary = self._prefer(primary)
         others = [x.model_id for x in models if x.model_id not in primary]
-        if self.tools.account.lots and others:
-            cmp = self.tools.compare_models(others)
+        if self.tools.account.lots:  # closest to today's holdings first
+            cmp = self.tools.compare_models(primary + others)
             te = {c["model"]["id"]: c["te_from_current"] or 9.0 for c in cmp["comparisons"]}
+            primary.sort(key=lambda i: te.get(i, 9.0))
             others.sort(key=lambda i: te.get(i, 9.0))
         return (primary + others)[: max(2, min(3, len(models)))]
+
+    def _prefer(self, ids: list[str]) -> list[str]:
+        """Keep the models that match the review's preferences (when any do)."""
+        fixes = self.fixes
+        if not ({"lower_risk", "more_intl"} & set(fixes)):
+            return ids
+        d = self.data.get("diagnosis") or {}
+        eq_now = float(d.get("equity_pct") or 1.0)
+        prof = self.tools.model_profiles(ids)
+        keep = ids
+        if "lower_risk" in fixes:
+            keep = [i for i in keep if prof[i]["equity"] <= eq_now - 0.10] or keep
+        if "more_intl" in fixes:
+            keep = [i for i in keep if prof[i]["non_us_equity"] >= 0.20] or keep
+        return keep
 
     # ------------------------------------------------------------------ setup / results
     def _setup(self) -> dict[str, Any]:
@@ -513,7 +593,8 @@ class ConversationEngine:
                 mode,
                 setup.get("budget_value"),
                 target,
-                {**DEFAULT_CONSTRAINTS, **(setup.get("constraints") or {})},
+                {**DEFAULT_CONSTRAINTS, **self._fix_constraints(),
+                 **(setup.get("constraints") or {})},
             )
             self.tools.run_frontier(target, mode if mode != "none" else "tax")
         except HTTPException as exc:
@@ -693,6 +774,40 @@ class ConversationEngine:
                 facts=pv.summary.model_dump(),
             )
 
+        if s is State.ACCOUNT_REVIEW:
+            if not a.lots:
+                self._goto(State.TARGET_KNOWLEDGE)
+                return self._render()
+            try:
+                d = self._diagnosis()
+            except HTTPException:
+                self._goto(State.TARGET_KNOWLEDGE)
+                return self._render()
+            applied = self.fixes
+            offered = [f for f in dict.fromkeys(x for fd in d.findings for x in fd.fixes)
+                       if f not in applied]
+            replies = [qr(f"fix:{f}", dg.FIXES[f].label) for f in offered[:4]]
+            replies.append(qr("continue", f"Continue with {len(applied)} fix"
+                              + ("es" if len(applied) > 1 else "") if applied
+                              else "Looks fine — continue"))
+            data = d.model_dump(mode="json")
+            data["applied"] = applied
+            data["all_fixes"] = {k: v.model_dump() for k, v in dg.FIXES.items()}
+            msg = dg.message(d, applied)
+            if self.data.get("review_shown"):
+                msg = (("Applied so far: " + "; ".join(dg.FIXES[f].label.lower() for f in applied)
+                        + ". ") if applied else "") + (
+                    "Anything else that concerns the client? Pick another fix, tell me in your "
+                    "own words, or continue.")
+            else:
+                self._save(review_shown=True)
+            return Render(
+                msg,
+                replies,
+                UiPayload(type="account_review", data=data),
+                facts=dg.facts(d),
+            )
+
         if s is State.TARGET_KNOWLEDGE:
             return Render(
                 "Do you already know the target model, or would you like help choosing?",
@@ -702,15 +817,18 @@ class ConversationEngine:
         if s is State.TARGET_PICK_LIST:
             models = self.tools.list_models()
             return Render(
-                "Here is the model catalog. Which one is the target?",
-                [qr(f"choose:{x['model_id']}", x["name"]) for x in models],
+                "Here is the model catalog, grouped by line. Open a line and select the "
+                "target, or type its name.",
+                [qr(f"choose:{x['model_id']}", x["name"]) for x in models]
+                if len(models) <= 8 else [qr("help", "Help me choose")],
                 UiPayload(type="model_list", data={"models": models}),
             )
 
         if s is State.Q_OBJECTIVE:
             return Render(
-                "Is the goal **income** or **total return**?",
-                [qr("objective:income", "Income"), qr("objective:total_return", "Total return")],
+                "Is the goal **income**, **total return** or **tax efficiency**?",
+                [qr("objective:income", "Income"), qr("objective:total_return", "Total return"),
+                 qr("objective:tax_efficient", "Tax efficient")],
             )
 
         if s is State.Q_CONSTRUCTION:
@@ -730,6 +848,13 @@ class ConversationEngine:
                 cmp = self.tools.compare_models(cands)
                 self._save(candidates=cands, comparison=cmp)
             lines = ["Here are the closest options for this account (illustrative):"]
+            notes = [n for f, n in (("lower_risk", "less equity than today"),
+                                    ("more_intl", "more international stocks"))
+                     if f in self.fixes]
+            if notes:
+                lines[0] = ("Following the account review, I favored models with "
+                            + " and ".join(notes) + ". Here are the closest options "
+                            "(illustrative):")
             for c in cmp["comparisons"]:
                 ft = c["full_transition"]
                 te = "n/a" if c["te_from_current"] is None else pct(c["te_from_current"])
@@ -772,13 +897,26 @@ class ConversationEngine:
                     if v > 0:
                         replies.append(qr(f"budget:tax:{v:.0f}", f"Up to {money(v)} tax"))
             replies.append(qr("budget:none", "No limit (full transition)"))
+            rec = None
+            if est["taxable"] and "spread_gains" in self.fixes and full > 0:
+                v = max(round(full / 3 / 1000) * 1000, 1000)
+                rec = (f"budget:tax:{v:.0f}",
+                       f"Spread over ~3 years: up to {money(v)} tax (recommended)",
+                       f"As agreed in the review, spreading the gains over about three years "
+                       f"means a tax budget of about **{money(v)}** this year.")
+            elif est["taxable"] and "harvest" in self.fixes:
+                rec = ("budget:tax:0", "$0 tax: harvest losses (recommended)",
+                       "As agreed in the review, I recommend a **$0** tax budget: losses pay for "
+                       "the trades.")
+            if rec:
+                replies = [qr(rec[0], rec[1])] + [r for r in replies if r.id != rec[0]]
             if setup.get("budget_mode"):
                 replies.append(qr("run", "Run again"))
             lines = [
                 f"Moving fully into **{mid}** today would cost about **{money(full)}** in tax "
                 f"(net gain {money(ft['net_realized_gain'])}).",
                 "How much tax are you willing to pay this year? You can also lock positions "
-                "(e.g. “don't sell JUP”) or change the cash buffer.",
+                "(e.g. “don't sell AAPL”) or change the cash buffer.",
             ]
             if not est["taxable"]:
                 lines[0] = (
@@ -786,6 +924,13 @@ class ConversationEngine:
                 )
             if summary["locked_value"]:
                 lines.append(f"Locked positions: {money(summary['locked_value'])} won't be sold.")
+            if rec:
+                lines.insert(1, rec[2])
+            cons = [dg.FIXES[f].label.lower() for f in self.fixes
+                    if dg.FIXES[f].kind == "constraint"]
+            if cons:
+                lines.append("From the account review, the optimizer will also: "
+                             + "; ".join(cons) + ".")
             return Render(
                 "\n\n".join(lines),
                 replies,

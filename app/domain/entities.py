@@ -47,6 +47,7 @@ class LotSource(StrEnum):
 class Objective(StrEnum):
     TOTAL_RETURN = "total_return"
     INCOME = "income"
+    TAX_EFFICIENT = "tax_efficient"
 
 
 class Construction(StrEnum):

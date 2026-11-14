@@ -77,11 +77,18 @@ def wait_change(pg, old_heading: str, old_state: str) -> str:
     return heading(pg)
 
 
+def open_fold(pg, key: str) -> None:
+    """Sections below Analytics start closed; open one by its key."""
+    pg.click(f'[id=\'{{"key":"{key}","type":"fold-btn"}}\']')
+
+
 def sign_in(pg) -> None:
     pg.goto(f"{DASH_URL}/login")
     pg.fill("#login-email", EMAIL)
     pg.fill("#login-password", PASSWORD)
     pg.click("#login-submit")
+    pg.wait_for_selector("#book-clients-summary strong", timeout=STEP_TIMEOUT)
+    open_fold(pg, "book-clients")
     pg.wait_for_selector("#book-grid .ag-row", timeout=STEP_TIMEOUT)
 
 
@@ -90,6 +97,7 @@ def start_transition(pg) -> str:
     pg.locator(".ts-menu-item.is-accent").click()
     pg.wait_for_function("/^\\/(transition|clients)\\//.test(location.pathname)", timeout=STEP_TIMEOUT)
     if "/clients/" in pg.url:
+        open_fold(pg, "cd-accounts")
         pg.wait_for_selector("#cd-accounts-grid .ts-action-link", timeout=STEP_TIMEOUT)
         pg.locator("#cd-accounts-grid .ts-action-link").first.click()
         pg.wait_for_function("location.pathname.startsWith('/transition/')", timeout=STEP_TIMEOUT)
@@ -113,6 +121,13 @@ def test_demo_flow(page) -> None:
                 pg.locator(".ts-canvas button:has-text('Use current holdings')").click()
             else:
                 pg.locator(".ts-canvas button:has-text('sample statement')").click()
+        elif h == "Account review":
+            assert pg.locator(".ts-ai-finding").count() >= 1, "findings shown"
+            fix = pg.locator(".ts-canvas button.ts-ai-fix").first
+            if fix.count():
+                fix.click()
+                pg.wait_for_selector(".ts-canvas button.ts-ai-fix.is-on", timeout=STEP_TIMEOUT)
+            pg.locator(".ts-canvas .ts-canvas-actions button").first.click()
         elif h == "Review lots":
             pg.locator(".ts-canvas button:has-text('Confirm holdings')").click()
         elif h == "Choose your target":
@@ -139,6 +154,11 @@ def test_demo_flow(page) -> None:
         elif h == "Optimization results":
             assert pg.locator(".ts-review-card").count() == 4
             assert "Settings:" in pg.locator(".ts-settings-line").inner_text()
+            # current / transition / target analytics, five tabs
+            pg.wait_for_selector(".ts-pa-legend", timeout=STEP_TIMEOUT)
+            pg.locator(".ts-pa .ts-segmented label", has_text="Risk").click()
+            pg.wait_for_selector("[id*='ws-pa-pane'][id*='risk'] .js-plotly-plot",
+                                 timeout=STEP_TIMEOUT)
             pg.locator(".ts-canvas button:has-text('Approve transition')").click()
         elif h == "Review & export":
             for label, ext in (("Download CSV", ".csv"), ("Download PDF", ".pdf")):
@@ -158,6 +178,8 @@ def test_demo_flow(page) -> None:
 
     # the approved transition appears on the client's timeline
     pg.locator(".ts-canvas a:has-text('Back to client')").click()
+    pg.wait_for_selector("#cd-history-summary", timeout=STEP_TIMEOUT)
+    open_fold(pg, "cd-history")
     pg.wait_for_selector(".ts-evt-row", timeout=STEP_TIMEOUT)
     assert pg.locator(".ts-evt-row").first.inner_text().lower().find("transition") >= 0
 

@@ -12,6 +12,7 @@ from pydantic import ValidationError
 
 from app.core.config import get_settings
 from app.db.catalog import (
+    BLENDS,
     CatalogFile,
     FundProxies,
     build_fund_proxies,
@@ -33,8 +34,10 @@ def funds(market: SyntheticMarket, catalog: CatalogFile) -> FundProxies:
 
 
 def test_catalog_file_is_valid(catalog: CatalogFile) -> None:
-    assert len(catalog.models) == 2
-    assert {m.objective for m in catalog.models} == {"total_return", "income"}
+    assert len(catalog.models) >= 2
+    assert {m.objective for m in catalog.models} == {"total_return", "income", "tax_efficient"}
+    lines = {ln.id for ln in catalog.lines}
+    assert all(m.line_id in lines for m in catalog.models)
     for m in catalog.models:
         assert sum(h.weight for h in m.holdings) == pytest.approx(1.0)
 
@@ -54,7 +57,11 @@ def test_catalog_validation_errors(catalog: CatalogFile) -> None:
 def test_proxies_are_valid_portfolios(funds: FundProxies, market: SyntheticMarket) -> None:
     w = funds.weights
     assert (w.to_numpy() >= 0).all()
-    np.testing.assert_allclose(w.sum(axis=1).to_numpy(), 1.0)
+    sums = w.sum(axis=1)
+    # plain equity rules are full portfolios; blended rules (bonds, non-US, cash) are partial
+    full = [t for t, r in funds.rules.items() if r not in BLENDS]
+    np.testing.assert_allclose(sums[full].to_numpy(), 1.0)
+    assert ((sums >= 0) & (sums <= 1.1 + 1e-9)).all()
     assert list(w.columns) == list(market.universe.index)
     assert (funds.nav > 0).all().all() and len(funds.nav) == len(market.prices)
     # value and growth sleeves split the same large-cap set

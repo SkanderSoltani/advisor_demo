@@ -19,7 +19,7 @@ class Intent(BaseModel):
     intent: str = Field(description="One of the allowed intent names for the current step")
     confidence: float = Field(ge=0, le=1)
     model_id: str | None = None
-    objective: str | None = Field(None, description="income | total_return")
+    objective: str | None = Field(None, description="income | total_return | tax_efficient")
     construction: str | None = Field(
         None, description="market_cap | market_cap_fundamental | market_cap_fundamental_active"
     )
@@ -27,6 +27,7 @@ class Intent(BaseModel):
     budget_value: float | None = Field(None, description="USD")
     tickers: list[str] | None = None
     cash_buffer: float | None = Field(None, description="decimal, e.g. 0.02 for 2%")
+    fix: str | None = Field(None, description="diagnosis fix id, e.g. cap_stocks")
     question: str | None = None
 
 
@@ -51,13 +52,21 @@ STATE_INTENTS: dict[State, dict[str, str]] = {
         "upload_again": "upload a different file",
         "save_valid_only": "save only the rows without errors",
     },
+    State.ACCOUNT_REVIEW: {
+        "apply_fix": "a concern about the account; apply one of the offered fixes (fix)",
+        "remove_fix": "undo a fix that was applied (fix)",
+        "continue": "no (more) concerns; move on to choosing the target",
+    },
     State.TARGET_KNOWLEDGE: {
         "knows": "already knows which target model to use",
         "help": "wants help choosing a target",
         "choose_model": "names a specific model (model_id)",
     },
-    State.TARGET_PICK_LIST: {"choose_model": "picks a model (model_id)"},
-    State.Q_OBJECTIVE: {"set_objective": "income or total return (objective)"},
+    State.TARGET_PICK_LIST: {
+        "choose_model": "picks a model (model_id)",
+        "help": "wants help choosing a target",
+    },
+    State.Q_OBJECTIVE: {"set_objective": "income, total return or tax efficient (objective)"},
     State.Q_CONSTRUCTION: {"set_construction": "construction style (construction)"},
     State.TARGET_COMPARE: {"choose_model": "picks one of the compared models (model_id)"},
     State.TARGET_CONFIRM: {"yes": "confirms the target", "no": "wants a different target"},
@@ -166,13 +175,15 @@ def match_model(text: str, models: Sequence[ModelRef]) -> str | None:
     for mdl in models:
         if mdl.model_id.lower() in t or mdl.name.lower() in t:
             return mdl.model_id
+    wants_tax = _has(t, "tax efficient", "tax-efficient", "tax aware", "tax-aware", "muni")
     wants_income = _has(t, "income", "dividend", "dividends", "yield")
     wants_tr = _has(t, "total return", "growth", "core", "equity")
     hits = [
         mdl.model_id
         for mdl in models
-        if (wants_income and mdl.objective == "income")
-        or (wants_tr and not wants_income and mdl.objective == "total_return")
+        if (wants_tax and mdl.objective == "tax_efficient")
+        or (wants_income and not wants_tax and mdl.objective == "income")
+        or (wants_tr and not wants_income and not wants_tax and mdl.objective == "total_return")
     ]
     return hits[0] if len(hits) == 1 else None
 
@@ -207,16 +218,31 @@ def rule_interpret(
             return Intent(intent="upload_again", confidence=0.85)
         if _has(t, "confirm", "looks good", "correct", "yes", "save", "fine"):
             return Intent(intent="confirm", confidence=0.85)
+    elif state is State.ACCOUNT_REVIEW:
+        from app.model_builder.diagnosis import FIXES, concern_to_fix
+
+        fix = concern_to_fix(t, list(FIXES))
+        if _has(t, "undo", "remove", "drop", "cancel", "don't cap", "do not cap") and fix:
+            return Intent(intent="remove_fix", confidence=0.8, fix=fix)
+        if fix and not _has(t, "no concern", "looks fine", "looks good", "all good"):
+            return Intent(intent="apply_fix", confidence=0.85, fix=fix)
+        if _has(t, "continue", "looks fine", "looks good", "fine", "no concern", "none", "next",
+                "move on", "skip", "all good", "go ahead", "nothing", "ok", "okay", "no"):
+            return Intent(intent="continue", confidence=0.85)
     elif state in (State.TARGET_KNOWLEDGE, State.TARGET_PICK_LIST, State.TARGET_COMPARE):
         mid = match_model(raw, models)
         if mid:
             return Intent(intent="choose_model", confidence=0.85, model_id=mid)
+        if state is State.TARGET_PICK_LIST and _has(t, "help me", "not sure", "recommend"):
+            return Intent(intent="help", confidence=0.85)
         if state is State.TARGET_KNOWLEDGE:
             if _has(t, "help", "not sure", "unsure", "recommend", "suggest", "no", "don't know"):
                 return Intent(intent="help", confidence=0.85)
             if _has(t, "yes", "i know", "list", "show", "pick"):
                 return Intent(intent="knows", confidence=0.8)
     elif state is State.Q_OBJECTIVE:
+        if _has(t, "tax efficient", "tax-efficient", "tax aware", "tax-aware", "municipal", "muni"):
+            return Intent(intent="set_objective", confidence=0.9, objective="tax_efficient")
         if _has(t, "income", "dividend", "dividends", "yield", "cash flow"):
             return Intent(intent="set_objective", confidence=0.9, objective="income")
         if _has(t, "total return", "growth", "appreciation", "return"):

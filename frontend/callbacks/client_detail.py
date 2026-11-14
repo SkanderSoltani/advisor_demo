@@ -261,9 +261,24 @@ def more_events(n, limit):
     return (limit or 12) + 12
 
 
+def _history_summary(items: list[dict[str, Any]], etype: str | None) -> list[html.Span]:
+    """One line for the closed Management history section."""
+    if not items:
+        return [html.Span("No events yet" if not etype else "No events of this type")]
+    n = len(items)
+    last = max(items, key=lambda e: e["date"])
+    noun = EVENT_FILTER_LABELS[etype].lower() if etype else "events"
+    return [html.Span([html.Strong(fmt.number(n)), f" {noun}"]),
+            html.Span(["Latest: ", html.Strong(charts.EVENT_LABELS.get(last["type"], last["type"])),
+                       f" on {last['date']}"]),
+            html.Span([html.Strong(fmt.money_full(sum(e.get("est_taxes_saved") or 0
+                                                      for e in items))), " taxes saved"])]
+
+
 @callback(
     Output("cd-events", "children"),
     Output("cd-filter-chip", "children"),
+    Output("cd-history-summary", "children"),
     Output("auth-expired", "data", allow_duplicate=True),
     Input("cd-account", "value"),
     Input("cd-event-type", "data"),
@@ -279,9 +294,9 @@ def events(account, etype, limit, detail, session):
     try:
         res = api(_tok(session)).client_events(detail["id"], type_=t, account_id=_acct(account))
     except AuthError:
-        return no_update, no_update, _expired()
+        return no_update, no_update, no_update, _expired()
     except ApiError as exc:
-        return error_state(exc.message), None, no_update
+        return error_state(exc.message), None, None, no_update
     chip = None
     if t:
         chip = html.Div([html.Span(f"Showing: {EVENT_FILTER_LABELS[t]}", className="ts-filter-chip"),
@@ -289,9 +304,11 @@ def events(account, etype, limit, detail, session):
                                      type="button", className="ts-link-btn ts-text-xs")],
                         className="ts-row ts-gap-2 ts-px-5 ts-pt-3")
     items = [e.model_dump(mode="json") for e in res.items]
+    summary = _history_summary(items, t)
     if not items:
         if t:
-            return html.P("No events of this type.", className="ts-sub ts-p-5"), chip, no_update
+            return (html.P("No events of this type.", className="ts-sub ts-p-5"), chip, summary,
+                    no_update)
         has_accounts = bool(detail["accounts"])
         return (empty_state(
             "No management history yet",
@@ -301,12 +318,12 @@ def events(account, etype, limit, detail, session):
              html.Button(["Start first transition", icon("arrow-right", 15)],
                          id={"type": "empty-action", "id": "start"}, n_clicks=0, type="button",
                          className="ts-btn-cta", disabled=not has_accounts)],
-            icon_name="calendar-clock"), chip, no_update)
+            icon_name="calendar-clock"), chip, summary, no_update)
     rows = [event_row(e) for e in items[: limit or 12]]
     if len(items) > (limit or 12):
         rows.append(html.Button(f"Show more ({len(items) - (limit or 12)} remaining)", id="cd-more",
                                 n_clicks=0, type="button", className="ts-show-more"))
-    return html.Div(rows, className="ts-evt-list"), chip, no_update
+    return html.Div(rows, className="ts-evt-list"), chip, summary, no_update
 
 
 @callback(
@@ -361,9 +378,10 @@ def accounts_grid(detail, session):
 
 
 # ------------------------------------------------------------------ actions
-def _start(session: dict | None, client_id: str, account_id: str) -> tuple[Any, Any]:
+def _start(session: dict | None, client_id: str, account_id: str,
+           fixes: list[str] | None = None) -> tuple[Any, Any]:
     try:
-        t = api(_tok(session)).create_transition(client_id, account_id)
+        t = api(_tok(session)).create_transition(client_id, account_id, fixes)
     except ApiError as exc:
         return no_update, [{"action": "show", "id": "start-failed", "title": "Couldn't start",
                             "message": exc.message, "color": "red"}]

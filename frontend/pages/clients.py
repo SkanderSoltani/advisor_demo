@@ -11,7 +11,9 @@ from components.add_account_modal import add_account_modal
 from components.charts import TAX_VIEWS
 from components.common import kpi_skeleton, skeleton
 from components.delete_client_modal import delete_client_modal
+from components.fold import fold_body, fold_button, fold_extra, fold_summary
 from components.onboard_client_modal import onboard_modal
+from components.risk_panel import risk_section
 from components.shell import footer, icon, left_rail, topbar_book
 
 dash.register_page(__name__, path="/", title="Client book · Transition Studio")
@@ -112,9 +114,20 @@ def layout(**_: object) -> html.Div:
                                                        className="ts-sub-sm ts-mt-2"),
                                             ]
                                         ),
-                                        html.Button([icon("plus", 17), " Onboard new client"],
-                                                    id="open-onboard", n_clicks=0, type="button",
-                                                    className="ts-btn ts-btn-primary ts-shadow-sm"),
+                                        html.Div(
+                                            [
+                                                dcc.Link([icon("layers", 17), " Model management"],
+                                                         href="/models", id="open-models",
+                                                         className="ts-btn ts-btn-secondary "
+                                                                   "ts-no-underline"),
+                                                html.Button([icon("plus", 17), " Onboard new client"],
+                                                            id="open-onboard", n_clicks=0,
+                                                            type="button",
+                                                            className="ts-btn ts-btn-primary "
+                                                                      "ts-shadow-sm"),
+                                            ],
+                                            className="ts-row ts-gap-3 ts-wrap",
+                                        ),
                                     ],
                                     className="ts-page-head",
                                 ),
@@ -177,6 +190,8 @@ def layout(**_: object) -> html.Div:
                                     ],
                                     className="ts-card ts-p-5 ts-mb-8",
                                 ),
+                                risk_section("book", "Analytics",
+                                             "Allocation, exposures and risk for the whole book"),
                                 html.Section(
                                     [
                                         html.Div(
@@ -184,8 +199,10 @@ def layout(**_: object) -> html.Div:
                                                 html.Div([html.H2("Clients", className="ts-h2"),
                                                           html.P("Monitor portfolio health and next "
                                                                  "best actions.",
-                                                                 className="ts-sub ts-mt-1")]),
+                                                                 className="ts-sub ts-mt-1"),
+                                                          fold_summary("book-clients-summary")]),
                                                 html.Div(
+                                                    [fold_extra("book-clients", html.Div(
                                                     [
                                                         html.Label(
                                                             [icon("search", 16, "ts-search-icon"),
@@ -204,12 +221,15 @@ def layout(**_: object) -> html.Div:
                                                                     className="ts-sort-btn",
                                                                     **{"aria-label": "Sort clients by name"}),
                                                     ],
-                                                    className="ts-row ts-gap-2",
+                                                    className="ts-row ts-gap-2 ts-wrap",
+                                                    )),
+                                                     fold_button("book-clients", "clients")],
+                                                    className="ts-row ts-gap-2 ts-wrap ts-fold-actions",
                                                 ),
                                             ],
                                             className="ts-table-head",
                                         ),
-                                        html.Div(id="book-grid-wrap", children=[
+                                        fold_body("book-clients", html.Div(id="book-grid-wrap", children=[
                                             dag.AgGrid(
                                                 id="book-grid",
                                                 rowData=[],
@@ -234,7 +254,7 @@ def layout(**_: object) -> html.Div:
                                                 className="ts-grid",
                                                 style={"width": "100%"},
                                             ),
-                                        ]),
+                                        ])),
                                     ],
                                     className="ts-card ts-overflow-hidden",
                                 ),

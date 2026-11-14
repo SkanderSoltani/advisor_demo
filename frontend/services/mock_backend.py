@@ -1107,11 +1107,204 @@ def _transition_out(t: dict[str, Any]) -> dict[str, Any]:
                 created_at=f"{AS_OF}T09:00:00Z", updated_at=f"{AS_OF}T09:00:00Z")
 
 
+
+# ---------------------------------------------------------------- model management (mock)
+MOCK_LINES: list[dict[str, Any]] = [
+    dict(id="TR-CORE", name="Core Models", objective="total_return",
+         description="Broad, low-cost market exposure across risk levels."),
+    dict(id="INC-CORE", name="Core Models", objective="income",
+         description="Dividend-focused equity with broad diversification."),
+]
+MOCK_LINE_OF = {"SCHWAB-TR": ("TR-CORE", "Moderate"), "SCHWAB-INC": ("INC-CORE", "Moderate")}
+RISK_PROFILES = ["Conservative", "Moderately conservative", "Moderate", "Moderately aggressive",
+                 "Aggressive"]
+_FUND_NAMES = {"SCHX": ("Schwab U.S. Large-Cap ETF", 3), "SCHG": ("Schwab U.S. Large-Cap Growth ETF", 4),
+               "SCHV": ("Schwab U.S. Large-Cap Value ETF", 4), "SCHM": ("Schwab U.S. Mid-Cap ETF", 4),
+               "SCHD": ("Schwab U.S. Dividend Equity ETF", 6)}
+
+
+def _catalog_model(mp: dict[str, Any]) -> dict[str, Any]:
+    line_id, risk = MOCK_LINE_OF.get(mp["id"], (None, ""))
+    n = sum(1 for a in STATE["accounts"].values() if a["target_model_id"] == mp["id"])
+    return dict(id=mp["id"], name=mp["name"], objective=mp["objective"], line_id=line_id,
+                risk_profile=risk, construction=mp["construction"], benchmark=mp["benchmark"],
+                description=mp["description"], advisory_fee_bps=mp.get("advisory_fee_bps", 0.0),
+                holdings=[dict(ticker=t, name=nm, weight=w) for t, nm, _er, w in mp["holdings"]],
+                target_yield=mp["target_yield"], expected_te=mp["expected_te"], fee_bps=mp["fee_bps"],
+                n_accounts=n)
+
+
+def _model_catalog() -> dict[str, Any]:
+    models = [_catalog_model(mp) for mp in MODELS]
+    cats = []
+    for obj, label in (("total_return", "Total return"), ("income", "Income")):
+        lines = [dict(ln, models=[x for x in models if x["line_id"] == ln["id"]])
+                 for ln in MOCK_LINES if ln["objective"] == obj]
+        cats.append(dict(id=obj, label=label, lines=lines,
+                         unassigned=[x for x in models if x["objective"] == obj and not x["line_id"]]))
+    return dict(categories=cats, risk_profiles=RISK_PROFILES,
+                products=[dict(ticker=t, name=n, asset_class="US Equity", expense_ratio_bps=er)
+                          for t, (n, er) in _FUND_NAMES.items()])
+
+
+def _mock_line(lid: str) -> dict[str, Any]:
+    ln = next((x for x in MOCK_LINES if x["id"] == lid), None)
+    if ln is None:
+        raise _Http(404, f"Model line {lid} not found")
+    return ln
+
+
+def _mock_set_model(mp: dict[str, Any], body: dict[str, Any]) -> None:
+    if body.get("holdings") is not None:
+        hs = [h for h in body["holdings"] if h["weight"] > 0]
+        if abs(sum(h["weight"] for h in hs) - 1) > 0.0005:
+            raise _Http(422, "Weights must add up to 100%")
+        mp["holdings"] = [(h["ticker"], _FUND_NAMES[h["ticker"]][0], _FUND_NAMES[h["ticker"]][1],
+                           h["weight"]) for h in hs]
+        mp["fee_bps"] = round(sum(er * w for _t, _n, er, w in mp["holdings"]), 2)
+    for k in ("name", "description", "advisory_fee_bps"):
+        if body.get(k) is not None:
+            mp[k] = body[k]
+    line_id, risk = MOCK_LINE_OF.get(mp["id"], (None, ""))
+    if body.get("line_id"):
+        line_id = _mock_line(body["line_id"])["id"]
+        mp["objective"] = _mock_line(line_id)["objective"]
+    MOCK_LINE_OF[mp["id"]] = (line_id, body.get("risk_profile") or risk)
+
+
+def _model_catalog_route(method: str, p: str, body: Any) -> Any:
+    body = body or {}
+    if p == "/model-catalog" and method == "GET":
+        return _model_catalog()
+    if p == "/model-catalog/lines" and method == "POST":
+        lid = f"L-{len(MOCK_LINES) + 1}"
+        MOCK_LINES.append(dict(id=lid, name=body["name"], objective=body["objective"],
+                               description=body.get("description", "")))
+        return {"id": lid}
+    m = re.fullmatch(r"/model-catalog/lines/([^/]+)", p)
+    if m:
+        ln = _mock_line(m.group(1))
+        ids = [k for k, (lid, _r) in MOCK_LINE_OF.items() if lid == ln["id"]]
+        if method == "PATCH":
+            ln.update({k: v for k, v in body.items() if v is not None})
+            for mp in MODELS:
+                if mp["id"] in ids:
+                    mp["objective"] = ln["objective"]
+            return None
+        if any(a["target_model_id"] in ids for a in STATE["accounts"].values()):
+            raise _Http(409, f"Can't delete the line “{ln['name']}”: accounts target its models.")
+        MOCK_LINES.remove(ln)
+        MODELS[:] = [mp for mp in MODELS if mp["id"] not in ids]
+        return None
+    if p == "/model-catalog/models" and method == "POST":
+        ln = _mock_line(body["line_id"])
+        mid = f"{ln['id']}-{len(MODELS) + 1}"
+        mp: dict[str, Any] = dict(id=mid, name=body["name"], provider="Charles Schwab",
+                                  objective=ln["objective"], construction="market_cap",
+                                  benchmark=MODELS[0]["benchmark"], description="", rationale="",
+                                  target_yield=0.02, expected_te=0.02, fee_bps=0.0, holdings=[])
+        _mock_set_model(mp, body)
+        MODELS.append(mp)
+        return {"id": mid}
+    m = re.fullmatch(r"/model-catalog/models/([^/]+)", p)
+    if m:
+        mp = _model(m.group(1))
+        if mp is None:
+            raise _Http(404, f"Model {m.group(1)} not found")
+        if method == "PATCH":
+            _mock_set_model(mp, body)
+            return None
+        if any(a["target_model_id"] == mp["id"] for a in STATE["accounts"].values()):
+            raise _Http(409, f"Can't delete “{mp['name']}”: accounts target it.")
+        MODELS.remove(mp)
+        MOCK_LINE_OF.pop(mp["id"], None)
+        return None
+    raise _Http(404, "Not found")
+
+
+# ---------------------------------------------------------------- risk & exposures (mock)
+
+
+def _mock_risk(scope: str, sid: str, name: str, mv: float,
+               accounts: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    r = rng("risk", sid)
+
+    def mix(names: list[str]) -> list[dict[str, Any]]:
+        raw = [r.random() ** 2 + .02 for _ in names]
+        tot = sum(raw)
+        return sorted([dict(name=n, weight=round(v / tot, 6), market_value=round(v / tot * mv, 2))
+                       for n, v in zip(names, raw, strict=True)], key=lambda x: -x["weight"])
+
+    grp = {"US Equity": "Equity", "Non-US Stocks": "Equity", "US Bonds": "Fixed Income",
+           "Non-US Bonds": "Fixed Income", "Preferred": "Preferred", "Cash": "Cash"}
+    vol = .12 + r.random() * .1
+    sys_pct = .7 + r.random() * .2
+    dec = [("Market", 1.0), ("Sector / industry", None), ("Value", .1), ("Quality", .05),
+           ("Profitability", .02), ("Momentum", -.03), ("Size (small cap)", -.2),
+           ("Stock-specific", None)]
+    shares = [sys_pct * .8, sys_pct * .15, .01, .01, .005, -.003, sys_pct * .05 - .022,
+              1 - sys_pct]
+    tail = []
+    for horizon, days in (("1 day", 1), ("1 month", 21)):
+        for conf, z in ((.95, 1.645), (.99, 2.33)):
+            v = vol / math.sqrt(252) * z * math.sqrt(days)
+            tail.append(dict(horizon=horizon, days=days, confidence=conf, var=round(v, 6),
+                             cvar=round(v * 1.25, 6), var_usd=round(v * mv, 2),
+                             cvar_usd=round(v * 1.25 * mv, 2)))
+    edges = [-.05 + i * .0025 for i in range(41)]
+    hist = [dict(x0=edges[i], x1=edges[i + 1],
+                 count=int(60 * math.exp(-((edges[i] + .00125) / (vol / 16)) ** 2 / 2)))
+            for i in range(40)]
+    rep = dict(
+        scope=scope, scope_id=sid, name=name, as_of=AS_OF.isoformat(),
+        generated_at="2026-11-11T09:00:00", data_source="mock", source_label="Simulated (mock data)",
+        methodology=["Frontend mock backend — illustrative numbers only."],
+        market_value=round(mv, 2), cash_weight=.02, n_positions=40, n_underlying=120,
+        asset_allocation=[dict(x, group=grp[x["name"]]) for x in
+                          sorted(mix(list(grp)), key=lambda x: list(grp).index(x["name"]))],
+        sectors=mix(["Information Technology", "Health Care", "Financials",
+                     "Consumer Discretionary", "Communication Services", "Industrials",
+                     "Consumer Staples", "Energy", "Utilities", "Real Estate", "Materials"]),
+        regions=mix(["North America", "Europe", "Asia Pacific", "Emerging Markets"]),
+        countries=[dict(region="North America", **x) for x in
+                   mix(["United States", "United Kingdom", "Japan", "Germany", "Canada"])],
+        volatility=round(vol, 6), realized_volatility=round(vol * .97, 6),
+        beta=round(.85 + r.random() * .3, 4),
+        systematic_pct=round(sys_pct, 5), specific_pct=round(1 - sys_pct, 5),
+        decomposition=[dict(factor=f, exposure=e, pct_of_variance=round(sh, 5),
+                            vol_contribution=round(sh * vol, 6))
+                       for (f, e), sh in zip(dec, shares, strict=True)],
+        sector_factor_detail=[], tail=tail, return_histogram=hist,
+        stress_tests=[dict(name=n, description=d, pnl_pct=p_, pnl_usd=round(p_ * mv, 2))
+                      for n, d, p_ in (("Equity market −20%", "Broad market falls 20%", -.2),
+                                       ("Rates +200 bp", "Rate-sensitive sectors fall", -.06),
+                                       ("Equity rally +15%", "Broad market rises 15%", .15))],
+        top_contributors=[dict(ticker=f"T{i}", name=f"Holding {i}", weight=.05, pct_of_risk=.06)
+                          for i in range(1, 6)],
+        top10_weight=.4, effective_n=25.0, accounts=[],
+    )
+    if accounts:
+        rep["accounts"] = [dict(account_id=a["id"], label=a.get("nickname") or a["account_type"],
+                                market_value=_account_mv(a), volatility=round(vol, 6), beta=1.0,
+                                var_95_1d=tail[0]["var"],
+                                var_95_1d_usd=round(tail[0]["var"] * _account_mv(a), 2))
+                           for a in accounts]
+    return rep
+
+
 def _route(method: str, path: str, body: Any, params: dict[str, Any], files: Any, data: Any) -> Any:
     p = path.rstrip("/")
     g = lambda k, d=None: (params or {}).get(k, d)  # noqa: E731
     if method == "GET" and p == "/auth/me":
         return USER
+    if p in ("/book/risk", "/book/risk/refresh"):
+        mv = sum(_account_mv(a) for a in STATE["accounts"].values())
+        return _mock_risk("book", "book", "Client book", mv)
+    m_risk = re.fullmatch(r"/clients/([^/]+)/risk(?:/refresh)?", p)
+    if m_risk:
+        c = _client_or_404(m_risk.group(1))
+        accts = _client_accounts(c["id"])
+        return _mock_risk("client", c["id"], c["name"], sum(_account_mv(a) for a in accts), accts)
     # ---- book
     if p == "/book/summary":
         accts = [_account_summary(a) for a in STATE["accounts"].values()]
@@ -1375,6 +1568,8 @@ def _route(method: str, path: str, body: Any, params: dict[str, Any], files: Any
                                      for t_, h in holdings.items()], key=lambda x: -x["market_value"]),
                     lots=lots)
     # ---- models
+    if p.startswith("/model-catalog"):
+        return _model_catalog_route(method, p, body)
     if p == "/models":
         items = [_model_summary(mp) for mp in MODELS
                  if not g("objective") or mp["objective"] == g("objective")]

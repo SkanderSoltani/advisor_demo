@@ -11,6 +11,8 @@ from typing import Any
 import dash_ag_grid as dag
 from dash import dcc, html
 
+from components.fold import fold_body, fold_button, fold_extra
+
 COLUMNS = [
     {"field": "label", "headerName": "Ticker / Lot ID", "width": 130, "pinned": "left",
      "cellClass": {"function": "params.data.kind === 'ticker' ? 'ts-lot-label ts-lot-ticker'"
@@ -96,12 +98,13 @@ def holdings_section() -> html.Section:
             html.Div(
                 [html.Div([html.H2("Holdings", className="ts-h2"),
                            html.P("Current positions. Click a ticker to see its tax lots.",
-                                  id="cd-hold-sub", className="ts-sub ts-mt-1")]),
-                 html.Div(id="cd-hold-totals", className="ts-hold-totals")],
-                className="ts-section-head ts-row ts-between ts-items-start",
+                                  id="cd-hold-sub", className="ts-sub ts-mt-1"),
+                           html.Div(id="cd-hold-totals", className="ts-hold-totals ts-mt-2")]),
+                 fold_button("cd-holdings", "holdings"), fold_extra("cd-holdings")],
+                className="ts-section-head ts-row ts-between ts-items-start ts-gap-3",
             ),
             dcc.Store(id="cd-hold-state", data=None),
-            dag.AgGrid(
+            fold_body("cd-holdings", dag.AgGrid(
                 id="cd-holdings", rowData=[], columnDefs=COLUMNS,
                 defaultColDef={"sortable": False, "suppressMovable": True},
                 dashGridOptions={"rowHeight": 44, "headerHeight": 40, "domLayout": "autoHeight",
@@ -112,7 +115,7 @@ def holdings_section() -> html.Section:
                                  "rowClassRules": {"ts-lot-child": "params.data.kind === 'lot'"},
                                  "localeText": {"noRowsToShow": "No holdings in this account."}},
                 className="ts-grid ts-grid-compact", style={"width": "100%"},
-            ),
+            )),
         ],
         className="ts-card ts-overflow-hidden ts-mt-6",
     )

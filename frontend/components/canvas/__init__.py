@@ -14,6 +14,7 @@ from typing import Any
 from dash import html
 
 from components.canvas import (
+    account_review,
     ingest_choice,
     model_comparison,
     model_list,
@@ -29,6 +30,7 @@ REGISTRY: dict[str, Renderer] = {
     "none": none.render,
     "ingest_choice": ingest_choice.render,
     "parse_preview": parse_preview.render,
+    "account_review": account_review.render,
     "model_list": model_list.render,
     "model_comparison": model_comparison.render,
     "transition_setup": transition_setup.render,

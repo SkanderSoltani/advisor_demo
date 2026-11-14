@@ -94,7 +94,7 @@ Typical sequence:
      confirm quick replies.
 3. Target questions, then comparison, then confirm (all via chat).
 4. Setup: quick replies like `budget:tax:20000`, or free text ("don't pay more than 20k in
-   taxes", "don't sell JUP", "keep 2% cash"). Choosing a budget runs the optimizer and frontier.
+   taxes", "don't sell MSFT", "keep 2% cash"). Choosing a budget runs the optimizer and frontier.
 5. Results: re-run with other budgets, ask "why isn't TE zero?", then `approve`.
 6. Approve: export via `exports.trades_csv` / `exports.summary_pdf`, then `{"action": "approve"}`
    to record the transition.

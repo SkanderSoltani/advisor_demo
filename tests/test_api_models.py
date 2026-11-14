@@ -45,20 +45,20 @@ def client(market: SyntheticMarket, provider: RandomAnalyticsProvider) -> Iterat
 
 def test_catalog(client: TestClient) -> None:
     r = client.get(f"{API}/models").json()
-    assert r["data_source"] == "mock_random" and r["total"] == 2
+    assert r["data_source"] == "mock_random" and r["total"] == 53
     for m in r["items"]:
         st = m["stats"]
-        assert 0.05 < st["volatility"] < 0.35 and 0 < st["max_drawdown"] < 0.6
+        assert 0.005 < st["volatility"] < 0.35 and 0 < st["max_drawdown"] < 0.6
         assert sum(st["sector_mix"].values()) == pytest.approx(1, abs=1e-4)
-        assert st["n_holdings"] <= 10 < st["n_underlying"]
-        assert 0 < m["fee_bps"] < 20 and 0 < m["expected_te"] < 0.06
+        assert st["n_holdings"] <= 25 and st["n_underlying"] > 10
+        assert 0 < m["fee_bps"] < 40 and 0 < m["expected_te"] < 0.06
     inc = client.get(f"{API}/models?objective=income").json()["items"]
-    assert [m["id"] for m in inc] == ["SCHWAB-INC"]
+    assert "INC-60-40" in [m["id"] for m in inc] and len(inc) == 6
     assert client.get(f"{API}/models?objective=growth").status_code == 422
 
 
 def test_model_detail(client: TestClient) -> None:
-    d = client.get(f"{API}/models/SCHWAB-INC").json()
+    d = client.get(f"{API}/models/INC-60-40").json()
     assert sum(h["weight"] for h in d["holdings"]) == pytest.approx(1)
     assert all(h["security_type"] == "fund" for h in d["holdings"])
     assert d["regime_performance"] is None
@@ -66,12 +66,12 @@ def test_model_detail(client: TestClient) -> None:
 
 
 def test_compare_legacy_account(client: TestClient) -> None:
-    body = {"model_ids": ["SCHWAB-TR", "SCHWAB-INC", "SCHWAB-TR"], "account_id": "acc_017"}
+    body = {"model_ids": ["TR-CORE-96-04", "INC-60-40", "TR-CORE-96-04"], "account_id": "acc_017"}
     r = client.post(f"{API}/models/compare", json=body)
     assert r.status_code == 200, r.text
     p = r.json()
     assert p["taxable"] and "Not tax or investment advice" in p["disclaimer"]
-    assert [c["model"]["id"] for c in p["comparisons"]] == ["SCHWAB-TR", "SCHWAB-INC"]
+    assert [c["model"]["id"] for c in p["comparisons"]] == ["TR-CORE-96-04", "INC-60-40"]
     cur = p["current"]
     assert cur["locked_value"] > 0 and sum(cur["sector_mix"].values()) == pytest.approx(1, abs=1e-4)
     for c in p["comparisons"]:
@@ -84,7 +84,7 @@ def test_compare_legacy_account(client: TestClient) -> None:
 
 def test_compare_ira_and_unlocked(client: TestClient) -> None:
     p = client.post(
-        f"{API}/models/compare", json={"model_ids": ["SCHWAB-INC"], "account_id": "acc_003"}
+        f"{API}/models/compare", json={"model_ids": ["INC-60-40"], "account_id": "acc_003"}
     ).json()
     ft = p["comparisons"][0]["full_transition"]
     assert not p["taxable"] and ft["est_tax"] == 0
@@ -94,7 +94,9 @@ def test_compare_ira_and_unlocked(client: TestClient) -> None:
 def test_compare_errors_and_empty_account(client: TestClient) -> None:
     bad = client.post(f"{API}/models/compare", json={"model_ids": ["X"], "account_id": "acc_001"})
     assert bad.status_code == 404
-    bad = client.post(f"{API}/models/compare", json={"model_ids": ["SCHWAB-TR"], "account_id": "z"})
+    bad = client.post(
+        f"{API}/models/compare", json={"model_ids": ["TR-CORE-96-04"], "account_id": "z"}
+    )
     assert bad.status_code == 404
     assert (
         client.post(
@@ -106,7 +108,7 @@ def test_compare_errors_and_empty_account(client: TestClient) -> None:
         f"{API}/clients/cli_009/accounts", json={"account_type": "ira", "custodian": "Schwab"}
     ).json()
     p = client.post(
-        f"{API}/models/compare", json={"model_ids": ["SCHWAB-TR"], "account_id": acct["id"]}
+        f"{API}/models/compare", json={"model_ids": ["TR-CORE-96-04"], "account_id": acct["id"]}
     ).json()
     c = p["comparisons"][0]
     assert c["te_from_current"] is None and c["full_transition"]["est_tax"] == 0
@@ -117,7 +119,7 @@ def test_regimes(client: TestClient) -> None:
     r = client.post(f"{API}/analytics/regimes", files={"file": ("r.csv", csv, "text/csv")})
     assert r.status_code == 200, r.text
     assert r.json()["regimes"] == {"risk_off": 2, "risk_on": 1}
-    perf = client.get(f"{API}/models/SCHWAB-TR").json()["regime_performance"]
+    perf = client.get(f"{API}/models/TR-CORE-96-04").json()["regime_performance"]
     assert {p["regime"] for p in perf} == {"risk_off", "risk_on"}
     assert sum(p["n_days"] for p in perf) > 1000
     bad = client.post(
@@ -125,4 +127,4 @@ def test_regimes(client: TestClient) -> None:
     )
     assert bad.status_code == 422 and "invalid date" in bad.text
     assert client.delete(f"{API}/analytics/regimes").status_code == 204
-    assert client.get(f"{API}/models/SCHWAB-TR").json()["regime_performance"] is None
+    assert client.get(f"{API}/models/TR-CORE-96-04").json()["regime_performance"] is None

@@ -56,6 +56,8 @@ FACTORS = ("value", "quality", "momentum", "size")
 RISK_FREE_RATE = 0.03
 
 
+NON_EQUITY = "Bonds & other"  # look-through weight of bond / cash funds outside stocks
+
 class RandomAnalyticsProvider(AnalyticsProvider):
     """Seeded simulated analytics over the synthetic market."""
 
@@ -326,6 +328,12 @@ class RandomAnalyticsProvider(AnalyticsProvider):
         ]
         if total > 0:
             sectors.append(SectorExposure("Cash", round(cash_w, 6), 0.0))
+        # bond / cash funds look through to only part of a stock basket (see BLENDS): the rest
+        # of their weight is shown as one non-equity row so both sides still add up to 1
+        rest_p = max(0.0, 1.0 - sum(sec_p.values()) - (cash_w if total > 0 else 0.0))
+        rest_t = max(0.0, 1.0 - sum(sec_t.values())) if has_target else 0.0
+        if rest_p > 1e-4 or rest_t > 1e-4:
+            sectors.append(SectorExposure(NON_EQUITY, round(rest_p, 6), round(rest_t, 6)))
 
         names = set(w) | set(tw)
         secs = sorted(
@@ -379,7 +387,8 @@ class RandomAnalyticsProvider(AnalyticsProvider):
             weights = self.look_through(weights)
             tick = [t for t, w in weights.items() if w > 0]
             w = np.array([weights[t] for t in tick])
-            rets = self.market.returns[tick].to_numpy() @ (w / w.sum())
+            # no re-normalisation: weight not in stocks (bond / cash funds) earns ~0 here
+            rets = self.market.returns[tick].to_numpy() @ w
             self._model_ret_cache[key] = pd.Series(rets, index=self.market.returns.index)
         return self._model_ret_cache[key]
 
@@ -397,6 +406,10 @@ class RandomAnalyticsProvider(AnalyticsProvider):
         for t, w in held.items():
             sec = str(u.at[t, "sector"])
             sectors[sec] = sectors.get(sec, 0.0) + w
+
+        rest = 1.0 - sum(sectors.values())
+        if rest > 1e-4:
+            sectors[NON_EQUITY] = rest
 
         def avg(col: str) -> float:
             src = self._size if col == "size" else u[col]

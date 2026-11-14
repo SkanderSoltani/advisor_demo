@@ -7,9 +7,11 @@ from fastapi import APIRouter, HTTPException, Query, status
 from app.analytics.types import Granularity as AGranularity
 from app.api.deps import DB, Service, account_or_404
 from app.db import models as m
+from app.model_builder.diagnosis import Diagnosis
 from app.schemas.accounts import AccountDetail, EventDetail
 from app.schemas.analytics import ExposuresOut, TaxHistory, TrackingError
 from app.schemas.common import Granularity, TEWindow
+from app.services.diagnosis import DiagnosisService
 from app.services.events import event_detail
 
 router = APIRouter(tags=["accounts"])
@@ -43,6 +45,20 @@ def tracking_error(
 ) -> TrackingError:
     a = account_or_404(svc, account_id)
     return svc.tracking_error([a], int(window), a.id)
+
+
+@router.get(
+    "/accounts/{account_id}/diagnosis",
+    response_model=Diagnosis,
+    summary="AI review checks: concentration, sector/region tilts, risk vs benchmark, tax & cash",
+)
+def diagnosis(account_id: str, svc: Service,
+              target_model_id: str | None = Query(None, description="compare against this model "
+                                                  "(default: the account's own target)"),
+              use_target: bool = Query(True, description="false = always the auto blend"),
+              ) -> Diagnosis:
+    return DiagnosisService(svc).account(account_or_404(svc, account_id), target_model_id,
+                                         use_target)
 
 
 @router.get(

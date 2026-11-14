@@ -10,7 +10,18 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
-from app.api import accounts, auth, book, clients, ingest, models, transitions
+from app.api import (
+    accounts,
+    auth,
+    book,
+    clients,
+    ingest,
+    model_builder,
+    model_catalog,
+    models,
+    risk,
+    transitions,
+)
 from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger, new_request_id, request_id_var
 
@@ -50,6 +61,9 @@ def sync_catalog_on_startup() -> None:
         log.info("book file", action=what, path=str(s.BOOK_FILE))
     import threading
 
+    from app.services import book_cache
+
+    book_cache.set_warmer(warm_book_cache)
     threading.Thread(target=warm_book_cache, name="warm-book-cache", daemon=True).start()
 
 
@@ -147,6 +161,9 @@ def create_app(sync_catalog: bool = True) -> FastAPI:
         clients.router,
         accounts.router,
         models.router,
+        model_catalog.router,
+        model_builder.router,
+        risk.router,
         transitions.router,
         ingest.router,
     ):

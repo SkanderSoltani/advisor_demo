@@ -44,9 +44,10 @@ def invalidate(accounts: Iterable[str] | None = None, everything: bool = False) 
         if everything:
             _global_rev += 1
             _acct_cache.clear()
-            return
-        for a in accounts or ():
-            _acct_rev[a] = _acct_rev.get(a, 0) + 1
+        else:
+            for a in accounts or ():
+                _acct_rev[a] = _acct_rev.get(a, 0) + 1
+    _schedule_rewarm()
 
 
 def book_cached(fn: F) -> F:
@@ -65,13 +66,48 @@ def book_cached(fn: F) -> F:
         with _lock:
             if key in _cache:
                 return _cache[key]
-        value = fn(self, *args, **kwargs)
-        with _lock:
-            if key[1] == _version:  # don't store a result computed across a change
-                _cache[key] = value
+            flight = _inflight.setdefault(key, threading.Lock())
+        # single flight: concurrent requests for the same numbers (several charts on one page)
+        # wait for the first computation instead of each recomputing the whole book
+        with flight:
+            with _lock:
+                if key in _cache:
+                    return _cache[key]
+            try:
+                value = fn(self, *args, **kwargs)
+                with _lock:
+                    if key[1] == _version:  # don't store a result computed across a change
+                        _cache[key] = value
+            finally:
+                with _lock:
+                    _inflight.pop(key, None)
         return value
 
     return wrapper  # type: ignore[return-value]
+
+
+_inflight: dict[tuple[Any, ...], threading.Lock] = {}
+_rewarm: threading.Timer | None = None
+_warmer: Callable[[], None] | None = None
+
+
+def set_warmer(fn: Callable[[], None]) -> None:
+    """Register the function that precomputes the landing-page numbers (app startup)."""
+    global _warmer
+    _warmer = fn
+
+
+def _schedule_rewarm(delay: float = 1.0) -> None:
+    """After a change, recompute the book numbers in the background (debounced), so the next
+    page view finds them ready instead of waiting."""
+    global _rewarm
+    if _warmer is None:
+        return
+    if _rewarm is not None:
+        _rewarm.cancel()
+    _rewarm = threading.Timer(delay, _warmer)
+    _rewarm.daemon = True
+    _rewarm.start()
 
 
 def account_cached(

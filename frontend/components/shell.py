@@ -66,6 +66,8 @@ def left_rail(active: str = "dashboard") -> html.Aside:
         [
             btn("dashboard", "layout-dashboard", "Dashboard", "/"),
             btn("clients", "users", "Clients"),
+            btn("models", "layers", "Model management", "/models"),
+            btn("builder", "blocks", "Model builder", "/model-builder"),
             btn("activity", "activity", "Activity"),
             html.Div([btn("help", "circle-help", "Help"), btn("settings", "settings-2", "Settings")],
                      className="ts-rail-bottom"),

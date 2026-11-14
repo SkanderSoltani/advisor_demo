@@ -578,3 +578,217 @@ button.ts-choice-card:hover, button.ts-model-card:hover { border-color: var(--br
 .ts-canvas-actions--center { align-items: center; }
 @media (min-width: 1024px) { .ts-ws { height: 100vh; overflow: clip; } }
 .ts-settings-line { margin: 16px 0 0; font-size: 12px; line-height: 16px; color: var(--ink-600); }
+
+/* ---------- Model management (/models) */
+.ts-justify-end { justify-content: flex-end; }
+.ts-wrap { flex-wrap: wrap; }
+.ts-no-underline, .ts-no-underline:hover { text-decoration: none; }
+.ts-icon-btn.is-danger:hover { color: var(--negative); border-color: rgba(204, 51, 51, .35); }
+.ts-mm-cat-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border-radius: 8px; background: rgba(0, 160, 223, .1); color: var(--brand-primary-dark); }
+.ts-mm-cat-title { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: var(--brand-navy); }
+.ts-mm-line { overflow: hidden; }
+.ts-mm-line-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--surface-100); background: var(--surface-50); }
+.ts-mm-line-name { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; color: var(--brand-navy); }
+.ts-mm-count { border-radius: 9999px; background: #fff; border: 1px solid var(--surface-100); padding: 1px 8px;
+  font-size: 12px; color: var(--ink-600); }
+.ts-mm-table-wrap { overflow-x: auto; }
+.ts-mm-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+.ts-mm-table th:nth-child(1) { width: 23%; } .ts-mm-table th:nth-child(2) { width: 11%; }
+.ts-mm-table th:nth-child(3) { width: 31%; } .ts-mm-table th:nth-child(4) { width: 7%; }
+.ts-mm-table th:nth-child(5) { width: 8%; } .ts-mm-table th:nth-child(6) { width: 9%; }
+.ts-mm-table th:nth-child(7) { width: 8%; } .ts-mm-table th:nth-child(8) { width: 96px; }
+.ts-mm-table th { text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-600); padding: 10px 16px;
+  border-bottom: 1px solid var(--surface-100); white-space: nowrap; }
+.ts-mm-table td { padding: 12px 16px; border-bottom: 1px solid var(--surface-100); vertical-align: middle; color: var(--ink-900); }
+.ts-mm-table tr:last-child td { border-bottom: 0; }
+.ts-mm-table th.ts-num, .ts-mm-table td.ts-num { text-align: right; white-space: nowrap; }
+.ts-mm-id { font-size: 12px; color: var(--ink-600); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin-top: 2px; }
+.ts-mm-risk { display: inline-flex; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 500;
+  background: rgba(0, 61, 92, .07); color: var(--brand-navy); white-space: nowrap; }
+.ts-mm-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.ts-mm-chip { white-space: nowrap; color: var(--ink-900); }
+.ts-mm-chip b { font-weight: 600; color: var(--brand-navy); }
+.ts-mm-empty { margin: 0; padding: 20px; color: var(--ink-600); font-size: 14px; }
+.ts-mm-w-title { font-size: 14px; font-weight: 600; color: var(--brand-navy); }
+.ts-mm-w-total { font-size: 13px; font-weight: 600; border-radius: 9999px; padding: 2px 10px; }
+.ts-mm-w-total.is-ok { background: rgba(46,133,64,.1); color: var(--positive); }
+.ts-mm-w-total.is-off { background: rgba(232,163,23,.15); color: var(--warning-text); }
+.ts-mm-w-list { border: 1px solid var(--surface-100); border-radius: 8px; max-height: 420px; overflow-y: auto; }
+.ts-mm-w-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 12px;
+  border-bottom: 1px solid var(--surface-100); }
+.ts-mm-w-row:last-child { border-bottom: 0; }
+.ts-mm-prod-name { font-size: 12px; color: var(--ink-600); }
+.ts-mm-w { width: 110px; flex-shrink: 0; }
+.ts-mm-select .mantine-Select-input { height: 36px; border-radius: 8px; border-color: var(--surface-100); font-size: 14px; }
+
+/* ---- Risk & exposures panel (components/risk_panel.py) ---- */
+.ts-risk-asof { font-size: 12px; color: var(--ink-600); }
+.ts-risk-grid-3, .ts-risk-grid-2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1024px) {
+  .ts-risk-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ts-risk-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.ts-risk-card { border: 1px solid var(--surface-100); border-radius: 10px; padding: 16px; min-width: 0; }
+.ts-risk-card-title { font-size: 15px; font-weight: 600; color: var(--brand-navy); margin: 0 0 2px; }
+.ts-risk-sublabel { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-600); margin: 14px 0 6px; }
+.ts-bar-list { display: flex; flex-direction: column; gap: 7px; }
+.ts-bar-row { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr) 52px; align-items: center; gap: 10px;
+  font-size: 13px; }
+.ts-bar-name { color: var(--ink-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ts-bar-track { height: 10px; background: var(--surface-50); border-radius: 4px; overflow: hidden; }
+.ts-bar-fill { display: block; height: 100%; border-radius: 4px; min-width: 2px; }
+.ts-bar-primary { background: var(--brand-primary); }
+.ts-bar-navy { background: var(--brand-navy); }
+.ts-bar-fill.is-cash { background: var(--ink-300); }
+.ts-bar-val { text-align: right; color: var(--ink-900); font-weight: 500; }
+.ts-risk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ts-risk-table th { text-align: left; font-weight: 500; color: var(--ink-600); font-size: 12px;
+  padding: 6px 8px; border-bottom: 1px solid var(--surface-100); }
+.ts-risk-table td { padding: 7px 8px; border-bottom: 1px solid var(--surface-50); }
+.ts-risk-table tr:last-child td { border-bottom: 0; }
+.ts-risk-table .ts-num { text-align: right; }
+.ts-stress-list { display: flex; flex-direction: column; gap: 10px; }
+.ts-stress-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 96px; align-items: center; gap: 12px; }
+.ts-stress-desc { font-size: 12px; color: var(--ink-600); }
+.ts-stress-track { position: relative; height: 12px; background: var(--surface-50); border-radius: 4px; }
+.ts-stress-axis { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink-300); }
+.ts-stress-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.ts-stress-fill.is-loss { background: var(--negative); }
+.ts-stress-fill.is-gain { background: var(--positive); }
+.ts-stress-val { text-align: right; }
+.ts-risk-method { font-size: 12px; color: var(--ink-600); }
+.ts-risk-method summary { cursor: pointer; font-weight: 500; color: var(--brand-primary-dark); }
+.ts-risk-method ul { margin: 8px 0 0 18px; padding: 0; }
+@media (max-width: 640px) {
+  .ts-stress-row { grid-template-columns: minmax(0, 1fr) 84px; }
+  .ts-stress-track { display: none; }
+}
+.ts-stress-title { font-size: 14px; font-weight: 500; color: var(--brand-navy); }
+.ts-table-scroll { overflow-x: auto; max-width: 100%; }
+.ts-table-scroll .ts-risk-table td, .ts-table-scroll .ts-risk-table th { white-space: nowrap; }
+.ts-bar-row.is-group .ts-bar-name, .ts-bar-row.is-group .ts-bar-val { font-weight: 600; color: var(--brand-navy); }
+.ts-bar-row.is-child .ts-bar-name { padding-left: 14px; color: var(--ink-600); }
+.ts-bar-row.is-group:not(:first-child) { margin-top: 4px; }
+
+/* ---- show / hide for sections below Analytics */
+.ts-fold-summary { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; line-height: 20px; color: var(--ink-600); }
+.ts-fold-summary:empty { display: none; }
+.ts-fold-summary strong { color: var(--brand-navy); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ts-fold-btn { white-space: nowrap; flex-shrink: 0; }
+.ts-fold-actions { align-items: center; justify-content: flex-end; }
+
+/* ---- model management: provider heading (Schwab Models → category → line) */
+.ts-mm-provider { padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--surface-100); gap: 12px; }
+.ts-mm-provider-title { margin: 0; font-size: 24px; line-height: 32px; font-weight: 700; color: var(--brand-navy); }
+.ts-mm-line-head > :first-child { flex: 1 1 0; min-width: 0; }
+.ts-mm-line-head > :last-child { flex-shrink: 0; flex-wrap: nowrap; }
+@media (max-width: 760px) { .ts-mm-line-head > :last-child { flex-wrap: wrap; } }
+/* transition: target picker table (narrower canvas) */
+.ts-pick-table { min-width: 720px; }
+.ts-pick-table th:nth-child(1) { width: 24%; } .ts-pick-table th:nth-child(2) { width: 10%; }
+.ts-pick-table th:nth-child(3) { width: 30%; } .ts-pick-table th:nth-child(4) { width: 9%; }
+.ts-pick-table th:nth-child(5) { width: 9%; } .ts-pick-table th:nth-child(6) { width: 7%; }
+.ts-pick-table th:nth-child(7) { width: 92px; }
+.ts-pick-table th, .ts-pick-table td { padding-left: 10px; padding-right: 10px; }
+
+/* ---- chart tooltips: let Plotly hover labels draw outside the chart area (they were clipped
+   on short charts) and above neighbouring cards */
+.js-plotly-plot, .js-plotly-plot .plot-container, .js-plotly-plot .svg-container,
+.js-plotly-plot .plotly .main-svg { overflow: visible !important; }
+.ts-graph, .js-plotly-plot { position: relative; }
+.ts-graph:hover, .js-plotly-plot:hover { z-index: 50; }
+.js-plotly-plot .plotly .main-svg .hoverlayer { pointer-events: none; }
+
+/* ---- Model Builder */
+@media (min-width: 1024px) { .ts-chat--narrow { width: 30%; min-width: 320px; max-width: 440px; } }
+.ts-bld-canvas { max-width: 1240px; }
+.ts-bld-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 16px; }
+@media (min-width: 900px) { .ts-bld-tools { grid-template-columns: 1fr 1.3fr 1fr; } }
+.ts-bld-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ts-bld-label { font-size: 12px; font-weight: 600; color: var(--ink-600); }
+.ts-bld-grow { flex: 1 1 260px; }
+.ts-bld-upload { display: flex; align-items: center; justify-content: center; gap: 6px; height: 44px; border: 1px dashed var(--ink-300);
+  border-radius: 8px; color: var(--brand-primary-dark); cursor: pointer; background: var(--surface-50); font-size: 14px; }
+.ts-bld-upload:hover { border-color: var(--brand-primary); }
+.ts-bld-addrow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px; border-radius: 10px; background: var(--surface-50); }
+.ts-bld-search { flex: 1 1 320px; min-width: 0; }
+.ts-bld-addw { width: 110px; }
+.ts-bld-table { min-width: 560px; }
+.ts-bld-table th:nth-child(1) { width: 44%; } .ts-bld-table th:nth-child(2) { width: 20%; }
+.ts-bld-table th:nth-child(3) { width: 12%; } .ts-bld-table th:nth-child(4) { width: 16%; } .ts-bld-table th:nth-child(5) { width: 8%; }
+.ts-bld-table td { padding-top: 8px; padding-bottom: 8px; }
+.ts-bld-w { width: 110px; margin-left: auto; }
+.ts-bld-note { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 8px; background: var(--surface-50);
+  margin-bottom: 12px; font-size: 13px; }
+.ts-bld-note p { margin: 0; }
+.ts-bld-bench { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 10px;
+  background: rgba(0,160,223,.08); color: var(--brand-navy); font-size: 14px; }
+.ts-bld-warn { margin: 8px 0 0; font-size: 13px; color: var(--warning-text, #9A6A00); }
+.ts-bld-kpis { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 900px) { .ts-bld-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.ts-bld-grid-3 { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) { .ts-bld-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ts-bld-span2 { grid-column: span 2; } }
+.ts-bld-leg { display: grid; gap: 4px; margin-top: 8px; }
+.ts-bld-legrow { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-600); }
+.ts-bld-box { width: 100%; border-collapse: separate; border-spacing: 4px; table-layout: fixed; }
+.ts-bld-box th { font-size: 12px; font-weight: 600; color: var(--ink-600); text-align: center; padding: 2px; }
+.ts-bld-box-h { text-align: left !important; width: 52px; }
+.ts-bld-box-cell { text-align: center; border-radius: 6px; height: 52px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ts-bld-factor { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) { .ts-bld-factor { grid-template-columns: 1.3fr 1fr; align-items: start; } }
+.ts-bld-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.ts-bld-total-row td { border-top: 1px solid var(--ink-300); }
+.ts-bld-scale-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.ts-bld-scale-controls .ts-bld-field { width: 140px; }
+.ts-bld-scale-controls .ts-bld-grow { width: auto; }
+.ts-bld-preview-btn { height: 40px; }
+.ts-bld-line-table { min-width: 720px; }
+.ts-bld-line-table th:nth-child(1) { width: 12%; } .ts-bld-line-table th:nth-child(2) { width: 40%; }
+
+/* segmented controls: anchor the visually-hidden radio to its own label. Without a positioned
+   ancestor it sat far down the page, made the document taller than the window, and focusing it on
+   click scrolled the whole page (the "jump" when switching tabs). */
+.ts-segmented label { position: relative; }
+.ts-canvas { position: relative; }
+
+/* ---------- transition: three-portfolio analytics ---------- */
+.ts-pa-legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 16px; font-size: 13px; }
+.ts-pa-key { display: flex; align-items: center; gap: 8px; }
+.ts-pa-swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.ts-pa-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.ts-pa-table th.ts-num, .ts-pa-table td.ts-num { white-space: nowrap; }
+.ts-pa-holdings { max-height: 520px; overflow-y: auto; }
+.ts-pa-holdings thead th { position: sticky; top: 0; background: var(--surface-0, #fff); z-index: 1; }
+.ts-pa-boxes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ts-pa-box-title { font-size: 13px; font-weight: 600; color: var(--ink-900); border-left: 3px solid; padding-left: 8px; margin-bottom: 6px; }
+.ts-pa-box-table .ts-bld-box-h { width: 24px; }
+.ts-pa-box-table .ts-bld-box-cell { font-size: 12px; padding: 8px 2px; }
+@media (max-width: 900px) { .ts-pa-boxes { grid-template-columns: 1fr; } }
+
+/* analytics tabs: side-by-side cards keep their own height (no blank stretch under the shorter) */
+#mb-analytics .ts-risk-grid-2, #mb-analytics .ts-risk-grid-3,
+.ts-pa .ts-risk-grid-2, .ts-pa .ts-risk-grid-3 { align-items: start; }
+
+/* ---------- AI review (account diagnosis) ---------- */
+.ts-ai-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 12px; background: rgba(0,160,223,.08); color: var(--brand-navy); font-size: 14px; }
+.ts-ai-list { display: flex; flex-direction: column; gap: 12px; }
+.ts-ai-finding { display: flex; gap: 14px; padding: 16px 18px; border: 1px solid var(--surface-200, #E1E6EA); border-left-width: 4px; border-radius: 12px; background: #fff; }
+.ts-ai-finding--high { border-left-color: var(--negative, #C8102E); }
+.ts-ai-finding--medium { border-left-color: #E8A317; }
+.ts-ai-finding--low, .ts-ai-finding--info { border-left-color: var(--ink-300, #C5CBD1); }
+.ts-ai-icon { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-100, #EBEFF2); color: var(--brand-navy); }
+.ts-ai-main { min-width: 0; flex: 1; }
+.ts-ai-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ts-ai-title { font-weight: 600; color: var(--brand-navy); font-size: 15px; }
+.ts-ai-detail { margin-top: 4px; color: var(--ink-600, #5B6670); font-size: 14px; line-height: 1.5; }
+.ts-ai-fixes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.ts-ai-fix { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--brand-primary, #00A0DF); color: var(--brand-primary-dark, #0076A8); background: #fff; border-radius: 9999px; padding: 6px 12px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.ts-ai-fix:hover { background: rgba(0,160,223,.06); }
+.ts-ai-fix.is-on { background: var(--brand-primary, #00A0DF); color: #fff; }
+.ts-ai-solutions { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--surface-100, #EBEFF2); }
+.ts-ai-checks label { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 14px; cursor: pointer; }
+.ts-ai-check-input { margin-top: 3px; accent-color: var(--brand-primary, #00A0DF); }
+.ts-ai-card .ts-row { flex-wrap: wrap; }

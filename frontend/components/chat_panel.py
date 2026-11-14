@@ -17,7 +17,14 @@ QR_LABELS = {
     "save_valid_only": "Save only the valid rows", "knows": "I know my target",
     "help": "Help me choose", "yes": "Yes, confirm", "no": "Choose another",
     "approve": "Approve", "adjust": "Change settings", "restart": "Start over",
-    "confirm_pending": "Yes", "cancel_pending": "No",
+    "confirm_pending": "Yes", "cancel_pending": "No", "continue": "Continue",
+}
+# account-review fixes (ids from the backend diagnosis)
+FIX_LABELS = {
+    "cap_stocks": "Cap single stocks at 5%", "sector_band": "Keep sectors near the target",
+    "lower_risk": "Look at lower-risk targets", "more_intl": "Add international stocks",
+    "spread_gains": "Spread gains over ~3 years", "harvest": "Harvest losses first",
+    "invest_cash": "Invest the idle cash",
 }
 
 
@@ -32,8 +39,12 @@ def humanize_reply(raw: str) -> str:
     name, _, arg = rid.partition(":")
     if name == "choose":
         return f"Choose {arg}"
+    if name in ("fix", "unfix"):
+        label = FIX_LABELS.get(arg, arg.replace("_", " "))
+        return label if name == "fix" else f"Undo: {label.lower()}"
     if name == "objective":
-        return {"income": "Income", "total_return": "Total return"}.get(arg, arg)
+        return {"income": "Income", "total_return": "Total return",
+                "tax_efficient": "Tax efficient"}.get(arg, arg)
     if name == "construction":
         return arg.replace("market_cap", "Market cap").replace("_fundamental", " + fundamental") \
                   .replace("_active", " + active")

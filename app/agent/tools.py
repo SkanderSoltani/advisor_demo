@@ -69,6 +69,22 @@ class AgentTools:
             if objective is None or mp.objective == objective
         ]
 
+    def model_profiles(self, model_ids: list[str]) -> dict[str, dict[str, float]]:
+        """Equity share and the international share of the equity sleeve, per model."""
+        from app.db.catalog import EQUITY_CLASSES
+        from app.model_builder.analytics import BuilderData
+
+        data = BuilderData.get(self.ts.p)
+        out = {}
+        for mid in model_ids:
+            w = self.ts.ps.model_weights(mid)
+            eq = sum(x for t, x in w.items() if data.known(t)
+                     and data.asset_class(t) in EQUITY_CLASSES)
+            intl = sum(x for t, x in w.items() if data.known(t)
+                       and data.asset_class(t) == "Non-US Stocks")
+            out[mid] = {"equity": eq, "non_us_equity": intl / eq if eq else 0.0}
+        return out
+
     def compare_models(self, model_ids: list[str]) -> dict[str, Any]:
         ids = [i for i in dict.fromkeys(model_ids) if self.ms.get(i) is not None]
         if not ids:
@@ -181,7 +197,8 @@ READ_ONLY_TOOL_SPECS: list[dict[str, Any]] = [
     _tool(
         "list_models",
         "The target-model catalog, optionally filtered by objective.",
-        {"objective": {"type": "string", "enum": ["income", "total_return", "any"]}},
+        {"objective": {"type": "string",
+                       "enum": ["income", "total_return", "tax_efficient", "any"]}},
         ["objective"],
     ),
     _tool(

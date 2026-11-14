@@ -145,7 +145,8 @@ def test_new_client_and_approved_transition_are_written(
 
     chat()
     chat(quick_reply="use_existing")
-    chat(quick_reply="choose:SCHWAB-INC")
+    chat(quick_reply="continue")  # account review: no fixes
+    chat(quick_reply="choose:INC-60-40")
     chat(message="yes")
     t = chat(quick_reply="budget:tax:50000")
     assert t["state"] == "TRANSITION_RESULTS", t["state"]
@@ -193,7 +194,7 @@ def test_new_client_and_approved_transition_are_written(
     assert ev["realized_lt_gain"] == pytest.approx(rz["lt_gain"], abs=0.01)
     assert ev["realized_st_loss"] == pytest.approx(rz["st_loss"], abs=0.01)
     assert ev["realized_lt_loss"] == pytest.approx(rz["lt_loss"], abs=0.01)
-    assert acct["target_model_id"] == "SCHWAB-INC"
+    assert acct["target_model_id"] == "INC-60-40"
     assert check_book(book) == []
     # the cached book numbers were refreshed by the change
     api = c.get(f"{API}/book/summary").json()
@@ -262,3 +263,46 @@ def test_delete_client_removes_it_everywhere(setup: tuple[TestClient, Any, Path]
             s.query(m.ManagementEvent).filter(m.ManagementEvent.account_id.in_(acct_ids)).count()
             == 0
         )
+
+
+def test_cache_invalidation_is_narrow_and_shared() -> None:
+    """Adding an account to a client must not clear every account's cached numbers; only a real
+    tax-rate edit does. Concurrent identical requests compute once."""
+    import threading
+    import time
+    from types import SimpleNamespace
+
+    from app.db import models as m
+    from app.db.book_store import _tax_rates_changed
+    from app.services import book_cache
+
+    from sqlalchemy.orm.attributes import set_committed_value
+
+    c = m.Client()
+    for k, v in {"id": "cli_x", "federal_st_rate": 0.37, "federal_lt_rate": 0.2, "state": "CA",
+                 "state_rate": 0.1}.items():
+        set_committed_value(c, k, v)  # as if loaded from the database
+    c.name = "Renamed"
+    assert not _tax_rates_changed(c)
+    c.state_rate = 0.12
+    assert _tax_rates_changed(c)
+
+    calls = []
+
+    class Svc:
+        advisor_id = "adv"
+        db = SimpleNamespace(get_bind=lambda: "bind")
+
+        @book_cache.book_cached
+        def slow(self) -> int:
+            calls.append(1)
+            time.sleep(0.2)
+            return 42
+
+    out: list[int] = []
+    ts = [threading.Thread(target=lambda: out.append(Svc().slow())) for _ in range(4)]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+    assert out == [42] * 4 and len(calls) == 1

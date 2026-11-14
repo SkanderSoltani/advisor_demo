@@ -6,12 +6,12 @@ from dash import html
 
 from components.shell import icon
 
-STEPS = ["Import holdings", "Review lots", "Choose target", "Compare", "Optimize transition",
+STEPS = ["Import holdings", "Review account", "Choose target", "Compare", "Optimize transition",
          "Review & export"]
 
 # backend conversation state → React step (1-based). See docs/port_plan.md §8.
 STATE_STEP = {
-    "START": 1, "INGEST_CHOICE": 1, "INGEST_REVIEW": 2,
+    "START": 1, "INGEST_CHOICE": 1, "INGEST_REVIEW": 2, "ACCOUNT_REVIEW": 2,
     "TARGET_KNOWLEDGE": 3, "TARGET_PICK_LIST": 3, "Q_OBJECTIVE": 3, "Q_CONSTRUCTION": 3,
     "TARGET_COMPARE": 4, "TARGET_CONFIRM": 4,
     "TRANSITION_SETUP": 5, "TRANSITION_RESULTS": 5,
@@ -19,7 +19,7 @@ STATE_STEP = {
 }
 # where "go back to step N" lands (first visited candidate wins)
 STEP_BACK_TARGETS = {
-    1: ["INGEST_CHOICE"], 2: ["INGEST_REVIEW", "INGEST_CHOICE"],
+    1: ["INGEST_CHOICE"], 2: ["ACCOUNT_REVIEW", "INGEST_REVIEW", "INGEST_CHOICE"],
     3: ["TARGET_KNOWLEDGE"], 4: ["TARGET_COMPARE", "TARGET_CONFIRM", "TARGET_PICK_LIST"],
     5: ["TRANSITION_SETUP"], 6: ["TRANSITION_APPROVE"],
 }

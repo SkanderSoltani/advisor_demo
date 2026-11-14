@@ -937,6 +937,7 @@ class Type(StrEnum):
     none = "none"
     ingest_choice = "ingest_choice"
     parse_preview = "parse_preview"
+    account_review = "account_review"
     model_list = "model_list"
     model_comparison = "model_comparison"
     transition_setup = "transition_setup"

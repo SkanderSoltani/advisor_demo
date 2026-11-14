@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.logging import get_logger
 from app.db import models as m
-from app.db.catalog import CatalogFile, FundProxies, universe_arrays
+from app.db.catalog import EQUITY_CLASSES, CatalogFile, FundProxies, universe_arrays
 from app.db.synthetic_market import SyntheticMarket
 from app.domain import model_construction as mc
 
@@ -22,6 +22,10 @@ def sync_catalog(
 
     Models that left the JSON are deleted unless an account still targets them (then kept, with
     a warning, so the account keeps working until it is moved).
+
+    Multi-asset models (equity plus bonds / cash) are measured against a blended benchmark:
+    the equity share in the category's equity index and the rest in the aggregate bond product
+    (SCHZ) when the catalog has it.
     """
     u = market.universe
     ua = universe_arrays(market)
@@ -34,8 +38,15 @@ def sync_catalog(
         return [lt.get(t, 0.0) for t in tickers]
 
     # ---------------------------------------------------------------- products as securities
+    dy = u["dividend_yield"].to_numpy(dtype=float)
+    yields: dict[str, float] = {}
     for p in catalog.products:
         w = funds.weights.loc[p.ticker].to_numpy(dtype=float)
+        exposure = float(w.sum())
+        yields[p.ticker] = (
+            float(p.yield_) if p.yield_ is not None
+            else float(w @ dy) / exposure if exposure > 0 else 0.0
+        )
         sec = session.get(m.Security, p.ticker) or m.Security(ticker=p.ticker)
         sec.name = p.name
         sec.sector = "Fund"
@@ -44,7 +55,7 @@ def sync_catalog(
         sec.asset_class = p.asset_class
         sec.expense_ratio_bps = p.expense_ratio_bps
         sec.market_cap = 0.0
-        sec.dividend_yield = float(w @ u["dividend_yield"].to_numpy(dtype=float))
+        sec.dividend_yield = yields[p.ticker]
         sec.value_score = float(w @ u["value"].to_numpy(dtype=float))
         sec.quality_score = float(w @ u["quality"].to_numpy(dtype=float))
         sec.profitability_score = float(w @ u["profitability"].to_numpy(dtype=float))
@@ -63,7 +74,12 @@ def sync_catalog(
         lt = np.array(lt_vec(weights))
         code = spec.benchmark.split()[0] if spec.benchmark else ""
         bench = benches.get(code, benches[mc.TR_BENCHMARK])
-        er = sum(h.weight * catalog.product(h.ticker).expense_ratio_bps for h in spec.holdings)
+        eq = sum(h.weight for h in spec.holdings
+                 if catalog.asset_class(h.ticker) in EQUITY_CLASSES)
+        if eq < 0.999:
+            bonds = np.array(lt_vec({"SCHZ": 1.0})) if "SCHZ" in funds.rows else 0.0
+            bench = eq * bench + (1.0 - eq) * bonds
+        er = sum(h.weight * catalog.expense_ratio_bps(h.ticker) for h in spec.holdings)
         mp = session.get(m.ModelPortfolio, spec.id) or m.ModelPortfolio(id=spec.id)
         mp.name = spec.name
         mp.provider = spec.provider
@@ -72,7 +88,11 @@ def sync_catalog(
         mp.benchmark = spec.benchmark
         mp.description = spec.description
         mp.rationale = spec.rationale
-        mp.target_yield = round(float(lt @ u["dividend_yield"].to_numpy()), 5)
+        stock_y = u["dividend_yield"]
+        mp.target_yield = round(sum(
+            h.weight * (yields[h.ticker] if h.ticker in yields
+                        else float(stock_y.get(h.ticker, 0.0)))
+            for h in spec.holdings), 5)
         mp.expected_te = round(mc.tracking_error(lt, bench, cov), 5)
         mp.advisory_fee_bps = spec.advisory_fee_bps
         mp.fee_bps = round(er + spec.advisory_fee_bps, 2)

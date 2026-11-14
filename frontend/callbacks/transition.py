@@ -8,13 +8,15 @@ new ChatTurn → re-render header, thread, chips and canvas from it.
 from __future__ import annotations
 
 import base64
+import contextlib
 from datetime import datetime
 from typing import Any
 
-from dash import ALL, Input, Output, State, callback, clientside_callback, ctx, dcc, no_update
+from dash import ALL, MATCH, Input, Output, State, callback, clientside_callback, ctx, dcc, no_update
 from dash.exceptions import PreventUpdate
 
 from callbacks.client_detail import account_label
+from components import transition_analytics
 from components.canvas import render_canvas
 from components.canvas.transition_setup import lock_rows
 from components.chat_panel import bubble, chips, humanize_reply
@@ -42,6 +44,9 @@ def _dump(x: Any) -> Any:
 def _extra(client: ApiClient, tid: str, turn: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:
     """Data a canvas needs beyond the ChatTurn (fetched from the API, never computed here)."""
     extra: dict[str, Any] = {"client_href": f"/clients/{meta['client_id']}"}
+    if turn["state"] == "TARGET_PICK_LIST":
+        with contextlib.suppress(ApiError):  # fall back to the flat card list
+            extra["catalog"] = client.model_catalog()  # grouped like Model management
     if turn["state"] == "TRANSITION_SETUP":
         acct = client.account(meta["account_id"])
         extra["lots"] = [{**lot.model_dump(mode="json"), "account_locked": lot.locked} for lot in acct.lots]
@@ -115,6 +120,34 @@ def render(turn, extra, meta):
     header = workspace_header(meta["client_name"], meta["account_label"], step_of(state), back,
                               done=state == "DONE")
     return header, render_canvas(turn, extra), chips(turn.get("quick_replies", []))
+
+
+# ------------------------------------------------------------------ three-portfolio analytics
+@callback(
+    Output({"type": "ws-pa", "id": ALL}, "children"),
+    Input({"type": "ws-pa-key", "id": ALL}, "data"),
+    State("ws-tid", "data"),
+    State("session", "data"),
+)
+def portfolio_analytics(keys, tid, session):
+    if not keys or not tid:
+        raise PreventUpdate
+    try:
+        a = api(_tok(session)).transition_analytics(tid)
+    except ApiError as exc:
+        return [error_state(exc.message)] * len(keys)
+    return [transition_analytics.view(a)] * len(keys)
+
+
+clientside_callback(
+    """function(tabs, ids) {
+        return window.dash_clientside.ts.switchTab('.ts-pa-body', tabs[0] || 'overview', ids);
+    }""",
+    Output({"type": "ws-pa-pane", "id": ALL}, "style"),
+    Input({"type": "ws-pa-tab", "id": ALL}, "value"),
+    State({"type": "ws-pa-pane", "id": ALL}, "id"),
+    prevent_initial_call=True,
+)
 
 
 @callback(Output("ws-thread", "children"), Input("ws-thread-data", "data"))
@@ -323,17 +356,45 @@ def budget_label(values):
     Output({"type": "ws-model-grid", "id": ALL}, "children"),
     Input({"type": "ws-model-search", "id": ALL}, "value"),
     State("ws-turn", "data"),
+    State({"type": "ws-model-grid", "id": ALL}, "id"),
     prevent_initial_call=True,
 )
-def search_models(values, turn):
+def search_models(values, turn, grids):
     from components.canvas.model_list import card
 
-    if not turn or not values:
+    if not turn or not values or not grids:  # the grouped picker has its own search
         raise PreventUpdate
     q = (values[0] or "").strip().lower()
     models = (turn.get("ui_payload") or {}).get("data", {}).get("models", [])
     hits = [m for m in models if not q or q in f"{m['model_id']} {m['name']} {m['construction']}".lower()]
     return [[card(m) for m in hits] or [fmt_empty()]]
+
+
+@callback(
+    Output({"type": "ws-model-groups", "id": ALL}, "children"),
+    Input({"type": "ws-model-search", "id": ALL}, "value"),
+    State("ws-extra", "data"),
+    State({"type": "ws-model-groups", "id": ALL}, "id"),
+    prevent_initial_call=True,
+)
+def search_grouped(values, extra, groups):
+    from components.canvas.model_list import grouped_picker
+
+    if not values or not groups or not (extra or {}).get("catalog"):
+        raise PreventUpdate
+    return [grouped_picker(extra["catalog"], values[0] or "")]
+
+
+@callback(
+    Output({"type": "ws-line-body", "id": MATCH}, "style"),
+    Output({"type": "ws-line-btn", "id": MATCH}, "children"),
+    Input({"type": "ws-line-btn", "id": MATCH}, "n_clicks"),
+)
+def toggle_pick_line(n):
+    from components.model_mgmt import fold_label
+
+    o = bool((n or 0) % 2)
+    return {"display": "block" if o else "none"}, fold_label(o)
 
 
 def fmt_empty():

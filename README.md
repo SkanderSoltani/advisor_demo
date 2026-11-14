@@ -17,6 +17,10 @@ scripts/demo.sh          # Docker Compose if installed, otherwise both servers l
 UI **http://localhost:8050** · API **http://localhost:8000/docs** · login **`demo@advisor.test` / `demo1234`**.
 See [`frontend/README.md`](frontend/README.md) for the front end on its own (including mock mode).
 
+## Deploy on Railway
+
+Two services (api + web) and a volume; step-by-step in [docs/deploy_railway.md](docs/deploy_railway.md).
+
 ## Quick start: backend only (offline demo)
 
 ```bash

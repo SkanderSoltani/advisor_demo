@@ -10,6 +10,7 @@ from app.agent.engine import ConversationEngine
 from app.agent.llm import LLMClient, get_llm
 from app.api.deps import Service
 from app.ingest.plaid_client import PlaidGateway, get_plaid_gateway
+from app.model_builder.transition_view import TransitionAnalytics
 from app.schemas.chat import BackRequest, ChatHistory, ChatHistoryItem, ChatRequest, ChatTurn
 from app.schemas.transitions import (
     FrontierRequest,
@@ -36,7 +37,7 @@ Plaid = Annotated[PlaidGateway, Depends(get_plaid_gateway)]
 )
 def create_transition(body: TransitionCreate, svc: Service) -> TransitionOut:
     ts = TransitionService(svc)
-    return ts.out(ts.create(body.client_id, body.account_id))
+    return ts.out(ts.create(body.client_id, body.account_id, body.fixes))
 
 
 @router.get("/{transition_id}", response_model=TransitionOut, summary="Transition session state")
@@ -104,6 +105,17 @@ def optimize(transition_id: str, body: OptimizeRequest, svc: Service) -> Optimiz
 def frontier(transition_id: str, body: FrontierRequest, svc: Service) -> FrontierResult:
     ts = TransitionService(svc)
     return ts.frontier(ts.get(transition_id), body)
+
+
+@router.get(
+    "/{transition_id}/analytics",
+    response_model=TransitionAnalytics,
+    response_model_by_alias=True,
+    summary="Current, post-trade and target portfolios through the Model Builder analytics",
+)
+def analytics(transition_id: str, svc: Service) -> TransitionAnalytics:
+    ts = TransitionService(svc)
+    return ts.analytics(ts.get(transition_id))
 
 
 @router.get(

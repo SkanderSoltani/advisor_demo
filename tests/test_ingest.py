@@ -494,7 +494,7 @@ def test_plaid_flow_with_average_cost(client: TestClient) -> None:
     # the account can now be optimized
     o = client.post(
         f"{API}/transitions/{tid}/optimize",
-        json={"budget_mode": "tax", "budget_value": 5000, "target_model_id": "SCHWAB-TR"},
+        json={"budget_mode": "tax", "budget_value": 5000, "target_model_id": "TR-CORE-96-04"},
     )
     assert o.status_code == 200 and o.json()["realized"]["est_tax"] <= 5001
     bad = client.post(

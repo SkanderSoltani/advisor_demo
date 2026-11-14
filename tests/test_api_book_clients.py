@@ -188,7 +188,7 @@ def test_account_detail_and_analytics(client: TestClient) -> None:
     assert te["ex_ante_te"] == acct["ex_ante_te"]
     x = get(client, "/accounts/acc_004/analytics/exposures")
     assert sum(s["portfolio_weight"] for s in x["sectors"]) == pytest.approx(1, abs=1e-4)
-    assert x["target_model_id"] == "SCHWAB-TR"
+    assert x["target_model_id"] == "TR-CORE-96-04"
     get(client, "/accounts/acc_nope", 404)
 
 
@@ -244,7 +244,7 @@ def test_onboard_client_and_add_account(client: TestClient) -> None:
             "account_type": "joint_taxable",
             "custodian": "Schwab",
             "nickname": "Joint",
-            "target_model_id": "SCHWAB-TR",
+            "target_model_id": "TR-CORE-96-04",
         },
     )
     assert a.status_code == 201, a.text

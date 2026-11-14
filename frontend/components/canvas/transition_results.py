@@ -9,6 +9,7 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 from dash import dcc, html
 
+from components import transition_analytics
 from components.canvas.common import DISCLAIMER, act, header
 from components.canvas.frontier import frontier_figure
 from components.common import graph, sim_badge
@@ -178,13 +179,17 @@ def render(turn: dict[str, Any], extra: dict[str, Any]) -> Any:
         ),
         className="ts-card ts-overflow-hidden ts-mt-6",
     )
+    pf = o.get("portfolios") or {}
+    key = "|".join([o["transition_id"], o["target_model_id"], str(o.get("budget_value")),
+                    str(sorted((pf.get("transition") or {}).items()))])
+    analytics = transition_analytics.card(key, o.get("data_source"))
     if state == "TRANSITION_APPROVE":
         title, lede = "Review & export", "Your recommended transition is ready for review."
     else:
         title, lede = "Optimization results", "Review the trade-off, then approve or adjust."
     return [
         header(state, title, lede),
-        cards, buttons, detail, frontier, glide, trades,
+        cards, buttons, detail, analytics, frontier, glide, trades,
         html.P(o.get("disclaimer") or DISCLAIMER, className="ts-disclaimer"),
     ]
 

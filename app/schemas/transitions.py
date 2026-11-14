@@ -15,6 +15,10 @@ BudgetModeIn = Literal["net_gain", "tax", "none"]
 class TransitionCreate(Schema):
     client_id: str = Field(examples=["cli_009"])
     account_id: str = Field(examples=["acc_017"])
+    fixes: list[str] = Field(
+        default_factory=list,
+        description="Diagnosis fixes picked on the client page (ids from the account diagnosis)",
+    )
 
 
 class TransitionOut(Schema):
@@ -42,6 +46,9 @@ class Constraints(Schema):
     min_trade_value: float = Field(0.0, ge=0)
     max_names: int | None = Field(None, ge=1, le=1000)
     max_weight: float | None = Field(None, gt=0, le=1)
+    max_stock_weight: float | None = Field(
+        None, gt=0, le=1, description="Cap on single stocks only (funds are not capped)"
+    )
     sector_band: float | None = Field(None, gt=0, le=1)
     round_shares: bool = True
     lot_relief: Literal["optimizer", "tax_optimal", "hifo"] = "optimizer"
@@ -126,6 +133,15 @@ class PortfolioSnapshot(Schema):
     factor_active: dict[str, float]
 
 
+class PortfolioWeights(Schema):
+    """Ticker → weight of total value (cash as ``CASH``) for the three portfolios a transition
+    compares: the account today, the account after the proposed trades, and the target model."""
+
+    current: dict[str, float]
+    transition: dict[str, float]
+    target: dict[str, float]
+
+
 class TEContributionOut(Schema):
     ticker: str
     active_weight: float
@@ -171,6 +187,7 @@ class OptimizationResult(AnalyticsPayload):
     post: PortfolioSnapshot
     glide_path: list[GlideYearOut] | None = None
     diagnostics: Diagnostics
+    portfolios: PortfolioWeights | None = None
     disclaimer: str = DISCLAIMER
 
     model_config = ConfigDict(
@@ -191,7 +208,7 @@ class OptimizationResult(AnalyticsPayload):
                         "sells": [
                             {
                                 "lot_id": "lot_001650",
-                                "ticker": "BPC",
+                                "ticker": "AAPL",
                                 "shares": 12.5,
                                 "price": 494.62,
                                 "proceeds": 6182.75,
@@ -249,11 +266,11 @@ class OptimizationResult(AnalyticsPayload):
                         "relaxations": [],
                         "notes": [],
                         "explanation": [
-                            "Locked lots in JUP contribute 2.93% of the 4.15% residual TE."
+                            "Locked lots in MSFT contribute 2.93% of the 4.15% residual TE."
                         ],
                         "te_contributions": [
                             {
-                                "ticker": "JUP",
+                                "ticker": "MSFT",
                                 "active_weight": 0.104,
                                 "te_contribution": 0.0293,
                                 "reason": "locked",

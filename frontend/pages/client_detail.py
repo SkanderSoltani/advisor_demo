@@ -11,7 +11,9 @@ from components.add_account_modal import add_account_modal
 from components.charts import TAX_VIEWS
 from components.common import kpi_skeleton, skeleton
 from components.edit_client_modal import edit_client_modal
+from components.fold import fold_body, fold_button, fold_extra, fold_summary
 from components.holdings_table import holdings_section
+from components.risk_panel import risk_section
 from components.shell import footer, icon, topbar_client
 
 dash.register_page(__name__, path_template="/clients/<client_id>",
@@ -176,6 +178,21 @@ def layout(client_id: str | None = None, start: str | None = None, **_: object) 
                         ],
                         className="ts-detail-charts",
                     ),
+                    html.Section(
+                        [html.Div([html.Div([icon("sparkles", 18, "ts-c-primary"),
+                                             html.H2("AI review", className="ts-h2"),
+                                             html.Span("Simulated analytics",
+                                                       className="ts-sim-badge")],
+                                            className="ts-row ts-gap-2"),
+                                   html.P(id="cd-ai-sub", className="ts-sub ts-mt-1")]),
+                         dcc.Loading(html.Div(id="cd-ai-body", className="ts-mt-4",
+                                              children=[skeleton(56, cls="ts-mb-2")] * 2),
+                                     type="dot", color="#00A0DF", delay_show=300)],
+                        className="ts-card ts-p-5 ts-mt-6 ts-ai-card",
+                    ),
+                    html.Div(risk_section("cd", "Analytics",
+                                          "Household view, all accounts combined"),
+                             className="ts-mt-6"),
                     holdings_section(),
                     html.Section(
                         [
@@ -183,8 +200,9 @@ def layout(client_id: str | None = None, start: str | None = None, **_: object) 
                                 [
                                     html.Div([html.H2("Management history", className="ts-h2"),
                                               html.P("Newest activity across selected accounts",
-                                                     className="ts-sub ts-mt-1")]),
-                                    dmc.Menu(
+                                                     className="ts-sub ts-mt-1"),
+                                              fold_summary("cd-history-summary")]),
+                                    html.Div([fold_extra("cd-history", dmc.Menu(
                                         [
                                             dmc.MenuTarget(html.Button(
                                                 icon("sliders-horizontal", 16), id="cd-filter-btn",
@@ -197,45 +215,58 @@ def layout(client_id: str | None = None, start: str | None = None, **_: object) 
                                             ]),
                                         ],
                                         position="bottom-end", width=200, shadow="md", radius=8,
-                                    ),
+                                    )),
+                                        fold_button("cd-history", "history")],
+                                        className="ts-row ts-gap-2 ts-fold-actions"),
                                 ],
-                                className="ts-row ts-between ts-section-head",
+                                className="ts-row ts-between ts-items-start ts-gap-3 ts-section-head",
                             ),
                             dcc.Store(id="cd-event-type", data="all"),
-                            html.Div(id="cd-filter-chip"),
-                            html.Div(id="cd-events", children=[skeleton(56, cls="ts-m-5")] * 3),
+                            fold_body("cd-history", [
+                                html.Div(id="cd-filter-chip"),
+                                html.Div(id="cd-events", children=[skeleton(56, cls="ts-m-5")] * 3),
+                            ]),
                         ],
                         className="ts-card ts-overflow-hidden ts-mt-6",
                     ),
                     html.Section(
                         [
-                            html.Div([html.H2("Summary by year", className="ts-h2"),
-                                      html.P("Realized gains, harvesting and rebalancing per calendar "
-                                             "year", className="ts-sub ts-mt-1")],
-                                     className="ts-section-head"),
-                            dag.AgGrid(id="cd-years", rowData=[], columnDefs=YEAR_COLUMNS,
+                            html.Div([html.Div([html.H2("Summary by year", className="ts-h2"),
+                                                html.P("Realized gains, harvesting and rebalancing "
+                                                       "per calendar year", className="ts-sub ts-mt-1"),
+                                                fold_summary("cd-years-summary")]),
+                                      fold_button("cd-years", "summary"), fold_extra("cd-years")],
+                                     className="ts-section-head ts-row ts-between ts-items-start "
+                                               "ts-gap-3"),
+                            fold_body("cd-years", dag.AgGrid(
+                                id="cd-years", rowData=[], columnDefs=YEAR_COLUMNS,
                                        defaultColDef={"sortable": True, "suppressMovable": True},
                                        dashGridOptions={"rowHeight": 44, "headerHeight": 40,
                                                         "domLayout": "autoHeight",
                                                         "suppressCellFocus": True,
                                                         "localeText": {"noRowsToShow": "No history yet."}},
-                                       className="ts-grid", style={"width": "100%"}),
+                                       className="ts-grid", style={"width": "100%"})),
                         ],
                         className="ts-card ts-overflow-hidden ts-mt-6",
                     ),
                     html.Section(
                         [
-                            html.Div([html.H2("Accounts", className="ts-h2"),
-                                      html.P("Holdings, targets and next actions per account",
-                                             className="ts-sub ts-mt-1")],
-                                     className="ts-section-head", id="cd-accounts-anchor"),
-                            dag.AgGrid(id="cd-accounts-grid", rowData=[], columnDefs=ACCOUNT_COLUMNS,
+                            html.Div([html.Div([html.H2("Accounts", className="ts-h2"),
+                                                html.P("Holdings, targets and next actions per "
+                                                       "account", className="ts-sub ts-mt-1"),
+                                                fold_summary("cd-accounts-summary")]),
+                                      fold_button("cd-accounts", "accounts"),
+                                      fold_extra("cd-accounts")],
+                                     className="ts-section-head ts-row ts-between ts-items-start "
+                                               "ts-gap-3", id="cd-accounts-anchor"),
+                            fold_body("cd-accounts", dag.AgGrid(
+                                id="cd-accounts-grid", rowData=[], columnDefs=ACCOUNT_COLUMNS,
                                        defaultColDef={"sortable": True, "suppressMovable": True},
                                        dashGridOptions={"rowHeight": 52, "headerHeight": 40,
                                                         "domLayout": "autoHeight",
                                                         "suppressCellFocus": True,
                                                         "getRowId": {"function": "params.data.id"}},
-                                       className="ts-grid", style={"width": "100%"}),
+                                       className="ts-grid", style={"width": "100%"})),
                         ],
                         className="ts-card ts-overflow-hidden ts-mt-6",
                     ),

@@ -381,6 +381,18 @@ def sync_from_file(session: Session, path: Path, as_of: date | None = None) -> s
 CACHE_TYPES = (*BOOK_TYPES, m.ModelPortfolio, m.ModelHolding, m.Security)
 
 
+TAX_FIELDS = ("federal_st_rate", "federal_lt_rate", "state", "state_rate")
+
+
+def _tax_rates_changed(c: m.Client) -> bool:
+    """True only when a tax-rate column really changed (a client is also "dirty" when, e.g., an
+    account is added to it, which must not clear every account's cached analytics)."""
+    from sqlalchemy import inspect
+
+    st = inspect(c)
+    return any(st.attrs[f].history.has_changes() for f in TAX_FIELDS)
+
+
 def _touched(session: Session, objs: Iterable[Any]) -> None:
     """Record what a pending commit changes: book file dirty, and which accounts' cached
     analytics to drop (``everything`` when it can't be narrowed down)."""
@@ -397,8 +409,8 @@ def _touched(session: Session, objs: Iterable[Any]) -> None:
         elif isinstance(o, m.EventTrade):
             pass  # trades feed no cached analytics (the loss split is stored on the event)
         elif isinstance(o, m.Client):
-            if o not in deleted and o not in session.new:
-                info["touch_everything"] = True  # e.g. tax rates feed every account's numbers
+            if o not in deleted and o not in session.new and _tax_rates_changed(o):
+                info["touch_everything"] = True  # tax rates feed the client's accounts' numbers
             else:
                 info["cache_dirty"] = True  # client list / book totals change
         elif isinstance(o, CACHE_TYPES):  # models, holdings, securities

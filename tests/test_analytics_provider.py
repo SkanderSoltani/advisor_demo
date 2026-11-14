@@ -118,7 +118,7 @@ def test_no_target_or_no_history(
     fresh = AccountContext(
         **{
             **{f: getattr(new, f) for f in new.__dataclass_fields__},
-            "target_model_id": "SCHWAB-TR",
+            "target_model_id": "TR-CORE-96-04",
             "target_weights": model_w,
         }
     )

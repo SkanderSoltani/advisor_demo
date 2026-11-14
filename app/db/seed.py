@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password
 from app.db import models as m
 from app.db.book_generator import generate_clients
-from app.db.catalog import build_fund_proxies, load_catalog
+from app.db.catalog import EQUITY_CLASSES, build_fund_proxies, load_catalog
 from app.db.catalog_sync import sync_catalog
 from app.db.lot_refs import make_lot_ref
 from app.db.seed_specs import AccountSpec, ClientSpec
@@ -646,9 +646,22 @@ def seed_demo(
         )
         for ms in catalog.models
     }
+    # demo accounts hold all-stock portfolios: each objective's most equity-heavy model in its
+    # first line (e.g. Core 96/04, Income 60/40) keeps their tracking error realistic
     by_code: dict[str, str] = {}
+    first_line: dict[str, str | None] = {}
+    eq_share: dict[str, float] = {}
     for ms in catalog.models:
-        by_code.setdefault("TR" if ms.objective == "total_return" else "INC", ms.id)
+        code = {"total_return": "TR", "income": "INC"}.get(ms.objective)
+        if code is None:
+            continue
+        line = first_line.setdefault(code, ms.line_id)
+        if ms.line_id != line:
+            continue
+        eq = sum(h.weight for h in ms.holdings
+                 if catalog.asset_class(h.ticker) in EQUITY_CLASSES)
+        if code not in by_code or eq > eq_share[code] + 1e-9:
+            by_code[code], eq_share[code] = ms.id, eq
     by_code.setdefault("TR", catalog.models[0].id)
     by_code.setdefault("INC", catalog.models[0].id)
 

@@ -16,7 +16,7 @@ What the guide does today, and the two features requested for when real analytic
 
 ## 1. Switch positions from the chat
 
-> "Swap ARVX for SCHX", "replace the two tech names with the core ETF", "sell half of JUP".
+> "Swap AAPL for SCHX", "replace the two tech names with the core ETF", "sell half of MSFT".
 
 - **New intents** at the optimize / results steps: `swap` (from tickers → to ticker),
   `trim` (ticker, fraction or amount), `exclude` (never buy), `force_sell`.

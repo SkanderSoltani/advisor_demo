@@ -24,7 +24,7 @@ def register() -> None:
                        showline=False, ticks="", tickfont=dict(size=12, color=t.INK_600)),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
                         font=dict(size=12, color=t.INK_600), bgcolor="rgba(0,0,0,0)"),
-            hoverlabel=dict(bgcolor=t.SURFACE_0, bordercolor=t.BRAND_NAVY,
+            hoverlabel=dict(bgcolor=t.SURFACE_0, bordercolor=t.BRAND_NAVY, namelength=-1,
                             font=dict(family=t.FONT_FAMILY, size=12, color=t.INK_900)),
             hovermode="x unified",
             bargap=0.35,

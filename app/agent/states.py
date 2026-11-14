@@ -9,6 +9,7 @@ class State(StrEnum):
     START = "START"
     INGEST_CHOICE = "INGEST_CHOICE"
     INGEST_REVIEW = "INGEST_REVIEW"
+    ACCOUNT_REVIEW = "ACCOUNT_REVIEW"
     TARGET_KNOWLEDGE = "TARGET_KNOWLEDGE"
     TARGET_PICK_LIST = "TARGET_PICK_LIST"
     Q_OBJECTIVE = "Q_OBJECTIVE"
@@ -29,6 +30,7 @@ PROGRESS: dict[State, tuple[int, str]] = {
     State.START: (1, "Holdings"),
     State.INGEST_CHOICE: (1, "Holdings"),
     State.INGEST_REVIEW: (1, "Holdings"),
+    State.ACCOUNT_REVIEW: (1, "Account review"),
     State.TARGET_KNOWLEDGE: (2, "Choose target"),
     State.TARGET_PICK_LIST: (2, "Choose target"),
     State.Q_OBJECTIVE: (2, "Choose target"),
@@ -45,6 +47,7 @@ TOTAL_STEPS = 6
 # session data keys produced in each state; going back to a state clears keys of later states
 OWNS: dict[State, tuple[str, ...]] = {
     State.INGEST_REVIEW: ("ingest_preview",),
+    State.ACCOUNT_REVIEW: ("diagnosis", "review_shown"),
     State.Q_OBJECTIVE: ("objective",),
     State.Q_CONSTRUCTION: ("construction",),
     State.TARGET_COMPARE: ("candidates", "comparison"),

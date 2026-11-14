@@ -53,6 +53,10 @@ class Settings(BaseSettings):
 
     # --- analytics ---
     ANALYTICS_PROVIDER: Literal["random", "aladdin"] = "random"
+    # Point-in-time book / client analytics (app/risk_analytics): source and saved files.
+    RISK_ANALYTICS_PROVIDER: Literal["mock", "aladdin", "bloomberg"] = "mock"
+    RISK_SNAPSHOT_FILE: Path = REPO_ROOT / "data" / "analytics" / "risk_snapshot.json"
+    SECURITY_MASTER_FILE: Path = REPO_ROOT / "data" / "analytics" / "security_master.json"
 
     # --- LLM ---
     LLM_PROVIDER: Literal["mock", "anthropic"] = "mock"

@@ -16,8 +16,12 @@ from tests.conftest import TEST_AS_OF
 def test_counts(seeded: SeedSummary) -> None:
     assert seeded.users == 1
     assert 8 <= seeded.clients <= 10
-    assert seeded.models == 2
-    assert seeded.securities == 300 + 6  # stocks + catalog products
+    from app.core.config import get_settings
+    from app.db.catalog import load_catalog
+
+    assert seeded.models == len(load_catalog(get_settings().MODELS_FILE).models)
+    n_products = len(load_catalog(get_settings().MODELS_FILE).products)
+    assert seeded.securities == 300 + n_products  # stocks + catalog products
 
 
 def test_demo_user_login(db: Session) -> None:

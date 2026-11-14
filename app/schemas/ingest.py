@@ -115,10 +115,10 @@ class ParsePreview(Schema):
                                 {
                                     "code": "unknown_ticker",
                                     "severity": "error",
-                                    "message": "JUWQ is not tradable — did you mean JUWL?",
+                                    "message": "BKGN is not tradable — did you mean BKNG?",
                                 }
                             ],
-                            "suggested_ticker": "JUWL",
+                            "suggested_ticker": "BKNG",
                             "include": False,
                         }
                     ],

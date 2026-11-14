@@ -12,6 +12,7 @@ UiType = Literal[
     "none",
     "ingest_choice",
     "parse_preview",
+    "account_review",
     "model_list",
     "model_comparison",
     "transition_setup",

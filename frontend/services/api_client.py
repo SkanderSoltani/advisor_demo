@@ -113,7 +113,17 @@ class ApiClient:
         return self._model(s.Activity, "GET", "/book/analytics/activity",
                            params={"granularity": granularity})
 
+    def book_risk(self, refresh: bool = False) -> dict[str, Any]:
+        return self._call("POST" if refresh else "GET",
+                          "/book/risk/refresh" if refresh else "/book/risk")
+
     # ------------------------------------------------------------------ clients
+    def client_risk(self, client_id: str, account_id: str | None = None,
+                    refresh: bool = False) -> dict[str, Any]:
+        return self._call("POST" if refresh else "GET",
+                          f"/clients/{client_id}/risk" + ("/refresh" if refresh else ""),
+                          params={"account_id": account_id})
+
     def clients(self, search: str | None = None, status: str | None = None) -> s.ClientList:
         return self._model(s.ClientList, "GET", "/clients",
                            params={"search": search, "status": status})
@@ -174,14 +184,71 @@ class ApiClient:
     def model(self, model_id: str) -> s.ModelDetail:
         return self._model(s.ModelDetail, "GET", f"/models/{model_id}")
 
+    # ------------------------------------------------------------------ model management
+    def model_catalog(self) -> dict[str, Any]:
+        return self._call("GET", "/model-catalog")
+
+    # ------------------------------------------------------------------ model builder
+    def mb_universe(self, q: str = "", limit: int = 400) -> list[dict[str, Any]]:
+        return self._call("GET", "/model-builder/universe", params={"q": q, "limit": limit})
+
+    def mb_analyze(self, holdings: dict[str, float], name: str) -> dict[str, Any]:
+        return self._call("POST", "/model-builder/analyze",
+                          json={"holdings": holdings, "name": name})
+
+    def mb_import(self, filename: str, content_base64: str) -> dict[str, Any]:
+        return self._call("POST", "/model-builder/import",
+                          json={"filename": filename, "content_base64": content_base64})
+
+    def mb_scale(self, holdings: dict[str, float], n: int, lo: int, hi: int) -> list[dict[str, Any]]:
+        return self._call("POST", "/model-builder/scale",
+                          json={"holdings": holdings, "n": n, "lo": lo, "hi": hi})
+
+    def mb_assist(self, draft: dict[str, Any], message: str | None = None,
+                  reply: str | None = None) -> dict[str, Any]:
+        return self._call("POST", "/model-builder/assist",
+                          json={"draft": draft, "message": message, "reply": reply})
+
+    def mb_save(self, draft: dict[str, Any]) -> dict[str, Any]:
+        return self._call("POST", "/model-builder/save", json=draft)
+
+    def mb_sample(self, fmt: str = "xlsx") -> bytes:
+        return self._call("GET", "/model-builder/sample", params={"fmt": fmt})
+
+    def create_line(self, body: dict[str, Any]) -> str:
+        return self._call("POST", "/model-catalog/lines", json=body)["id"]
+
+    def update_line(self, line_id: str, body: dict[str, Any]) -> None:
+        self._call("PATCH", f"/model-catalog/lines/{line_id}", json=body)
+
+    def delete_line(self, line_id: str) -> None:
+        self._call("DELETE", f"/model-catalog/lines/{line_id}")
+
+    def create_catalog_model(self, body: dict[str, Any]) -> str:
+        return self._call("POST", "/model-catalog/models", json=body)["id"]
+
+    def update_catalog_model(self, model_id: str, body: dict[str, Any]) -> None:
+        self._call("PATCH", f"/model-catalog/models/{model_id}", json=body)
+
+    def delete_catalog_model(self, model_id: str) -> None:
+        self._call("DELETE", f"/model-catalog/models/{model_id}")
+
     def compare(self, model_ids: list[str], account_id: str) -> s.ComparisonPayload:
         return self._model(s.ComparisonPayload, "POST", "/models/compare",
                            json={"model_ids": model_ids, "account_id": account_id})
 
     # ------------------------------------------------------------------ transitions
-    def create_transition(self, client_id: str, account_id: str) -> s.TransitionOut:
+    def create_transition(self, client_id: str, account_id: str,
+                          fixes: list[str] | None = None) -> s.TransitionOut:
         return self._model(s.TransitionOut, "POST", "/transitions",
-                           json={"client_id": client_id, "account_id": account_id})
+                           json={"client_id": client_id, "account_id": account_id,
+                                 "fixes": fixes or []})
+
+    def account_diagnosis(self, account_id: str) -> dict[str, Any]:
+        return dict(self._call("GET", f"/accounts/{account_id}/diagnosis"))
+
+    def client_diagnosis(self, client_id: str) -> dict[str, Any]:
+        return dict(self._call("GET", f"/clients/{client_id}/diagnosis"))
 
     def transition(self, transition_id: str) -> s.TransitionOut:
         return self._model(s.TransitionOut, "GET", f"/transitions/{transition_id}")
@@ -210,6 +277,9 @@ class ApiClient:
     def frontier(self, transition_id: str, body: dict[str, Any]) -> s.FrontierResult:
         return self._model(s.FrontierResult, "POST", f"/transitions/{transition_id}/frontier",
                            json=body)
+
+    def transition_analytics(self, transition_id: str) -> dict[str, Any]:
+        return dict(self._call("GET", f"/transitions/{transition_id}/analytics"))
 
     def trades_csv(self, transition_id: str) -> bytes:
         return bytes(self._call("GET", f"/transitions/{transition_id}/trades.csv"))

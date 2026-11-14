@@ -1,0 +1,3902 @@
+{
+ "_about": "Mock security master (synthetic). Generated once; edit freely. Replace with Aladdin / Bloomberg reference data when connected.",
+ "version": 3,
+ "asset_classes": [
+  {
+   "asset_class": "US Equity",
+   "group": "Equity"
+  },
+  {
+   "asset_class": "Non-US Stocks",
+   "group": "Equity"
+  },
+  {
+   "asset_class": "US Bonds",
+   "group": "Fixed Income"
+  },
+  {
+   "asset_class": "Non-US Bonds",
+   "group": "Fixed Income"
+  },
+  {
+   "asset_class": "Preferred",
+   "group": "Preferred"
+  },
+  {
+   "asset_class": "Cash",
+   "group": "Cash"
+  }
+ ],
+ "securities": [
+  {
+   "ticker": "AAPL",
+   "name": "Apple Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ABBV",
+   "name": "AbbVie Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ABNB",
+   "name": "Airbnb Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ABT",
+   "name": "Abbott Laboratories",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ACN",
+   "name": "Accenture plc",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ADBE",
+   "name": "Adobe Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ADI",
+   "name": "Analog Devices",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ADP",
+   "name": "Automatic Data Processing",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AEP",
+   "name": "American Electric Power",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AFL",
+   "name": "Aflac Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "AJG",
+   "name": "Arthur J. Gallagher & Co.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ALL",
+   "name": "Allstate Corp.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "AMAT",
+   "name": "Applied Materials",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AMD",
+   "name": "Advanced Micro Devices",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AMGN",
+   "name": "Amgen Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AMT",
+   "name": "American Tower",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon.com Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ANET",
+   "name": "Arista Networks",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "AON",
+   "name": "Aon plc",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "APD",
+   "name": "Air Products and Chemicals",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "APH",
+   "name": "Amphenol Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ARE",
+   "name": "Alexandria Real Estate Equities",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ASML",
+   "name": "ASML Holding",
+   "asset_class": "Non-US Stocks",
+   "sector": "Information Technology",
+   "country": "Netherlands",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AVB",
+   "name": "AvalonBay Communities",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AXP",
+   "name": "American Express",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AZN",
+   "name": "AstraZeneca plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "AZO",
+   "name": "AutoZone Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "BA",
+   "name": "Boeing Co.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BABA",
+   "name": "Alibaba Group",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "China",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BAC",
+   "name": "Bank of America",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BBY",
+   "name": "Best Buy Co.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "BCE",
+   "name": "BCE Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "BDX",
+   "name": "Becton, Dickinson and Co.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "BHP",
+   "name": "BHP Group",
+   "asset_class": "Non-US Stocks",
+   "sector": "Materials",
+   "country": "Australia",
+   "region": "Asia Pacific",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BIDU",
+   "name": "Baidu Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "China",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BIIB",
+   "name": "Biogen Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "BK",
+   "name": "Bank of New York Mellon",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "BKLN",
+   "name": "Invesco Senior Loan ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "BKNG",
+   "name": "Booking Holdings",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BLK",
+   "name": "BlackRock Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BMY",
+   "name": "Bristol-Myers Squibb",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BND",
+   "name": "Vanguard Total Bond Market ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "BNDX",
+   "name": "Vanguard Total International Bond ETF",
+   "asset_class": "Non-US Bonds",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "BP",
+   "name": "BP plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Energy",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BSX",
+   "name": "Boston Scientific",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "BUD",
+   "name": "Anheuser-Busch InBev",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Staples",
+   "country": "Belgium",
+   "region": "Europe",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "BX",
+   "name": "Blackstone Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "C",
+   "name": "Citigroup Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CARR",
+   "name": "Carrier Global",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "CASH",
+   "name": "Cash / cash equivalents",
+   "asset_class": "Cash",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CAT",
+   "name": "Caterpillar Inc.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CB",
+   "name": "Chubb Ltd.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CBRE",
+   "name": "CBRE Group",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CCI",
+   "name": "Crown Castle",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CCL",
+   "name": "Carnival Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CDNS",
+   "name": "Cadence Design Systems",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "CEG",
+   "name": "Constellation Energy",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CGCP",
+   "name": "Capital Group Core Plus Income ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGDV",
+   "name": "Capital Group Dividend Value ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGGR",
+   "name": "Capital Group Growth ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGMU",
+   "name": "Capital Group Municipal Income ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGSD",
+   "name": "Capital Group Short Duration Income ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGUS",
+   "name": "Capital Group Core Equity ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CGXU",
+   "name": "Capital Group International Focus Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "CHTR",
+   "name": "Charter Communications",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CI",
+   "name": "The Cigna Group",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CL",
+   "name": "Colgate-Palmolive",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CMCSA",
+   "name": "Comcast Corp.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CME",
+   "name": "CME Group",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CMG",
+   "name": "Chipotle Mexican Grill",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CNC",
+   "name": "Centene Corp.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "CNI",
+   "name": "Canadian National Railway",
+   "asset_class": "Non-US Stocks",
+   "sector": "Industrials",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "COF",
+   "name": "Capital One Financial",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "COP",
+   "name": "ConocoPhillips",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "COR",
+   "name": "Cencora Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "COST",
+   "name": "Costco Wholesale",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CP",
+   "name": "Canadian Pacific Kansas City",
+   "asset_class": "Non-US Stocks",
+   "sector": "Industrials",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CRM",
+   "name": "Salesforce Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CRWD",
+   "name": "CrowdStrike Holdings",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "CSCO",
+   "name": "Cisco Systems",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "CSGP",
+   "name": "CoStar Group",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CSX",
+   "name": "CSX Corp.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CTAS",
+   "name": "Cintas Corp.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CTVA",
+   "name": "Corteva Inc.",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CVS",
+   "name": "CVS Health",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "CVX",
+   "name": "Chevron Corp.",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "D",
+   "name": "Dominion Energy",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "DASH",
+   "name": "DoorDash Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DD",
+   "name": "DuPont de Nemours",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "DE",
+   "name": "Deere & Co.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DECK",
+   "name": "Deckers Outdoor",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "DEO",
+   "name": "Diageo plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Staples",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "DFAC",
+   "name": "Dimensional U.S. Core Equity 2 ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFAE",
+   "name": "Dimensional Emerging Core Equity Market ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Emerging markets (fund)",
+   "region": "Emerging Markets",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFAI",
+   "name": "Dimensional International Core Equity Market ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFAT",
+   "name": "Dimensional U.S. Targeted Value ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFAU",
+   "name": "Dimensional US Core Equity Market ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFCF",
+   "name": "Dimensional Core Fixed Income ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFIP",
+   "name": "Dimensional Inflation-Protected Securities ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFIV",
+   "name": "Dimensional International Value ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFNM",
+   "name": "Dimensional National Municipal Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFSD",
+   "name": "Dimensional Short-Duration Fixed Income ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFUS",
+   "name": "Dimensional U.S. Equity Market ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DFUV",
+   "name": "Dimensional US Marketwide Value ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "DGX",
+   "name": "Quest Diagnostics",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "DHI",
+   "name": "D.R. Horton",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "DHR",
+   "name": "Danaher Corp.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DIS",
+   "name": "Walt Disney Co.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DLR",
+   "name": "Digital Realty Trust",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DOW",
+   "name": "Dow Inc.",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "DPZ",
+   "name": "Domino's Pizza",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "DRI",
+   "name": "Darden Restaurants",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "DUK",
+   "name": "Duke Energy",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "DXCM",
+   "name": "DexCom Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "EA",
+   "name": "Electronic Arts",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "EBAY",
+   "name": "eBay Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ECL",
+   "name": "Ecolab Inc.",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ED",
+   "name": "Consolidated Edison",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ELV",
+   "name": "Elevance Health",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "EMR",
+   "name": "Emerson Electric",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ENB",
+   "name": "Enbridge Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Energy",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "EOG",
+   "name": "EOG Resources",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "EQIX",
+   "name": "Equinix Inc.",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "EQR",
+   "name": "Equity Residential",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ESS",
+   "name": "Essex Property Trust",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ETN",
+   "name": "Eaton Corp.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "EW",
+   "name": "Edwards Lifesciences",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "EXC",
+   "name": "Exelon Corp.",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "EXPE",
+   "name": "Expedia Group",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "EXR",
+   "name": "Extra Space Storage",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "F",
+   "name": "Ford Motor Co.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "FBCG",
+   "name": "Fidelity Blue Chip Growth ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FBND",
+   "name": "Fidelity Total Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FCX",
+   "name": "Freeport-McMoRan",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "FDVV",
+   "name": "Fidelity High Dividend ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FDX",
+   "name": "FedEx Corp.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "FELC",
+   "name": "Fidelity Enhanced Large Cap Core ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FENI",
+   "name": "Fidelity Enhanced International ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FIGB",
+   "name": "Fidelity Investment Grade Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FLTB",
+   "name": "Fidelity Limited Term Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FNDA",
+   "name": "Schwab Fundamental U.S. Small Company ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FNDC",
+   "name": "Schwab Fundamental International Small Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FNDE",
+   "name": "Schwab Fundamental Emerging Markets Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Emerging markets (fund)",
+   "region": "Emerging Markets",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FNDF",
+   "name": "Schwab Fundamental International Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FNDX",
+   "name": "Schwab Fundamental U.S. Large Company ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "FOXA",
+   "name": "Fox Corp.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "FVAL",
+   "name": "Fidelity Value Factor ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "GD",
+   "name": "General Dynamics",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "GE",
+   "name": "GE Aerospace",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "GEHC",
+   "name": "GE HealthCare Technologies",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "GILD",
+   "name": "Gilead Sciences",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "GM",
+   "name": "General Motors",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet Inc.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "GPC",
+   "name": "Genuine Parts Co.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "GRMN",
+   "name": "Garmin Ltd.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "GS",
+   "name": "Goldman Sachs Group",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "GSK",
+   "name": "GSK plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "HCA",
+   "name": "HCA Healthcare",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "HD",
+   "name": "Home Depot",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "HDB",
+   "name": "HDFC Bank",
+   "asset_class": "Non-US Stocks",
+   "sector": "Financials",
+   "country": "India",
+   "region": "Emerging Markets",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "HLT",
+   "name": "Hilton Worldwide",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "HMC",
+   "name": "Honda Motor Co.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "Japan",
+   "region": "Asia Pacific",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "HON",
+   "name": "Honeywell International",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "HSBC",
+   "name": "HSBC Holdings",
+   "asset_class": "Non-US Stocks",
+   "sector": "Financials",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "HUM",
+   "name": "Humana Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "IAGG",
+   "name": "iShares Core International Aggregate Bond ETF",
+   "asset_class": "Non-US Bonds",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "IBM",
+   "name": "International Business Machines",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ICE",
+   "name": "Intercontinental Exchange",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "IDXX",
+   "name": "IDEXX Laboratories",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "IFF",
+   "name": "International Flavors & Fragrances",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "INTC",
+   "name": "Intel Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "INTU",
+   "name": "Intuit Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "INVH",
+   "name": "Invitation Homes",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "IQV",
+   "name": "IQVIA Holdings",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "IRM",
+   "name": "Iron Mountain",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ISRG",
+   "name": "Intuitive Surgical",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ITW",
+   "name": "Illinois Tool Works",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "JNJ",
+   "name": "Johnson & Johnson",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "JPM",
+   "name": "JPMorgan Chase & Co.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "KDP",
+   "name": "Keurig Dr Pepper",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "KIM",
+   "name": "Kimco Realty",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "KKR",
+   "name": "KKR & Co.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "KLAC",
+   "name": "KLA Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "KMB",
+   "name": "Kimberly-Clark",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "KMI",
+   "name": "Kinder Morgan",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "KO",
+   "name": "Coca-Cola Co.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "LEN",
+   "name": "Lennar Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "LGILX",
+   "name": "Large-Cap Growth Fund (actively managed)",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "LH",
+   "name": "Labcorp Holdings",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "LIN",
+   "name": "Linde plc",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "LLY",
+   "name": "Eli Lilly and Co.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "LMT",
+   "name": "Lockheed Martin",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "LOW",
+   "name": "Lowe's Companies",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "LRCX",
+   "name": "Lam Research",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "LULU",
+   "name": "Lululemon Athletica",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "LVS",
+   "name": "Las Vegas Sands",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "LYV",
+   "name": "Live Nation Entertainment",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MA",
+   "name": "Mastercard Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MAA",
+   "name": "Mid-America Apartment Communities",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "MAR",
+   "name": "Marriott International",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MCD",
+   "name": "McDonald's Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MCK",
+   "name": "McKesson Corp.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MCO",
+   "name": "Moody's Corp.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MDLZ",
+   "name": "Mondelez International",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MDT",
+   "name": "Medtronic plc",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MELI",
+   "name": "MercadoLibre Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "Brazil",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MET",
+   "name": "MetLife Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MLM",
+   "name": "Martin Marietta Materials",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MMC",
+   "name": "Marsh & McLennan",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MMM",
+   "name": "3M Co.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MNST",
+   "name": "Monster Beverage",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "MO",
+   "name": "Altria Group",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MPC",
+   "name": "Marathon Petroleum",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MRK",
+   "name": "Merck & Co.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MS",
+   "name": "Morgan Stanley",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "MTD",
+   "name": "Mettler-Toledo International",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "MU",
+   "name": "Micron Technology",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "MUFG",
+   "name": "Mitsubishi UFJ Financial Group",
+   "asset_class": "Non-US Stocks",
+   "sector": "Financials",
+   "country": "Japan",
+   "region": "Asia Pacific",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NEE",
+   "name": "NextEra Energy",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NEM",
+   "name": "Newmont Corp.",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NFLX",
+   "name": "Netflix Inc.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NGG",
+   "name": "National Grid plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Utilities",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NKE",
+   "name": "Nike Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NOC",
+   "name": "Northrop Grumman",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NOW",
+   "name": "ServiceNow Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NSC",
+   "name": "Norfolk Southern",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "NTES",
+   "name": "NetEase Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "China",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NUE",
+   "name": "Nucor Corp.",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NVO",
+   "name": "Novo Nordisk",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "Denmark",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "NVR",
+   "name": "NVR Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "NVS",
+   "name": "Novartis AG",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "Switzerland",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "OKE",
+   "name": "ONEOK Inc.",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "OMC",
+   "name": "Omnicom Group",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle Corp.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "ORLY",
+   "name": "O'Reilly Automotive",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PANW",
+   "name": "Palo Alto Networks",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PCAR",
+   "name": "PACCAR Inc.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PCG",
+   "name": "PG&E Corp.",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PDD",
+   "name": "PDD Holdings",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "China",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PEG",
+   "name": "Public Service Enterprise Group",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "PEP",
+   "name": "PepsiCo Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PFE",
+   "name": "Pfizer Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PFF",
+   "name": "iShares Preferred and Income Securities ETF",
+   "asset_class": "Preferred",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PG",
+   "name": "Procter & Gamble",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PGR",
+   "name": "Progressive Corp.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PH",
+   "name": "Parker-Hannifin",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PHM",
+   "name": "PulteGroup Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PINS",
+   "name": "Pinterest Inc.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PLD",
+   "name": "Prologis Inc.",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PLTR",
+   "name": "Palantir Technologies",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PM",
+   "name": "Philip Morris International",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PNC",
+   "name": "PNC Financial Services",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "PPG",
+   "name": "PPG Industries",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "PRHYX",
+   "name": "T. Rowe Price High Yield Fund",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PRIKX",
+   "name": "T. Rowe Price Real Assets Fund I Class",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PRIUX",
+   "name": "T. Rowe Price International Stock Fund I Class",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PRSNX",
+   "name": "T. Rowe Price Global Multi-Sector Bond Fund",
+   "asset_class": "Non-US Bonds",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PSA",
+   "name": "Public Storage",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "PSX",
+   "name": "Phillips 66",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "PTKIX",
+   "name": "T. Rowe Price Total Return Fund I Class",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "PYPL",
+   "name": "PayPal Holdings",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "QCOM",
+   "name": "Qualcomm Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "RBLX",
+   "name": "Roblox Corp.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "RCL",
+   "name": "Royal Caribbean Group",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "REGN",
+   "name": "Regeneron Pharmaceuticals",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "REVIX",
+   "name": "T. Rowe Price Emerging Markets Discovery Stock Fund I Class",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Emerging markets (fund)",
+   "region": "Emerging Markets",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "RIO",
+   "name": "Rio Tinto",
+   "asset_class": "Non-US Stocks",
+   "sector": "Materials",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "RL",
+   "name": "Ralph Lauren Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "RMD",
+   "name": "ResMed Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ROST",
+   "name": "Ross Stores",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "RPTIX",
+   "name": "T. Rowe Price Mid-Cap Growth Fund I Class",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "RTX",
+   "name": "RTX Corp.",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "RY",
+   "name": "Royal Bank of Canada",
+   "asset_class": "Non-US Stocks",
+   "sector": "Financials",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SAP",
+   "name": "SAP SE",
+   "asset_class": "Non-US Stocks",
+   "sector": "Information Technology",
+   "country": "Germany",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SBAC",
+   "name": "SBA Communications",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "SBUX",
+   "name": "Starbucks Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SCCO",
+   "name": "Southern Copper",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "SCHA",
+   "name": "Schwab U.S. Small-Cap ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHB",
+   "name": "Schwab U.S. Broad Market ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHC",
+   "name": "Schwab International Small-Cap Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHD",
+   "name": "Schwab U.S. Dividend Equity ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHE",
+   "name": "Schwab Emerging Markets Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Emerging markets (fund)",
+   "region": "Emerging Markets",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHF",
+   "name": "Schwab International Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHG",
+   "name": "Schwab U.S. Large-Cap Growth ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHH",
+   "name": "Schwab U.S. REIT ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHI",
+   "name": "Schwab 5-10 Year Corporate Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHJ",
+   "name": "Schwab 1-5 Year Corporate Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHM",
+   "name": "Schwab U.S. Mid-Cap ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHO",
+   "name": "Schwab Short-Term U.S. Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHP",
+   "name": "Schwab U.S. TIPS ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHQ",
+   "name": "Schwab Long-Term U.S. Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHR",
+   "name": "Schwab Intermediate-Term U.S. Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHV",
+   "name": "Schwab U.S. Large-Cap Value ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHW",
+   "name": "Charles Schwab Corp.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SCHX",
+   "name": "Schwab U.S. Large-Cap ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHY",
+   "name": "Schwab International Dividend Equity ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCHZ",
+   "name": "Schwab U.S. Aggregate Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCMB",
+   "name": "Schwab Municipal Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SCYB",
+   "name": "Schwab High Yield Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SE",
+   "name": "Sea Ltd.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "Singapore",
+   "region": "Asia Pacific",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SHEL",
+   "name": "Shell plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Energy",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SHOP",
+   "name": "Shopify Inc.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Information Technology",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "SHW",
+   "name": "Sherwin-Williams",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SLB",
+   "name": "SLB N.V.",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "SNPS",
+   "name": "Synopsys Inc.",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "SNY",
+   "name": "Sanofi",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "France",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SO",
+   "name": "Southern Co.",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SONY",
+   "name": "Sony Group Corp.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "Japan",
+   "region": "Asia Pacific",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SPG",
+   "name": "Simon Property Group",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SPGI",
+   "name": "S&P Global Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SPOT",
+   "name": "Spotify Technology",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "Sweden",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "SRE",
+   "name": "Sempra",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "STE",
+   "name": "STERIS plc",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "SU",
+   "name": "Suncor Energy",
+   "asset_class": "Non-US Stocks",
+   "sector": "Energy",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "SUB",
+   "name": "iShares Short-Term National Muni Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker Corp.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "T",
+   "name": "AT&T Inc.",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TAK",
+   "name": "Takeda Pharmaceutical",
+   "asset_class": "Non-US Stocks",
+   "sector": "Health Care",
+   "country": "Japan",
+   "region": "Asia Pacific",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "TD",
+   "name": "Toronto-Dominion Bank",
+   "asset_class": "Non-US Stocks",
+   "sector": "Financials",
+   "country": "Canada",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "TFC",
+   "name": "Truist Financial",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "TGT",
+   "name": "Target Corp.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "TJX",
+   "name": "TJX Companies",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TKO",
+   "name": "TKO Group Holdings",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "TM",
+   "name": "Toyota Motor Corp.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Discretionary",
+   "country": "Japan",
+   "region": "Asia Pacific",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TMO",
+   "name": "Thermo Fisher Scientific",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TMUS",
+   "name": "T-Mobile US",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TRV",
+   "name": "Travelers Companies",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "TSCO",
+   "name": "Tractor Supply Co.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor Manufacturing",
+   "asset_class": "Non-US Stocks",
+   "sector": "Information Technology",
+   "country": "Taiwan",
+   "region": "Emerging Markets",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TT",
+   "name": "Trane Technologies",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TTE",
+   "name": "TotalEnergies SE",
+   "asset_class": "Non-US Stocks",
+   "sector": "Energy",
+   "country": "France",
+   "region": "Europe",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "TTWO",
+   "name": "Take-Two Interactive",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "TXN",
+   "name": "Texas Instruments",
+   "asset_class": "US Equity",
+   "sector": "Information Technology",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "UBER",
+   "name": "Uber Technologies",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "UL",
+   "name": "Unilever plc",
+   "asset_class": "Non-US Stocks",
+   "sector": "Consumer Staples",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ULTA",
+   "name": "Ulta Beauty",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "UNH",
+   "name": "UnitedHealth Group",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "UNP",
+   "name": "Union Pacific",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "UPS",
+   "name": "United Parcel Service",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "USB",
+   "name": "U.S. Bancorp",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "V",
+   "name": "Visa Inc.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "VALE",
+   "name": "Vale S.A.",
+   "asset_class": "Non-US Stocks",
+   "sector": "Materials",
+   "country": "Brazil",
+   "region": "Emerging Markets",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "VB",
+   "name": "Vanguard Small-Cap ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VCIT",
+   "name": "Vanguard Intermediate-Term Corporate Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VCSH",
+   "name": "Vanguard Short-Term Corporate Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VEA",
+   "name": "Vanguard FTSE Developed Markets ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VGIT",
+   "name": "Vanguard Intermediate-Term Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VGLT",
+   "name": "Vanguard Long-Term Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VGSH",
+   "name": "Vanguard Short-Term Treasury ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VICI",
+   "name": "VICI Properties",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "VIG",
+   "name": "Vanguard Dividend Appreciation ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VLO",
+   "name": "Valero Energy",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "VMC",
+   "name": "Vulcan Materials",
+   "asset_class": "US Equity",
+   "sector": "Materials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "VNQ",
+   "name": "Vanguard Real Estate ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VO",
+   "name": "Vanguard Mid-Cap ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VOD",
+   "name": "Vodafone Group",
+   "asset_class": "Non-US Stocks",
+   "sector": "Communication Services",
+   "country": "United Kingdom",
+   "region": "Europe",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "VOO",
+   "name": "Vanguard S&P 500 ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VRTX",
+   "name": "Vertex Pharmaceuticals",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "VST",
+   "name": "Vistra Corp.",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "VTEB",
+   "name": "Vanguard Tax-Exempt Bond ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VTI",
+   "name": "Vanguard Total Stock Market ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VTIP",
+   "name": "Vanguard Short-Term Inflation-Protected Securities ETF",
+   "asset_class": "US Bonds",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VTR",
+   "name": "Ventas Inc.",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "VTV",
+   "name": "Vanguard Value ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VUG",
+   "name": "Vanguard Growth ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VWO",
+   "name": "Vanguard FTSE Emerging Markets ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Emerging markets (fund)",
+   "region": "Emerging Markets",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VXUS",
+   "name": "Vanguard Total International Stock ETF",
+   "asset_class": "Non-US Stocks",
+   "sector": "Fund",
+   "country": "Developed ex-US (fund)",
+   "region": "Developed ex-US",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VYM",
+   "name": "Vanguard High Dividend Yield ETF",
+   "asset_class": "US Equity",
+   "sector": "Fund",
+   "country": "United States",
+   "region": "North America",
+   "size": "",
+   "is_fund": true
+  },
+  {
+   "ticker": "VZ",
+   "name": "Verizon Communications",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WAT",
+   "name": "Waters Corp.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "WBD",
+   "name": "Warner Bros. Discovery",
+   "asset_class": "US Equity",
+   "sector": "Communication Services",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "WELL",
+   "name": "Welltower Inc.",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WFC",
+   "name": "Wells Fargo & Co.",
+   "asset_class": "US Equity",
+   "sector": "Financials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WM",
+   "name": "Waste Management",
+   "asset_class": "US Equity",
+   "sector": "Industrials",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WMB",
+   "name": "Williams Companies",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WMT",
+   "name": "Walmart Inc.",
+   "asset_class": "US Equity",
+   "sector": "Consumer Staples",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "WY",
+   "name": "Weyerhaeuser Co.",
+   "asset_class": "US Equity",
+   "sector": "Real Estate",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "XEL",
+   "name": "Xcel Energy",
+   "asset_class": "US Equity",
+   "sector": "Utilities",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "XOM",
+   "name": "Exxon Mobil",
+   "asset_class": "US Equity",
+   "sector": "Energy",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  },
+  {
+   "ticker": "YUM",
+   "name": "Yum! Brands",
+   "asset_class": "US Equity",
+   "sector": "Consumer Discretionary",
+   "country": "United States",
+   "region": "North America",
+   "size": "Mid",
+   "is_fund": false
+  },
+  {
+   "ticker": "ZBH",
+   "name": "Zimmer Biomet",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Small",
+   "is_fund": false
+  },
+  {
+   "ticker": "ZTS",
+   "name": "Zoetis Inc.",
+   "asset_class": "US Equity",
+   "sector": "Health Care",
+   "country": "United States",
+   "region": "North America",
+   "size": "Large",
+   "is_fund": false
+  }
+ ]
+}

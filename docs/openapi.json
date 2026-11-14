@@ -240,6 +240,53 @@
         }
       }
     },
+    "/api/v1/clients/{client_id}/diagnosis": {
+      "get": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "AI review checks for the whole household (all accounts combined)",
+        "operationId": "client_diagnosis_api_v1_clients__client_id__diagnosis_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Diagnosis"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/clients": {
       "get": {
         "tags": [
@@ -1078,6 +1125,83 @@
         }
       }
     },
+    "/api/v1/accounts/{account_id}/diagnosis": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "AI review checks: concentration, sector/region tilts, risk vs benchmark, tax & cash",
+        "operationId": "diagnosis_api_v1_accounts__account_id__diagnosis_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "target_model_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "compare against this model (default: the account's own target)",
+              "title": "Target Model Id"
+            },
+            "description": "compare against this model (default: the account's own target)"
+          },
+          {
+            "name": "use_target",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "false = always the auto blend",
+              "default": true,
+              "title": "Use Target"
+            },
+            "description": "false = always the auto blend"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Diagnosis"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/accounts/{account_id}/analytics/exposures": {
       "get": {
         "tags": [
@@ -1195,7 +1319,8 @@
                 {
                   "enum": [
                     "total_return",
-                    "income"
+                    "income",
+                    "tax_efficient"
                   ],
                   "type": "string"
                 },
@@ -1406,6 +1531,829 @@
             "HTTPBearer": []
           }
         ]
+      }
+    },
+    "/api/v1/model-catalog": {
+      "get": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Categories \u2192 lines \u2192 models",
+        "operationId": "get_catalog_api_v1_model_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelCatalog"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-catalog/lines": {
+      "post": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Add a line",
+        "operationId": "create_line_api_v1_model_catalog_lines_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Created"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-catalog/lines/{line_id}": {
+      "patch": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Edit a line",
+        "operationId": "update_line_api_v1_model_catalog_lines__line_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "line_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Line Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinePatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Delete a line and its models (409 while an account targets one of them)",
+        "operationId": "delete_line_api_v1_model_catalog_lines__line_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "line_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Line Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model-catalog/models": {
+      "post": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Add a model to a line",
+        "operationId": "create_model_api_v1_model_catalog_models_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Created"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-catalog/models/{model_id}": {
+      "patch": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Edit a model",
+        "operationId": "update_model_api_v1_model_catalog_models__model_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Model Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "model management"
+        ],
+        "summary": "Delete a model (409 while an account targets it)",
+        "operationId": "delete_model_api_v1_model_catalog_models__model_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Model Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model-builder/universe": {
+      "get": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Search funds and stocks a model can hold",
+        "operationId": "universe_api_v1_model_builder_universe_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 60,
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 400,
+              "minimum": 1,
+              "default": 25,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Universe Api V1 Model Builder Universe Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model-builder/analyze": {
+      "post": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Characteristics, exposures, risk, benchmark and hypothetical performance",
+        "operationId": "analyze_model_api_v1_model_builder_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuilderReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-builder/import": {
+      "post": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Read a model from Excel, CSV or PDF",
+        "operationId": "import_model_api_v1_model_builder_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-builder/scale": {
+      "post": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Scale a model into a line of models by equity exposure",
+        "operationId": "scale_api_v1_model_builder_scale_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScaleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScaledOut"
+                  },
+                  "type": "array",
+                  "title": "Response Scale Api V1 Model Builder Scale Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-builder/save": {
+      "post": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Save the scaled line under Custom Models",
+        "operationId": "save_api_v1_model_builder_save_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Draft"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Saved"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-builder/assist": {
+      "post": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Guide turn (rule-based assistant)",
+        "operationId": "assist_turn_api_v1_model_builder_assist_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistTurn"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/model-builder/sample": {
+      "get": {
+        "tags": [
+          "model builder"
+        ],
+        "summary": "Sample model file (xlsx or pdf) for the import demo",
+        "operationId": "sample_api_v1_model_builder_sample_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fmt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(xlsx|pdf)$",
+              "default": "xlsx",
+              "title": "Fmt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/book/risk": {
+      "get": {
+        "tags": [
+          "risk analytics"
+        ],
+        "summary": "Book allocation, exposures and risk (saved point-in-time snapshot)",
+        "operationId": "book_risk_api_v1_book_risk_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskReport"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/book/risk/refresh": {
+      "post": {
+        "tags": [
+          "risk analytics"
+        ],
+        "summary": "Re-generate the book snapshot",
+        "operationId": "book_risk_refresh_api_v1_book_risk_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskReport"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/clients/{client_id}/risk": {
+      "get": {
+        "tags": [
+          "risk analytics"
+        ],
+        "summary": "Client allocation, exposures and risk (saved point-in-time snapshot)",
+        "operationId": "client_risk_api_v1_clients__client_id__risk_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Limit to one of the client's accounts",
+              "title": "Account Id"
+            },
+            "description": "Limit to one of the client's accounts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{client_id}/risk/refresh": {
+      "post": {
+        "tags": [
+          "risk analytics"
+        ],
+        "summary": "Re-generate the client's snapshot",
+        "operationId": "client_risk_refresh_api_v1_clients__client_id__risk_refresh_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Limit to one of the client's accounts",
+              "title": "Account Id"
+            },
+            "description": "Limit to one of the client's accounts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/transitions": {
@@ -1816,6 +2764,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/FrontierResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transitions/{transition_id}/analytics": {
+      "get": {
+        "tags": [
+          "transitions"
+        ],
+        "summary": "Current, post-trade and target portfolios through the Model Builder analytics",
+        "operationId": "analytics_api_v1_transitions__transition_id__analytics_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "transition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransitionAnalytics"
                 }
               }
             }
@@ -2247,6 +3242,49 @@
         ],
         "title": "AccountList"
       },
+      "AccountRisk": {
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "var_95_1d": {
+            "type": "number",
+            "title": "Var 95 1D"
+          },
+          "var_95_1d_usd": {
+            "type": "number",
+            "title": "Var 95 1D Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_id",
+          "label",
+          "market_value",
+          "volatility",
+          "beta",
+          "var_95_1d",
+          "var_95_1d_usd"
+        ],
+        "title": "AccountRisk"
+      },
       "AccountSummary": {
         "properties": {
           "id": {
@@ -2481,6 +3519,92 @@
         ],
         "title": "ActivityPeriod"
       },
+      "AnalyzeIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "Draft model"
+          },
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings",
+            "description": "ticker \u2192 weight as a fraction"
+          }
+        },
+        "type": "object",
+        "required": [
+          "holdings"
+        ],
+        "title": "AnalyzeIn"
+      },
+      "AssistIn": {
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/Draft"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "reply": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply"
+          }
+        },
+        "type": "object",
+        "required": [
+          "draft"
+        ],
+        "title": "AssistIn"
+      },
+      "AssistTurn": {
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/Draft"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "quick_replies": {
+            "items": {
+              "$ref": "#/components/schemas/QuickReply"
+            },
+            "type": "array",
+            "title": "Quick Replies"
+          },
+          "refresh_analytics": {
+            "type": "boolean",
+            "title": "Refresh Analytics",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "draft",
+          "message",
+          "quick_replies"
+        ],
+        "title": "AssistTurn"
+      },
       "BackRequest": {
         "properties": {
           "to_state": {
@@ -2496,6 +3620,42 @@
           "to_state"
         ],
         "title": "BackRequest"
+      },
+      "Benchmark": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "short": {
+            "type": "string",
+            "title": "Short"
+          },
+          "equity_pct": {
+            "type": "integer",
+            "title": "Equity Pct"
+          },
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "short",
+          "equity_pct",
+          "holdings",
+          "note"
+        ],
+        "title": "Benchmark"
       },
       "Body_upload_pdf_api_v1_ingest_pdf_post": {
         "properties": {
@@ -2669,6 +3829,325 @@
         ],
         "title": "BookTrackingError"
       },
+      "BuilderReport": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "default": "mock"
+          },
+          "total_weight": {
+            "type": "number",
+            "title": "Total Weight"
+          },
+          "normalized": {
+            "type": "boolean",
+            "title": "Normalized"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "n_holdings": {
+            "type": "integer",
+            "title": "N Holdings"
+          },
+          "n_underlying": {
+            "type": "integer",
+            "title": "N Underlying"
+          },
+          "equity_pct": {
+            "type": "number",
+            "title": "Equity Pct"
+          },
+          "fixed_income_pct": {
+            "type": "number",
+            "title": "Fixed Income Pct"
+          },
+          "cash_pct": {
+            "type": "number",
+            "title": "Cash Pct"
+          },
+          "avg_duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Duration"
+          },
+          "pe_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pe Ratio"
+          },
+          "pb_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pb Ratio"
+          },
+          "net_expense_ratio_bps": {
+            "type": "number",
+            "title": "Net Expense Ratio Bps"
+          },
+          "yield": {
+            "type": "number",
+            "title": "Yield"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/HoldingRow"
+            },
+            "type": "array",
+            "title": "Holdings"
+          },
+          "asset_allocation": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Asset Allocation"
+          },
+          "equity_size": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Equity Size"
+          },
+          "equity_style": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Equity Style"
+          },
+          "style_box": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Style Box"
+          },
+          "equity_regions": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Equity Regions"
+          },
+          "equity_sectors": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Equity Sectors"
+          },
+          "fi_rating": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Fi Rating"
+          },
+          "fi_sectors": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Fi Sectors"
+          },
+          "fi_maturity": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Fi Maturity"
+          },
+          "fi_regions": {
+            "items": {
+              "$ref": "#/components/schemas/Weighted"
+            },
+            "type": "array",
+            "title": "Fi Regions"
+          },
+          "equity_characteristics": {
+            "items": {
+              "$ref": "#/components/schemas/CharRow"
+            },
+            "type": "array",
+            "title": "Equity Characteristics"
+          },
+          "fi_characteristics": {
+            "items": {
+              "$ref": "#/components/schemas/CharRow"
+            },
+            "type": "array",
+            "title": "Fi Characteristics"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "bench_volatility": {
+            "type": "number",
+            "title": "Bench Volatility"
+          },
+          "tracking_error": {
+            "type": "number",
+            "title": "Tracking Error"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/FactorRow"
+            },
+            "type": "array",
+            "title": "Factors"
+          },
+          "tail": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Tail"
+          },
+          "return_histogram": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Return Histogram"
+          },
+          "stress_tests": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Stress Tests"
+          },
+          "bench_stress": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Bench Stress"
+          },
+          "performance": {
+            "items": {
+              "$ref": "#/components/schemas/PerfPoint"
+            },
+            "type": "array",
+            "title": "Performance"
+          },
+          "perf_stats": {
+            "items": {
+              "$ref": "#/components/schemas/PerfStat"
+            },
+            "type": "array",
+            "title": "Perf Stats"
+          },
+          "calendar_years": {
+            "items": {
+              "$ref": "#/components/schemas/YearReturn"
+            },
+            "type": "array",
+            "title": "Calendar Years"
+          },
+          "benchmark": {
+            "$ref": "#/components/schemas/Benchmark"
+          },
+          "methodology": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Methodology"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "as_of",
+          "total_weight",
+          "normalized",
+          "warnings",
+          "n_holdings",
+          "n_underlying",
+          "equity_pct",
+          "fixed_income_pct",
+          "cash_pct",
+          "avg_duration",
+          "pe_ratio",
+          "pb_ratio",
+          "net_expense_ratio_bps",
+          "yield",
+          "holdings",
+          "asset_allocation",
+          "equity_size",
+          "equity_style",
+          "style_box",
+          "equity_regions",
+          "equity_sectors",
+          "fi_rating",
+          "fi_sectors",
+          "fi_maturity",
+          "fi_regions",
+          "equity_characteristics",
+          "fi_characteristics",
+          "volatility",
+          "bench_volatility",
+          "tracking_error",
+          "beta",
+          "factors",
+          "tail",
+          "return_histogram",
+          "stress_tests",
+          "bench_stress",
+          "performance",
+          "perf_stats",
+          "calendar_years",
+          "benchmark",
+          "methodology"
+        ],
+        "title": "BuilderReport"
+      },
       "BuyOut": {
         "properties": {
           "ticker": {
@@ -2696,6 +4175,284 @@
           "value"
         ],
         "title": "BuyOut"
+      },
+      "CatalogCategory": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "total_return",
+              "income",
+              "tax_efficient"
+            ],
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogLine"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "unassigned": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogModel"
+            },
+            "type": "array",
+            "title": "Unassigned",
+            "description": "Models of this category with no line"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "lines",
+          "unassigned"
+        ],
+        "title": "CatalogCategory"
+      },
+      "CatalogHolding": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "weight"
+        ],
+        "title": "CatalogHolding"
+      },
+      "CatalogLine": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "objective": {
+            "type": "string",
+            "enum": [
+              "total_return",
+              "income",
+              "tax_efficient"
+            ],
+            "title": "Objective"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "Charles Schwab"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogModel"
+            },
+            "type": "array",
+            "title": "Models"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "objective",
+          "description",
+          "models"
+        ],
+        "title": "CatalogLine"
+      },
+      "CatalogModel": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "objective": {
+            "type": "string",
+            "enum": [
+              "total_return",
+              "income",
+              "tax_efficient"
+            ],
+            "title": "Objective"
+          },
+          "line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Id"
+          },
+          "risk_profile": {
+            "type": "string",
+            "title": "Risk Profile"
+          },
+          "construction": {
+            "type": "string",
+            "title": "Construction"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "advisory_fee_bps": {
+            "type": "number",
+            "title": "Advisory Fee Bps"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogHolding"
+            },
+            "type": "array",
+            "title": "Holdings"
+          },
+          "target_yield": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Yield",
+            "description": "Look-through dividend yield"
+          },
+          "expected_te": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Te",
+            "description": "Ex-ante TE vs the model's benchmark"
+          },
+          "fee_bps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fee Bps",
+            "description": "Weighted product expense ratio + advisory fee"
+          },
+          "n_accounts": {
+            "type": "integer",
+            "title": "N Accounts",
+            "description": "Accounts targeting this model"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "objective",
+          "line_id",
+          "risk_profile",
+          "construction",
+          "benchmark",
+          "description",
+          "advisory_fee_bps",
+          "holdings",
+          "target_yield",
+          "expected_te",
+          "fee_bps",
+          "n_accounts"
+        ],
+        "title": "CatalogModel"
+      },
+      "CatalogProduct": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "asset_class": {
+            "type": "string",
+            "title": "Asset Class"
+          },
+          "expense_ratio_bps": {
+            "type": "number",
+            "title": "Expense Ratio Bps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "asset_class",
+          "expense_ratio_bps"
+        ],
+        "title": "CatalogProduct"
+      },
+      "CharRow": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "model",
+          "benchmark"
+        ],
+        "title": "CharRow"
       },
       "ChatHistory": {
         "properties": {
@@ -3823,6 +5580,20 @@
             ],
             "title": "Max Weight"
           },
+          "max_stock_weight": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Stock Weight",
+            "description": "Cap on single stocks only (funds are not capped)"
+          },
           "sector_band": {
             "anyOf": [
               {
@@ -3854,6 +5625,52 @@
         },
         "type": "object",
         "title": "Constraints"
+      },
+      "CountrySlice": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group",
+            "default": ""
+          },
+          "region": {
+            "type": "string",
+            "title": "Region"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "weight",
+          "market_value",
+          "region"
+        ],
+        "title": "CountrySlice"
+      },
+      "Created": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "Created"
       },
       "CurrentPortfolio": {
         "properties": {
@@ -3951,6 +5768,89 @@
         ],
         "title": "DatedValueOut"
       },
+      "Diagnosis": {
+        "properties": {
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "data_source": {
+            "type": "string",
+            "title": "Data Source",
+            "default": "mock"
+          },
+          "benchmark": {
+            "$ref": "#/components/schemas/Benchmark"
+          },
+          "benchmark_kind": {
+            "type": "string",
+            "enum": [
+              "target",
+              "blend"
+            ],
+            "title": "Benchmark Kind"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "equity_pct": {
+            "type": "number",
+            "title": "Equity Pct"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "bench_volatility": {
+            "type": "number",
+            "title": "Bench Volatility"
+          },
+          "taxable": {
+            "type": "boolean",
+            "title": "Taxable"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          },
+          "fixes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Fix"
+            },
+            "type": "object",
+            "title": "Fixes"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope",
+          "as_of",
+          "benchmark",
+          "benchmark_kind",
+          "market_value",
+          "equity_pct",
+          "volatility",
+          "bench_volatility",
+          "taxable",
+          "findings",
+          "fixes",
+          "summary"
+        ],
+        "title": "Diagnosis"
+      },
       "Diagnostics": {
         "properties": {
           "solver": {
@@ -4030,6 +5930,72 @@
           "lot_relief_check"
         ],
         "title": "Diagnostics"
+      },
+      "Draft": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "My model"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective",
+            "default": "total_return"
+          },
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings"
+          },
+          "step": {
+            "type": "string",
+            "title": "Step",
+            "default": "build"
+          },
+          "scale_n": {
+            "type": "integer",
+            "title": "Scale N",
+            "default": 10
+          },
+          "scale_lo": {
+            "type": "integer",
+            "title": "Scale Lo",
+            "default": 10
+          },
+          "scale_hi": {
+            "type": "integer",
+            "title": "Scale Hi",
+            "default": 100
+          },
+          "line_name": {
+            "type": "string",
+            "title": "Line Name",
+            "default": ""
+          },
+          "saved_line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saved Line Id"
+          },
+          "saved_model_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Saved Model Ids"
+          }
+        },
+        "type": "object",
+        "title": "Draft"
       },
       "EventDetail": {
         "properties": {
@@ -4404,6 +6370,74 @@
         ],
         "title": "ExposuresOut"
       },
+      "FactorContribution": {
+        "properties": {
+          "factor": {
+            "type": "string",
+            "title": "Factor"
+          },
+          "exposure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exposure"
+          },
+          "pct_of_variance": {
+            "type": "number",
+            "title": "Pct Of Variance"
+          },
+          "vol_contribution": {
+            "type": "number",
+            "title": "Vol Contribution"
+          }
+        },
+        "type": "object",
+        "required": [
+          "factor",
+          "exposure",
+          "pct_of_variance",
+          "vol_contribution"
+        ],
+        "title": "FactorContribution"
+      },
+      "FactorRow": {
+        "properties": {
+          "factor": {
+            "type": "string",
+            "title": "Factor"
+          },
+          "model_vol": {
+            "type": "number",
+            "title": "Model Vol"
+          },
+          "model_pct": {
+            "type": "number",
+            "title": "Model Pct"
+          },
+          "bench_vol": {
+            "type": "number",
+            "title": "Bench Vol"
+          },
+          "bench_pct": {
+            "type": "number",
+            "title": "Bench Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "factor",
+          "model_vol",
+          "model_pct",
+          "bench_vol",
+          "bench_pct"
+        ],
+        "title": "FactorRow"
+      },
       "FactorWeight": {
         "properties": {
           "factor": {
@@ -4431,6 +6465,104 @@
           "active"
         ],
         "title": "FactorWeight"
+      },
+      "Finding": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "check": {
+            "type": "string",
+            "enum": [
+              "concentration",
+              "sector",
+              "region",
+              "risk",
+              "tax",
+              "cash"
+            ],
+            "title": "Check"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "info"
+            ],
+            "title": "Severity"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Metrics"
+          },
+          "fixes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fixes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "check",
+          "severity",
+          "title",
+          "detail"
+        ],
+        "title": "Finding"
+      },
+      "Fix": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "constraint",
+              "preference"
+            ],
+            "title": "Kind"
+          },
+          "setting": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Setting"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "description",
+          "kind"
+        ],
+        "title": "Fix"
       },
       "FrontierPointOut": {
         "properties": {
@@ -4698,6 +6830,50 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "HistBin": {
+        "properties": {
+          "x0": {
+            "type": "number",
+            "title": "X0"
+          },
+          "x1": {
+            "type": "number",
+            "title": "X1"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x0",
+          "x1",
+          "count"
+        ],
+        "title": "HistBin"
+      },
+      "HoldingIn": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "weight": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "description": "Fraction, 0.25 = 25%"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "weight"
+        ],
+        "title": "HoldingIn"
+      },
       "HoldingOut": {
         "properties": {
           "ticker": {
@@ -4767,6 +6943,111 @@
         ],
         "title": "HoldingOut"
       },
+      "HoldingRow": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "asset_class": {
+            "type": "string",
+            "title": "Asset Class"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "expense_ratio_bps": {
+            "type": "number",
+            "title": "Expense Ratio Bps"
+          },
+          "er_contribution_bps": {
+            "type": "number",
+            "title": "Er Contribution Bps"
+          },
+          "yield": {
+            "type": "number",
+            "title": "Yield"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "kind",
+          "asset_class",
+          "weight",
+          "expense_ratio_bps",
+          "er_contribution_bps",
+          "yield"
+        ],
+        "title": "HoldingRow"
+      },
+      "ImportIn": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "content_base64": {
+            "type": "string",
+            "title": "Content Base64"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "content_base64"
+        ],
+        "title": "ImportIn"
+      },
+      "ImportResult": {
+        "properties": {
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings"
+          },
+          "unmatched": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unmatched"
+          },
+          "total_in_file": {
+            "type": "number",
+            "title": "Total In File"
+          },
+          "rows_read": {
+            "type": "integer",
+            "title": "Rows Read"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "holdings",
+          "unmatched",
+          "total_in_file",
+          "rows_read",
+          "note"
+        ],
+        "title": "ImportResult"
+      },
       "Interpretation": {
         "properties": {
           "intent": {
@@ -4827,6 +7108,81 @@
           "message"
         ],
         "title": "IssueOut"
+      },
+      "LineIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "objective": {
+            "type": "string",
+            "enum": [
+              "total_return",
+              "income",
+              "tax_efficient"
+            ],
+            "title": "Objective"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "objective"
+        ],
+        "title": "LineIn"
+      },
+      "LinePatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "total_return",
+                  "income",
+                  "tax_efficient"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "title": "LinePatch"
       },
       "LinkTokenOut": {
         "properties": {
@@ -5059,6 +7415,39 @@
         ],
         "title": "LotSellOut"
       },
+      "ModelCatalog": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogCategory"
+            },
+            "type": "array",
+            "title": "Categories"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogProduct"
+            },
+            "type": "array",
+            "title": "Products",
+            "description": "Products a model can hold"
+          },
+          "risk_profiles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Risk Profiles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "categories",
+          "products",
+          "risk_profiles"
+        ],
+        "title": "ModelCatalog"
+      },
       "ModelComparison": {
         "properties": {
           "model": {
@@ -5240,6 +7629,54 @@
         ],
         "title": "ModelHoldingOut"
       },
+      "ModelIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "line_id": {
+            "type": "string",
+            "title": "Line Id"
+          },
+          "risk_profile": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Risk Profile"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "advisory_fee_bps": {
+            "type": "number",
+            "maximum": 300.0,
+            "minimum": 0.0,
+            "title": "Advisory Fee Bps",
+            "default": 0.0
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/HoldingIn"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Holdings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "line_id",
+          "risk_profile",
+          "holdings"
+        ],
+        "title": "ModelIn"
+      },
       "ModelList": {
         "properties": {
           "data_source": {
@@ -5269,6 +7706,85 @@
           "items"
         ],
         "title": "ModelList"
+      },
+      "ModelPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Id"
+          },
+          "risk_profile": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Profile"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "advisory_fee_bps": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 300.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advisory Fee Bps"
+          },
+          "holdings": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/HoldingIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holdings"
+          }
+        },
+        "type": "object",
+        "title": "ModelPatch"
       },
       "ModelStatsOut": {
         "properties": {
@@ -5510,6 +8026,16 @@
           "diagnostics": {
             "$ref": "#/components/schemas/Diagnostics"
           },
+          "portfolios": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PortfolioWeights"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "disclaimer": {
             "type": "string",
             "title": "Disclaimer",
@@ -5551,7 +8077,7 @@
                 "locked lots"
               ],
               "explanation": [
-                "Locked lots in JUP contribute 2.93% of the 4.15% residual TE."
+                "Locked lots in MSFT contribute 2.93% of the 4.15% residual TE."
               ],
               "lot_relief_check": {
                 "optimizer_tax": 24999.77
@@ -5566,7 +8092,7 @@
                   "active_weight": 0.104,
                   "reason": "locked",
                   "te_contribution": 0.0293,
-                  "ticker": "JUP"
+                  "ticker": "MSFT"
                 }
               ],
               "wash_blocked_lot_ids": []
@@ -5636,7 +8162,7 @@
                   "realized_gain": 2053.05,
                   "shares": 12.5,
                   "term": "LT",
-                  "ticker": "BPC"
+                  "ticker": "AAPL"
                 }
               ]
             },
@@ -5838,14 +8364,14 @@
                 "issues": [
                   {
                     "code": "unknown_ticker",
-                    "message": "JUWQ is not tradable \u2014 did you mean JUWL?",
+                    "message": "BKGN is not tradable \u2014 did you mean BKNG?",
                     "severity": "error"
                   }
                 ],
                 "quantity": 120.5,
                 "row_id": 34,
                 "statement_value": 9876.1,
-                "suggested_ticker": "JUWL",
+                "suggested_ticker": "BKNG",
                 "ticker": "JUWQ"
               }
             ],
@@ -5863,6 +8389,53 @@
             "transition_id": "trn_1a2b3c4d"
           }
         ]
+      },
+      "PerfPoint": {
+        "properties": {
+          "d": {
+            "type": "string",
+            "format": "date",
+            "title": "D"
+          },
+          "model": {
+            "type": "number",
+            "title": "Model"
+          },
+          "benchmark": {
+            "type": "number",
+            "title": "Benchmark"
+          }
+        },
+        "type": "object",
+        "required": [
+          "d",
+          "model",
+          "benchmark"
+        ],
+        "title": "PerfPoint"
+      },
+      "PerfStat": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "model",
+          "benchmark"
+        ],
+        "title": "PerfStat"
       },
       "PlaidExchangeRequest": {
         "properties": {
@@ -5927,6 +8500,39 @@
           "factor_active"
         ],
         "title": "PortfolioSnapshot"
+      },
+      "PortfolioWeights": {
+        "properties": {
+          "current": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Current"
+          },
+          "transition": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Transition"
+          },
+          "target": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Target"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current",
+          "transition",
+          "target"
+        ],
+        "title": "PortfolioWeights",
+        "description": "Ticker \u2192 weight of total value (cash as ``CASH``) for the three portfolios a transition\ncompares: the account today, the account after the proposed trades, and the target model."
       },
       "PreviewRow": {
         "properties": {
@@ -6314,6 +8920,337 @@
         ],
         "title": "RegimeUploadResult"
       },
+      "RiskContributor": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "pct_of_risk": {
+            "type": "number",
+            "title": "Pct Of Risk"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "name",
+          "weight",
+          "pct_of_risk"
+        ],
+        "title": "RiskContributor"
+      },
+      "RiskReport": {
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "book",
+              "client",
+              "account"
+            ],
+            "title": "Scope"
+          },
+          "scope_id": {
+            "type": "string",
+            "title": "Scope Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "data_source": {
+            "type": "string",
+            "title": "Data Source"
+          },
+          "source_label": {
+            "type": "string",
+            "title": "Source Label"
+          },
+          "methodology": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Methodology"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "cash_weight": {
+            "type": "number",
+            "title": "Cash Weight"
+          },
+          "n_positions": {
+            "type": "integer",
+            "title": "N Positions"
+          },
+          "n_underlying": {
+            "type": "integer",
+            "title": "N Underlying"
+          },
+          "asset_allocation": {
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            },
+            "type": "array",
+            "title": "Asset Allocation"
+          },
+          "sectors": {
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            },
+            "type": "array",
+            "title": "Sectors"
+          },
+          "regions": {
+            "items": {
+              "$ref": "#/components/schemas/Slice"
+            },
+            "type": "array",
+            "title": "Regions"
+          },
+          "countries": {
+            "items": {
+              "$ref": "#/components/schemas/CountrySlice"
+            },
+            "type": "array",
+            "title": "Countries"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "realized_volatility": {
+            "type": "number",
+            "title": "Realized Volatility"
+          },
+          "beta": {
+            "type": "number",
+            "title": "Beta"
+          },
+          "systematic_pct": {
+            "type": "number",
+            "title": "Systematic Pct"
+          },
+          "specific_pct": {
+            "type": "number",
+            "title": "Specific Pct"
+          },
+          "decomposition": {
+            "items": {
+              "$ref": "#/components/schemas/FactorContribution"
+            },
+            "type": "array",
+            "title": "Decomposition"
+          },
+          "sector_factor_detail": {
+            "items": {
+              "$ref": "#/components/schemas/FactorContribution"
+            },
+            "type": "array",
+            "title": "Sector Factor Detail"
+          },
+          "tail": {
+            "items": {
+              "$ref": "#/components/schemas/TailRisk"
+            },
+            "type": "array",
+            "title": "Tail"
+          },
+          "return_histogram": {
+            "items": {
+              "$ref": "#/components/schemas/HistBin"
+            },
+            "type": "array",
+            "title": "Return Histogram"
+          },
+          "stress_tests": {
+            "items": {
+              "$ref": "#/components/schemas/StressResult"
+            },
+            "type": "array",
+            "title": "Stress Tests"
+          },
+          "top_contributors": {
+            "items": {
+              "$ref": "#/components/schemas/RiskContributor"
+            },
+            "type": "array",
+            "title": "Top Contributors"
+          },
+          "top10_weight": {
+            "type": "number",
+            "title": "Top10 Weight"
+          },
+          "effective_n": {
+            "type": "number",
+            "title": "Effective N"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountRisk"
+            },
+            "type": "array",
+            "title": "Accounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope",
+          "scope_id",
+          "name",
+          "as_of",
+          "generated_at",
+          "data_source",
+          "source_label",
+          "market_value",
+          "cash_weight",
+          "n_positions",
+          "n_underlying",
+          "asset_allocation",
+          "sectors",
+          "regions",
+          "countries",
+          "volatility",
+          "realized_volatility",
+          "beta",
+          "systematic_pct",
+          "specific_pct",
+          "decomposition",
+          "sector_factor_detail",
+          "tail",
+          "return_histogram",
+          "stress_tests",
+          "top_contributors",
+          "top10_weight",
+          "effective_n"
+        ],
+        "title": "RiskReport"
+      },
+      "Saved": {
+        "properties": {
+          "line_id": {
+            "type": "string",
+            "title": "Line Id"
+          },
+          "model_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Model Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "line_id",
+          "model_ids"
+        ],
+        "title": "Saved"
+      },
+      "ScaleIn": {
+        "properties": {
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings"
+          },
+          "n": {
+            "type": "integer",
+            "maximum": 21.0,
+            "minimum": 1.0,
+            "title": "N",
+            "default": 10
+          },
+          "lo": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Lo",
+            "default": 10
+          },
+          "hi": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Hi",
+            "default": 100
+          }
+        },
+        "type": "object",
+        "required": [
+          "holdings"
+        ],
+        "title": "ScaleIn"
+      },
+      "ScaledOut": {
+        "properties": {
+          "equity_pct": {
+            "type": "integer",
+            "title": "Equity Pct"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "holdings": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Holdings"
+          },
+          "volatility": {
+            "type": "number",
+            "title": "Volatility"
+          },
+          "yield": {
+            "type": "number",
+            "title": "Yield"
+          },
+          "expense_ratio_bps": {
+            "type": "number",
+            "title": "Expense Ratio Bps"
+          },
+          "benchmark": {
+            "type": "string",
+            "title": "Benchmark"
+          }
+        },
+        "type": "object",
+        "required": [
+          "equity_pct",
+          "label",
+          "holdings",
+          "volatility",
+          "yield",
+          "expense_ratio_bps",
+          "benchmark"
+        ],
+        "title": "ScaledOut"
+      },
       "SectorWeight": {
         "properties": {
           "sector": {
@@ -6341,6 +9278,62 @@
           "active_weight"
         ],
         "title": "SectorWeight"
+      },
+      "Slice": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "weight",
+          "market_value"
+        ],
+        "title": "Slice"
+      },
+      "StressResult": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "pnl_pct": {
+            "type": "number",
+            "title": "Pnl Pct"
+          },
+          "pnl_usd": {
+            "type": "number",
+            "title": "Pnl Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "pnl_pct",
+          "pnl_usd"
+        ],
+        "title": "StressResult"
       },
       "TEContributionOut": {
         "properties": {
@@ -6405,6 +9398,49 @@
         ],
         "title": "TEWindow",
         "description": "Rolling TE window in trading days (63 \u2248 3 months, 252 \u2248 1 year)."
+      },
+      "TailRisk": {
+        "properties": {
+          "horizon": {
+            "type": "string",
+            "title": "Horizon"
+          },
+          "days": {
+            "type": "integer",
+            "title": "Days"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "var": {
+            "type": "number",
+            "title": "Var"
+          },
+          "cvar": {
+            "type": "number",
+            "title": "Cvar"
+          },
+          "var_usd": {
+            "type": "number",
+            "title": "Var Usd"
+          },
+          "cvar_usd": {
+            "type": "number",
+            "title": "Cvar Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "horizon",
+          "days",
+          "confidence",
+          "var",
+          "cvar",
+          "var_usd",
+          "cvar_usd"
+        ],
+        "title": "TailRisk"
       },
       "TaxHistory": {
         "properties": {
@@ -7089,6 +10125,40 @@
         ],
         "title": "Trades"
       },
+      "TransitionAnalytics": {
+        "properties": {
+          "target_model_id": {
+            "type": "string",
+            "title": "Target Model Id"
+          },
+          "target_name": {
+            "type": "string",
+            "title": "Target Name"
+          },
+          "te_ex_ante": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Te Ex Ante"
+          },
+          "reports": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BuilderReport"
+            },
+            "type": "object",
+            "title": "Reports"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_model_id",
+          "target_name",
+          "te_ex_ante",
+          "reports"
+        ],
+        "title": "TransitionAnalytics"
+      },
       "TransitionCreate": {
         "properties": {
           "client_id": {
@@ -7104,6 +10174,14 @@
             "examples": [
               "acc_017"
             ]
+          },
+          "fixes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fixes",
+            "description": "Diagnosis fixes picked on the client page (ids from the account diagnosis)"
           }
         },
         "type": "object",
@@ -7201,6 +10279,7 @@
               "none",
               "ingest_choice",
               "parse_preview",
+              "account_review",
               "model_list",
               "model_comparison",
               "transition_setup",
@@ -7328,6 +10407,57 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "Weighted": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "market_value": {
+            "type": "number",
+            "title": "Market Value",
+            "default": 0.0
+          },
+          "group": {
+            "type": "string",
+            "title": "Group",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "weight"
+        ],
+        "title": "Weighted"
+      },
+      "YearReturn": {
+        "properties": {
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "model": {
+            "type": "number",
+            "title": "Model"
+          },
+          "benchmark": {
+            "type": "number",
+            "title": "Benchmark"
+          }
+        },
+        "type": "object",
+        "required": [
+          "year",
+          "model",
+          "benchmark"
+        ],
+        "title": "YearReturn"
       },
       "YearSummary": {
         "properties": {

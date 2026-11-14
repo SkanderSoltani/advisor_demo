@@ -15,6 +15,8 @@ CARD_COPY: dict[str, tuple[str, str, str]] = {
     "help": ("compass", "Help me choose", "Answer two questions and compare recommendations."),
     "objective:income": ("hand-coins", "Income", "Higher, more stable dividend yield."),
     "objective:total_return": ("trending-up", "Total return", "Long-term growth with broad market exposure."),
+    "objective:tax_efficient": ("receipt-text", "Tax efficient",
+                                "Core enhanced equity with municipal bonds for taxable accounts."),
     "construction:market_cap": ("pie-chart", "Market cap",
                                 "Cap-weighted core — lowest cost and tracking error."),
     "construction:market_cap_fundamental": ("chart-column-big", "Market cap + fundamental",
@@ -24,7 +26,7 @@ CARD_COPY: dict[str, tuple[str, str, str]] = {
 }
 TITLES = {
     "TARGET_KNOWLEDGE": ("Choose your target", "Select a model aligned to this client's objective."),
-    "Q_OBJECTIVE": ("Choose your target", "Is the client focused on income or total return?"),
+    "Q_OBJECTIVE": ("Choose your target", "Is the client focused on income, total return or tax efficiency?"),
     "Q_CONSTRUCTION": ("Choose your target", "Pick a construction style for the target model."),
 }
 
